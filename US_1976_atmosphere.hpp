@@ -1,14 +1,70 @@
 #pragma once
 
-//US STandard Atmosphere 1976
+//References
+
+//US Standard Atmosphere 1976
 //NASA-TM-X-74335
+//https://ntrs.nasa.gov/search.jsp?R=19770009539
 //https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19770009539.pdf
 
-//
+//Defining constants, equations, and abbreviated tables of the 1975 US Standard Atmosphere
 //NASA TR R-459
-//
+//https://ntrs.nasa.gov/search.jsp?R=19760017709
+//https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19760017709.pdf
 
 #include <cstddef>
+
+//stores geopotential and geometric height and converts between them
+class Geopotential_height
+{
+public:
+
+	constexpr static Geopotential_height from_geomet_height(const double g_m)
+	{
+		return Geopotential_height(g_m, get_geopot_height(g_m));
+	}
+
+	constexpr static Geopotential_height from_geopot_height(const double g_p)
+	{
+		return Geopotential_height(get_geomet_height(g_p), g_p);
+	}
+
+	//NASA TR R-459 eq 18
+	constexpr static double get_geopot_height(const double geomet_height)
+	{
+		return (r0 * geomet_height) / (r0 + geomet_height);
+	}
+	double get_geopot_height() const
+	{
+		return m_geopotential_height;
+	}
+
+	//NASA TR R-459 eq 19
+	constexpr static double get_geomet_height(const double geopot_height)
+	{
+		return (r0 * geopot_height) / (r0 - geopot_height);
+	}
+	double get_geomet_height() const
+	{
+		return m_geometric_height;
+	}
+
+protected:
+
+	constexpr Geopotential_height(const double geomet_height, const double geopot_height) : m_geometric_height(geomet_height), m_geopotential_height(geopot_height)
+	{
+
+	}
+
+	double m_geometric_height;
+	double m_geopotential_height;
+
+	//m, value from NASA TR R-459 pg 15
+	constexpr static double r0 = 6356766.0;
+	
+	//m/s/s, value from NASA TR R-459 pg 15
+	constexpr static double g0 = 9.80665;
+};
 
 class US_1976_atmosphere
 {
@@ -26,25 +82,7 @@ public:
 		MESOPAUSE = 7
 	};
 
-	class Geopotential_height
-	{
-	public:
-		
-		static Geopotential_height from_geometric_height(const double g_m);
-
-	protected:
-
-		double m_geopotential_height;
-
-	}
-
 	static ATMOSPHERE_LAYER get_layer(const double geopot_height);
-
-	//NASA TR R-459 eq 18
-	static double get_geopot_height(const double geometric_height);
-
-	//NASA TR R-459 eq 19
-	static double get_geometric_height(const double geopot_height);
 
 	//NASA-TM-X-74335 eq 24
 	static double get_temperature(const double geopot_height);
