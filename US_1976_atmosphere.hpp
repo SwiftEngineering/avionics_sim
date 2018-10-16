@@ -6,7 +6,7 @@
 
 #include <cstddef>
 
-class ISA_atmosphere
+class US_1976_atmosphere
 {
 public:
 

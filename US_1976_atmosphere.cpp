@@ -1,19 +1,25 @@
 
-//US STandard Atmosphere 1976
+//US Standard Atmosphere 1976
 //NASA-TM-X-74335
 //https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19770009539.pdf
-#include "ISA_atmosphere.hpp"
+
+//Defined constats, equations, and abbreviated tables of the 1945 US Std Atmosphere
+//NASA TR R-459
+//https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19760017709.pdf
+
+//http://www.pdas.com/atmosdownload.html
+#include "US_1976_atmosphere.hpp"
 #include <exception>
 #include <stdexcept>
 #include <cmath>
 #include <iostream>
 
-constexpr double ISA_atmosphere::base_geopot_height_km[];
-constexpr double ISA_atmosphere::base_temp[];
-constexpr double ISA_atmosphere::base_pressure[];
-constexpr double ISA_atmosphere::lapse_rate[];
+constexpr double US_1976_atmosphere::base_geopot_height_km[];
+constexpr double US_1976_atmosphere::base_temp[];
+constexpr double US_1976_atmosphere::base_pressure[];
+constexpr double US_1976_atmosphere::lapse_rate[];
 
-ISA_atmosphere::ATMOSPHERE_LAYER ISA_atmosphere::get_layer(const double geopot_height)
+US_1976_atmosphere::ATMOSPHERE_LAYER US_1976_atmosphere::get_layer(const double geopot_height)
 {
 	const double geopot_height_km = geopot_height / 1000.0;
 
@@ -39,7 +45,7 @@ ISA_atmosphere::ATMOSPHERE_LAYER ISA_atmosphere::get_layer(const double geopot_h
 	}
 }
 
-double ISA_atmosphere::get_geopot_height(const double geometric_height)
+double US_1976_atmosphere::get_geopot_height(const double geometric_height)
 {
 	//m
 	const double r0 = 6356766.0;
@@ -51,7 +57,7 @@ double ISA_atmosphere::get_geopot_height(const double geometric_height)
 	return h;
 }
 
-double ISA_atmosphere::get_geometric_height(const double geopot_height)
+double US_1976_atmosphere::get_geometric_height(const double geopot_height)
 {
 	//m
 	const double r0 = 6356766.0;
@@ -63,7 +69,7 @@ double ISA_atmosphere::get_geometric_height(const double geopot_height)
 	return h;
 }
 
-double ISA_atmosphere::get_temperature(const double geopot_height)
+double US_1976_atmosphere::get_temperature(const double geopot_height)
 {
 	const ATMOSPHERE_LAYER layer = get_layer(geopot_height);
 
@@ -78,7 +84,7 @@ double ISA_atmosphere::get_temperature(const double geopot_height)
 	return Tm;
 }
 
-double ISA_atmosphere::get_pressure(const double geopot_height)
+double US_1976_atmosphere::get_pressure(const double geopot_height)
 {
 	const ATMOSPHERE_LAYER layer = get_layer(geopot_height);
 
