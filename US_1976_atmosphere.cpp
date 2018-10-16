@@ -37,10 +37,8 @@ US_1976_atmosphere::ATMOSPHERE_LAYER US_1976_atmosphere::get_layer(const double 
 		}
 	}
 
-	if(geopot_height_km == base_geopot_height_km[(size_t)ATMOSPHERE_LAYER::MESOPAUSE])
-	{
-		return ATMOSPHERE_LAYER::MESOPAUSE;
-	}
+	//we already throw above if you are higher than the mesopause
+	return ATMOSPHERE_LAYER::MESOPAUSE;
 }
 
 double US_1976_atmosphere::get_temperature(const double geopot_height)
