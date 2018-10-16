@@ -108,3 +108,13 @@ double US_1976_atmosphere::get_pressure(const double geopot_height)
 
 	return P;
 }
+
+double US_1976_atmosphere::get_mass_density(const double geopot_height)
+{
+	const double P = get_pressure(geopot_height);
+	const double T_M = get_temperature(geopot_height);
+
+	double rho = (P * M_0) / (R_star * T_M);
+
+	return rho;
+}

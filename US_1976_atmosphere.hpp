@@ -24,12 +24,20 @@ public:
 
 	static ATMOSPHERE_LAYER get_layer(const double geopot_height);
 
+	//NASA TR R-459 eq 18
 	static double get_geopot_height(const double geometric_height);
+
+	//NASA TR R-459 eq 19
 	static double get_geometric_height(const double geopot_height);
 
+	//NASA-TM-X-74335 eq 24
 	static double get_temperature(const double geopot_height);
 
+	//NASA-TM-X-74335 eq 33a / 33b
 	static double get_pressure(const double geopot_height);
+
+	//NASA-TM-X-74335 eq 42
+	static double get_mass_density(const double geopot_height);
 
 protected:
 
@@ -39,6 +47,8 @@ protected:
 
 	//g_o' * M_0 / R*
 	constexpr static double GMR = 34.163195;
+	constexpr static double R_star = 8.31432e3;//m/(kmol K) - nonstandard definition for US atmosphere
+	constexpr static double M_0 = 28.9644;//kg/kmol - pg 17 NASA TR R
 
 	//degC/km
 	constexpr static double lapse_rate[] = {-6.5, 0, 1.0, 2.8, 0, -2.8, -2.0, 0};
