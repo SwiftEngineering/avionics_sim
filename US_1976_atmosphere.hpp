@@ -95,15 +95,14 @@ public:
 
 protected:
 
-	constexpr static double base_geopot_height_km[] = {0.0, 11.0, 20.0, 32.0, 47.0, 51.0, 71.0, 84.8520};
-	constexpr static double base_temp[] = {288.15, 216.65, 216.65, 228.65, 270.65, 270.65, 214.65, 186.946};
-	constexpr static double base_pressure[] = {101325.0, 22632.06, 5474.889, 868.0187, 110.9063, 66.93887, 3.956720, 0.3733836};
+	constexpr static double base_geopot_height_km[] = {0.0, 11.0, 20.0, 32.0, 47.0, 51.0, 71.0, 84.8520};//in km
+	constexpr static double base_temp[] = {288.15, 216.65, 216.65, 228.65, 270.65, 270.65, 214.65, 186.946};//in Kelvin
+	constexpr static double base_pressure[] = {101325.0, 22632.06, 5474.889, 868.0187, 110.9063, 66.93887, 3.956720, 0.3733836};//in Pa
 
-	
-	constexpr static double GMR = 34.163195;//g_o' * M_0 / R* in g K/s/s
-	constexpr static double R_star = 8.31432e3;//m/(kmol K) - NASA TR R-459 pg 4 - nonstandard definition for US atmosphere
+	constexpr static double R_star = 8.31432e3;//m/(kmol K) - NASA TR R-459 pg 4 - nonstandard definition for US atmosphere 1976 used by convention
 	constexpr static double M_0 = 28.9644;//kg/kmol - NASA TR R-459 pg 17 - 
-	constexpr static double g_0 = 9.80665;//m/s/s - NASA TR R-459 pg 4 - 1901 value for "45 degrees" / 45deg 32min 33s
+	constexpr static double g_0 = 9.80665;//m/s/s - NASA TR R-459 pg 4 - 1901 value for "45 degrees" / but really closer to 45deg 32min 33s
+	constexpr static double GMR = g_0 * M_0 / R_star * 1000.0;//g_o' * M_0 / R* in g K/s/s, ~34.163195
 
 	//degC/km
 	constexpr static double lapse_rate[] = {-6.5, 0, 1.0, 2.8, 0, -2.8, -2.0, 0};
