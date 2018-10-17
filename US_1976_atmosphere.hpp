@@ -15,6 +15,7 @@
 #include <cstddef>
 
 //stores geopotential and geometric height and converts between them
+//Geometric height is linear meters above MSL
 class Geopotential_height
 {
 public:
@@ -66,6 +67,10 @@ protected:
 	constexpr static double g0 = 9.80665;
 };
 
+///
+/// Implementation of the US 1976 atmosphere
+/// Performance above MESOSPHERE2 is degraded, about 5 ULP of error (5/10000 Pa for pressure, 5/10000 kg/m^3 for density)
+
 class US_1976_atmosphere
 {
 public:
@@ -103,6 +108,7 @@ protected:
 	constexpr static double M_0 = 28.9644;//kg/kmol - NASA TR R-459 pg 17 - 
 	constexpr static double g_0 = 9.80665;//m/s/s - NASA TR R-459 pg 4 - 1901 value for "45 degrees" / but really closer to 45deg 32min 33s
 	constexpr static double GMR = g_0 * M_0 / R_star * 1000.0;//g_o' * M_0 / R* in g K/s/s, ~34.163195
+	constexpr static double MR = M_0 / R_star;//M_0 / R* in kg K/m, ~0.0034837
 
 	//degC/km
 	constexpr static double lapse_rate[] = {-6.5, 0, 1.0, 2.8, 0, -2.8, -2.0, 0};

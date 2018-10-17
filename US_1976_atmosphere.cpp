@@ -67,7 +67,6 @@ double US_1976_atmosphere::get_pressure(const double geopot_height)
 	const double Tmb = base_temp[(size_t)layer];
 	const double Pb = base_pressure[(size_t)layer];
 	const double Hb = base_geopot_height_km[(size_t)layer];
-	
 
 	double P = 0.0;
 
@@ -86,9 +85,9 @@ double US_1976_atmosphere::get_pressure(const double geopot_height)
 double US_1976_atmosphere::get_mass_density(const double geopot_height)
 {
 	const double P = get_pressure(geopot_height);
-	const double T_M = get_temperature(geopot_height);
+	const double Tm = get_temperature(geopot_height);
 
-	double rho = (P * M_0) / (R_star * T_M);
+	double rho = P * MR / Tm;
 
 	return rho;
 }
