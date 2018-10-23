@@ -8,11 +8,12 @@
 //https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19760017709.pdf
 
 //http://www.pdas.com/atmosdownload.html
-#include "US_1976_atmosphere.hpp"
-#include <exception>
-#include <stdexcept>
+#include "swift_common/US_1976_atmosphere.hpp"
+
 #include <cmath>
+#include <exception>
 #include <iostream>
+#include <stdexcept>
 
 constexpr double US_1976_atmosphere::base_geopot_height_km[];
 constexpr double US_1976_atmosphere::base_temp[];
