@@ -98,6 +98,9 @@ public:
 	//NASA-TM-X-74335 eq 42
 	static double get_mass_density(const double geopot_height);
 
+	static constexpr double CONSTANTS_STATIC_AIR_PRESSURE_AT_SEA_LEVEL = 101325;			// Pa
+	static constexpr double CONSTANTS_AIR_DENSITY_SEA_LEVEL_15C = 1.225;				// kg/m^3
+
 protected:
 
 	constexpr static double base_geopot_height_km[] = {0.0, 11.0, 20.0, 32.0, 47.0, 51.0, 71.0, 84.8520};//in km
