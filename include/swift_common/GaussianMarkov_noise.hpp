@@ -11,14 +11,14 @@ public:
 	/// Init class
 	/// Picks a random rng seed from a random device
 	/// \param  [in] tau - GM time constant, in seconds
-	/// \param  [in] sigma - GM std dev
+	/// \param  [in] sigma - GM std dev, if 0 GM will return 0
 	/// \param  [in] initial_output - GM inital value
 	GaussianMarkov_noise(const double tau, const double sigma, const double initial_output);
 	
 	///
 	/// Init class
 	/// \param  [in] tau - GM time constant, in seconds
-	/// \param  [in] sigma - GM std dev
+	/// \param  [in] sigma - GM std dev, if 0 GM will return 0
 	/// \param  [in] initial_output - GM inital value
 	/// \param  [in] seed - RNG seed
 	/// \param  [in] seed_len - Length of RNG seed

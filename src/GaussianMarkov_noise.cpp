@@ -51,6 +51,11 @@ void GaussianMarkov_noise::reset()
 
 double GaussianMarkov_noise::update(const double dT)
 {
+	if(m_sigma == 0.0)
+	{
+		return 0.0;
+	}
+	
 	const double alpha = exp(-dT / m_tau);
 
 	const double y_n = alpha * m_last_output + (1.0 - alpha) * m_sigma * m_normal_dist(m_rand_gen);
