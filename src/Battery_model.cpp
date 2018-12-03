@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <limits>
 #include <cstdint>
+#include <boost/math/tools/rational.hpp>
 
 bool Battery_model::initialize(const double initial_soc, const double capacity, const uint8_t num_cells, const double C, const double R)
 {
@@ -120,13 +121,6 @@ bool Battery_model::add_discharge_curves(const discharge_curve& dc)
 
 double  Battery_model::compute_voltage(const double soc, const uint8_t curve)
 {
-    double voltage = m_discharge_curves[curve].c[0]
-        + m_discharge_curves[curve].c[1] * soc
-        + m_discharge_curves[curve].c[2] * pow(soc,2)
-        + m_discharge_curves[curve].c[3] * pow(soc,3)
-        + m_discharge_curves[curve].c[4] * pow(soc,4)
-        + m_discharge_curves[curve].c[5] * pow(soc,5);
-
-    return voltage;
+    return boost::math::tools::evaluate_polynomial(m_discharge_curves[curve].c, soc);
 }
 
