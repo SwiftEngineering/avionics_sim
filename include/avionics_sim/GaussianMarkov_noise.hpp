@@ -11,6 +11,9 @@
 #include <random>
 #include <sstream>
 
+namespace avionics_sim
+{
+
 class GaussianMarkov_noise
 {
 public:
@@ -59,3 +62,5 @@ protected:
 
 	std::stringstream m_init_rng_state;
 };
+
+}

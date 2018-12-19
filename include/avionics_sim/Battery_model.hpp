@@ -19,6 +19,9 @@
 #include <array>
 #include <vector>
 
+namespace avionics_sim
+{
+
 class Battery_model
 {
 public:
@@ -90,3 +93,5 @@ protected:
     uint8_t m_num_discharge_curves;                                                 ///< Number of discharge curves that have been initialized.
 
 };
+
+}

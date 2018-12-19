@@ -11,6 +11,9 @@
 #include <cmath>
 #include <limits>
 
+namespace avionics_sim
+{
+
 Exponential_smoothing_filter::Exponential_smoothing_filter(const double f_3db, const double dT)
 {
 	m_dT = dT;
@@ -86,4 +89,6 @@ double Exponential_smoothing_filter::get_phase(const double f) const
 	const double omega_tau = 2.0 * M_PI * f * get_tau(m_f_3db);
 
 	return -atan(omega_tau);
+}
+
 }

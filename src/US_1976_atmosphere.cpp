@@ -22,6 +22,9 @@
 #include <iostream>
 #include <stdexcept>
 
+namespace avionics_sim
+{
+
 constexpr double US_1976_atmosphere::base_geopot_height_km[];
 constexpr double US_1976_atmosphere::base_temp[];
 constexpr double US_1976_atmosphere::base_pressure[];
@@ -98,4 +101,6 @@ double US_1976_atmosphere::get_mass_density(const double geopot_height)
 	double rho = P * MR / Tm;
 
 	return rho;
+}
+
 }

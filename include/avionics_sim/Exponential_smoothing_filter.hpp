@@ -8,6 +8,9 @@
 
 #pragma once
 
+namespace avionics_sim
+{
+
 // implements a digital first order LPF
 // X(s) = a / (s+a)
 // as
@@ -69,3 +72,5 @@ protected:
 	double m_last_output;
 
 };
+
+}

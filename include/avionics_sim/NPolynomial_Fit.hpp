@@ -12,6 +12,9 @@
 #include <vector>
 #include <boost/math/tools/rational.hpp>
 
+namespace avionics_sim
+{
+
 /// \brief NPolynomialFit class that implements a N-degree polynomial fit
 template <class T, size_t n>
 class NPolynomialFit {
@@ -36,3 +39,5 @@ protected:
 	/// \brief Array of polynomial fit curves
 	std::vector<boost::array<T, n> > m_fit_curves;
 };	// class NPolynomialFit
+
+}

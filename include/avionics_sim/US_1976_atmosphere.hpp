@@ -22,6 +22,9 @@
 
 #include <cstddef>
 
+namespace avionics_sim
+{
+
 //stores geopotential and geometric height and converts between them
 //Geometric height is linear meters above MSL
 class Geopotential_height
@@ -124,3 +127,5 @@ protected:
 	//degC/km
 	constexpr static double lapse_rate[] = {-6.5, 0, 1.0, 2.8, 0, -2.8, -2.0, 0};
 };
+
+}

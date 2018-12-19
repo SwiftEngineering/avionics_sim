@@ -15,6 +15,9 @@
 #include <cstdio>
 #include <limits>
 
+namespace avionics_sim
+{
+
 bool Battery_model::initialize(const double initial_soc, const double capacity, const uint8_t num_cells, const double C, const double R)
 {
     if (R <= 0.0 || C < 0.0)
@@ -134,3 +137,4 @@ double  Battery_model::compute_voltage(const double soc, const uint8_t curve)
     return boost::math::tools::evaluate_polynomial(m_discharge_curves[curve].c, soc);
 }
 
+}

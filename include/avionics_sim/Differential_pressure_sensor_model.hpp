@@ -35,6 +35,9 @@
 #include <cstddef>
 #include <cstdint>
 
+namespace avionics_sim
+{
+
 class Differential_pressure_sensor_model
 {
 public:
@@ -111,3 +114,5 @@ protected:
 	double m_correction;
 
 };
+
+}

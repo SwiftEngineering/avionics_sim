@@ -11,6 +11,9 @@
 #include <algorithm>
 #include <functional>
 
+namespace avionics_sim
+{
+
 GaussianMarkov_noise::GaussianMarkov_noise(const double tau, const double sigma, const double initial_output)
 {
 	//arbitrarily pick 16 as length of seed
@@ -71,4 +74,6 @@ double GaussianMarkov_noise::update(const double dT)
 	m_last_output = y_n;
 
 	return y_n;
+}
+
 }

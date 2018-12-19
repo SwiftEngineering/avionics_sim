@@ -16,6 +16,8 @@
 #include <random>
 #include <stdexcept>
 
+namespace avionics_sim
+{
 
 // From equation 3.10 in https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19800015804.pdf
 double Differential_pressure_sensor_model::diff_press_from_indicated_airspeed(const double indicated_airspeed)
@@ -50,4 +52,6 @@ double Differential_pressure_sensor_model::diff_press_from_true_airspeed(const d
 double Differential_pressure_sensor_model::get_air_density(const double static_pressure, const double temperature_celsius)
 {
 	return static_pressure / (CONSTANTS_AIR_GAS_CONST * (temperature_celsius - CONSTANTS_ABSOLUTE_NULL_CELSIUS));
+}
+
 }
