@@ -3,6 +3,7 @@
  * @file        NPolynomial_Fit.hpp
  * @author      Nuno Marques <nuno.marques@dronesolutions.io>
  * @copyright   Copyright(C) 2018, Swift Engineering Inc. All rights reserved.
+ * @license     Internal Use Only.
  */
 
 #pragma once

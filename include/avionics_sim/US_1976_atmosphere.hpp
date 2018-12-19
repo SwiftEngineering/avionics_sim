@@ -3,6 +3,7 @@
  * @file        US_1976_atmosphere.hpp
  * @author      Jacob Schloss <jschloss@swiftengineering.com>
  * @copyright   Copyright (c) 2018, Swift Engineering Inc. All rights reserved.
+ * @license     Internal Use Only.
  */
 
 #pragma once
