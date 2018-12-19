@@ -1,3 +1,10 @@
+/**
+ * @brief       US_1976_atmosphere
+ * @file        US_1976_atmosphere.hpp
+ * @author      Jacob Schloss <jschloss@swiftengineering.com>
+ * @copyright   Copyright (c) 2018, Swift Engineering Inc. All rights reserved.
+ */
+
 #pragma once
 
 // implements a digital first order LPF

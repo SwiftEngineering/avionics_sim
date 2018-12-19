@@ -1,3 +1,10 @@
+/**
+ * @brief       GaussianMarkov_noise
+ * @file        GaussianMarkov_noise.hpp
+ * @author      Jacob Schloss <jschloss@swiftengineering.com>
+ * @copyright   Copyright (c) 2018, Swift Engineering Inc. All rights reserved.
+ */
+
 #pragma once
 
 #include <random>

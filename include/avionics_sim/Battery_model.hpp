@@ -1,3 +1,10 @@
+/**
+ * @brief       Battery_model
+ * @file        Battery_model.hpp
+ * @author      Richard Kirby <richard@kspresearch.com>
+ * @copyright   Copyright (c) 2018, Swift Engineering Inc. All rights reserved.
+ */
+
 #pragma once
 
 /* 	

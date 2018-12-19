@@ -1,3 +1,10 @@
+/**
+ * @brief       Differential_pressure_sensor_model
+ * @file        Differential_pressure_sensor_model.hpp
+ * @author      Richard Kirby <richard@kspresearch.com>
+ * @copyright   Copyright (c) 2018, Swift Engineering Inc. All rights reserved.
+ */
+
 #pragma once
 
 /* 	From: https://en.wikipedia.org/wiki/Airspeed
