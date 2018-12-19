@@ -6,4 +6,4 @@
  * @copyright   Copyright(C) 2018, Swift Engineering Inc. All rights reserved.
  */
 
-#include <swift_common/NPolynomial_Fit.hpp>
+#include <avionics_sim/NPolynomial_Fit.hpp>
