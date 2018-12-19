@@ -8,7 +8,7 @@
 //https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19760017709.pdf
 
 //http://www.pdas.com/atmosdownload.html
-#include "swift_common/US_1976_atmosphere.hpp"
+#include "avionics_sim/US_1976_atmosphere.hpp"
 
 #include <cmath>
 #include <exception>

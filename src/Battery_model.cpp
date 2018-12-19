@@ -1,9 +1,11 @@
-#include "swift_common/Battery_model.hpp"
+#include "avionics_sim/Battery_model.hpp"
+
+#include <boost/math/tools/rational.hpp>
+
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include <limits>
-#include <cstdint>
-#include <boost/math/tools/rational.hpp>
 
 bool Battery_model::initialize(const double initial_soc, const double capacity, const uint8_t num_cells, const double C, const double R)
 {
