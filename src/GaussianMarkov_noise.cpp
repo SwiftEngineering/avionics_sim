@@ -13,7 +13,7 @@
 GaussianMarkov_noise::GaussianMarkov_noise(const double tau, const double sigma, const double initial_output)
 {
 	//arbitrarily pick 16 as length of seed
-	//no way to gaurntee mt19937 state is filled, so no point giving 624 elements
+	//no way to guarantee mt19937 state is filled, so no point giving 624 elements
 	std::vector<std::uint32_t> seed_data(16);
 
 	std::random_device rd;
