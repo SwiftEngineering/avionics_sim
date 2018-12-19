@@ -1,3 +1,10 @@
+/**
+ * @brief       Battery_model
+ * @file        Battery_model.cpp
+ * @author      Richard Kirby <rkirby@kspresearch.com>
+ * @copyright   Copyright (c) 2018, Swift Engineering Inc. All rights reserved.
+ */
+
 #include "avionics_sim/Battery_model.hpp"
 
 #include <boost/math/tools/rational.hpp>

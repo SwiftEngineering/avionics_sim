@@ -1,6 +1,6 @@
 /**
- * @brief       US_1976_atmosphere
- * @file        US_1976_atmosphere.hpp
+ * @brief       Exponential_smoothing_filter
+ * @file        Exponential_smoothing_filter.hpp
  * @author      Jacob Schloss <jschloss@swiftengineering.com>
  * @copyright   Copyright (c) 2018, Swift Engineering Inc. All rights reserved.
  */

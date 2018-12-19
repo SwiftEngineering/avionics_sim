@@ -1,7 +1,7 @@
 /**
  * @brief       Differential_pressure_sensor_model
  * @file        Differential_pressure_sensor_model.hpp
- * @author      Richard Kirby <richard@kspresearch.com>
+ * @author      Richard Kirby <rkirby@kspresearch.com>
  * @copyright   Copyright (c) 2018, Swift Engineering Inc. All rights reserved.
  */
 
