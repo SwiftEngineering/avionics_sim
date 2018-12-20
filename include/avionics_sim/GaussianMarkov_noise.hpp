@@ -43,6 +43,7 @@ public:
 
 	///
 	/// Time since reset
+	/// \param  [in] dT - Timestep, in seconds
 	/// \return return next value in sequence
 	///
 	double update(const double dT);
