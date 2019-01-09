@@ -1,9 +1,8 @@
 /**
- * @brief       NPolynomialFit class
- * @file        NPolynomial_Fit.hpp
+ * @brief       NPolynomialEval class
+ * @file        NPolynomial_Eval.hpp
  * @author      Nuno Marques <nuno.marques@dronesolutions.io>
  * @copyright   Copyright(C) 2018, Swift Engineering Inc. All rights reserved.
- * @license     Internal Use Only.
  */
 
 #pragma once
@@ -12,12 +11,9 @@
 #include <vector>
 #include <boost/math/tools/rational.hpp>
 
-namespace avionics_sim
-{
-
-/// \brief NPolynomialFit class that implements a N-degree polynomial fit
+/// \brief NPolynomialEval class that implements a N-degree polynomial eval
 template <class T, size_t n>
-class NPolynomialFit {
+class NPolynomialEval {
 public:
 	/// \brief Gets the output from an input value and the poly indeterminates kept on the m_fit_curves set
 	T get_output_from_poly(const size_t &poly_index, const double &input) {
@@ -38,6 +34,4 @@ public:
 protected:
 	/// \brief Array of polynomial fit curves
 	std::vector<boost::array<T, n> > m_fit_curves;
-};	// class NPolynomialFit
-
-}
+};	// class NPolynomialEval
