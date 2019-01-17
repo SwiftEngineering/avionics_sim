@@ -101,16 +101,19 @@ public:
 	static ATMOSPHERE_LAYER get_layer(const double geopot_height);
 
 	//NASA-TM-X-74335 eq 24
+	//Kelvin
 	static double get_temperature(const double geopot_height);
 
 	//NASA-TM-X-74335 eq 33a / 33b
+	//Pascal
 	static double get_pressure(const double geopot_height);
 
 	//NASA-TM-X-74335 eq 42
+	//kg/m^3
 	static double get_mass_density(const double geopot_height);
 
-	static constexpr double CONSTANTS_STATIC_AIR_PRESSURE_AT_SEA_LEVEL = 101325;			// Pa
-	static constexpr double CONSTANTS_AIR_DENSITY_SEA_LEVEL_15C = 1.225;				// kg/m^3
+	static constexpr double CONSTANTS_STATIC_AIR_PRESSURE_AT_SEA_LEVEL = 101325;	// Pa
+	static constexpr double CONSTANTS_AIR_DENSITY_SEA_LEVEL_15C = 1.225;			// kg/m^3
 
 protected:
 
