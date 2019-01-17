@@ -3,7 +3,8 @@
  *		 NPolynomial_Eval class definitions before deployment
  * @file        NPolynomial_Eval.cpp
  * @author      Nuno Marques <nuno.marques@dronesolutions.io>
- * @copyright   Copyright(C) 2018, Swift Engineering Inc. All rights reserved.
+ * @copyright   Copyright(c) 2018, Swift Engineering Inc.
+ * @license     Licensed under the MIT license. See LICENSE for details.
  */
 
 #include <avionics_sim/NPolynomial_Eval.hpp>

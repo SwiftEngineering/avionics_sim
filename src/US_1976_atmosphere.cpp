@@ -2,8 +2,8 @@
  * @brief       US_1976_atmosphere
  * @file        US_1976_atmosphere.cpp
  * @author      Jacob Schloss <jschloss@swiftengineering.com>
- * @copyright   Copyright (c) 2018, Swift Engineering Inc. All rights reserved.
- * @license     Internal Use Only.
+ * @copyright   Copyright (c) 2018, Swift Engineering Inc.
+ * @license     Licensed under the MIT license. See LICENSE for details.
  */
 
 //US Standard Atmosphere 1976

@@ -2,8 +2,8 @@
  * @brief       Differential_pressure_sensor_model
  * @file        Differential_pressure_sensor_model.cpp
  * @author      Richard Kirby <rkirby@kspresearch.com>
- * @copyright   Copyright (c) 2018, Swift Engineering Inc. All rights reserved.
- * @license     Internal Use Only.
+ * @copyright   Copyright (c) 2018, Swift Engineering Inc.
+ * @license     Licensed under the MIT license. See LICENSE for details.
  */
 
 #include "avionics_sim/Differential_pressure_sensor_model.hpp"

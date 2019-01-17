@@ -2,7 +2,8 @@
  * @brief       NPolynomialEval class
  * @file        NPolynomial_Eval.hpp
  * @author      Nuno Marques <nuno.marques@dronesolutions.io>
- * @copyright   Copyright(C) 2018, Swift Engineering Inc. All rights reserved.
+ * @copyright   Copyright (c) 2018, Swift Engineering Inc.
+ * @license     Licensed under the MIT license. See LICENSE for details.
  */
 
 #pragma once

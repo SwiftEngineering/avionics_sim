@@ -2,8 +2,8 @@
  * @brief       Battery_model
  * @file        Battery_model.hpp
  * @author      Richard Kirby <rkirby@kspresearch.com>
- * @copyright   Copyright (c) 2018, Swift Engineering Inc. All rights reserved.
- * @license     Internal Use Only.
+ * @copyright   Copyright (c) 2018, Swift Engineering Inc.
+ * @license     Licensed under the MIT license. See LICENSE for details.
  */
 
 #pragma once
