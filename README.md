@@ -13,6 +13,7 @@ Currently intended for use with PX4's sitl_gazebo.
    * Seedable, resettable
    * MT19937-64 based
  * An implementation of the US 1976 atmosphere model
+ * A 2D (Bilinear) lookup table implementation
 
 ## Planned Features
 
