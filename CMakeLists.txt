@@ -6,6 +6,7 @@ add_library(avionics_sim
 	src/GaussianMarkov_noise.cpp
 	src/NPolynomial_Eval.cpp
 	src/US_1976_atmosphere.cpp
+	src/Bilinear_interp.cpp
 )
 
 target_include_directories(avionics_sim PUBLIC
