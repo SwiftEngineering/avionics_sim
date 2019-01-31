@@ -9,7 +9,7 @@
 #include "avionics_sim/Bilinear_interp.hpp"
 
 #include <sstream> 
-#include <stdlib.h> 
+#include <cstdlib> 
 
 
 namespace avionics_sim
@@ -21,7 +21,7 @@ namespace avionics_sim
         haveZVals = false; 
     }
 
-    Bilinear_interp::Bilinear_interp(std::vector<std::vector<float>> xv, std::vector<float> yv, std::vector<std::vector<float>> zv)
+    Bilinear_interp::Bilinear_interp(const std::vector<std::vector<float>> xv, const std::vector<float> yv, const std::vector<std::vector<float>> zv)
     {
         xVals = xv; 
         yVals = yv; 
@@ -32,7 +32,7 @@ namespace avionics_sim
         haveZVals = true; 
     }
 
-    int Bilinear_interp::interpolate(std::vector<float> xv, std::vector<float> yv, float x, float &y)
+    int  Bilinear_interp::interpolate(const std::vector<float> &xv, const std::vector<float> &yv, float x, float* y)
     {
         float x_l, y_l, x_u, y_u; 
 
@@ -42,8 +42,8 @@ namespace avionics_sim
             if(x <= xv.back())
             {
                 // Find out which indices to interpolate from. 
-                std::vector<float>::iterator lowBound = lower_bound(xv.begin(), xv.end(), x);
-                int i_u = int(lowBound - xv.begin());
+                std::vector<float>::const_iterator lowBound = lower_bound(xv.begin(), xv.end(), x);
+                int i_u = std::distance(xv.begin(), lowBound); 
 
                 // Otherwise we would interpolate between x[-1] and x[0]
                 if(x == xv.front())
@@ -56,25 +56,25 @@ namespace avionics_sim
                 y_u = yv[i_u]; 
 
                 // Perform linear interpolation
-                y = (x-x_l)/(x_u-x_l)*(y_u-y_l) + y_l;
+                *y = (x-x_l)/(x_u-x_l)*(y_u-y_l) + y_l;
 
                 // Interpolation success. 
-                return 0; 
+                return InterpResult::INTERP_SUCCESS; 
             } else{
-                y = yv.back(); 
-                return -1; 
+                *y = yv.back(); 
+                return InterpResult::INTERP_WARN_OUT_OF_BOUNDS; 
             }
         } else {
-            y = yv.front(); 
-            return -1;
+            *y = yv.front(); 
+            return InterpResult::INTERP_WARN_OUT_OF_BOUNDS;
         }
     }
 
-    int Bilinear_interp::interpolate2D(std::vector<std::vector<float>> xv, std::vector<float> yv, std::vector<std::vector<float>> zv, float x, float y, float &z)
+    int Bilinear_interp::interpolate2D(const std::vector<std::vector<float>> &xv, const std::vector<float> &yv, const std::vector<std::vector<float>> &zv, float x, float y, float *z)
     {
         float y_l, y_u;
         float z_l, z_u = 0.0f;
-        bool error = false; 
+        bool errorState = InterpResult::INTERP_SUCCESS; 
 
         float y_clamped; // Bound using first and last points of LUT. Clamp if out of range, but throw an error. 
 
@@ -82,18 +82,18 @@ namespace avionics_sim
         if(y < yv.front())
         {
             y_clamped = yv.front();
-            error = true; 
+            errorState = InterpResult::INTERP_WARN_OUT_OF_BOUNDS; 
         } else if(y > yv.back())
         {
             y_clamped = yv.back(); 
-            error = true; 
+            errorState = InterpResult::INTERP_WARN_OUT_OF_BOUNDS; 
         } else 
         {
             y_clamped = y; 
         }
 
         // Find out which y values are bounding our input point
-        std::vector<float>::iterator lowBound = lower_bound(yv.begin(), yv.end(), y_clamped);
+        std::vector<float>::const_iterator lowBound = lower_bound(yv.begin(), yv.end(), y_clamped);
         int iy_u = int(lowBound - yv.begin());
 
         // Otherwise we would interpolate between x[-1] and x[0]
@@ -105,15 +105,15 @@ namespace avionics_sim
             // There are two curves to work with
 
             // Get the curve value pairs.
-            if(interpolate(xv[iy_u-1], zv[iy_u-1], x, z_l) < 0)
+            if(interpolate(xv[iy_u-1], zv[iy_u-1], x, &z_l) < 0)
             {
                 // Error has occured in interpolation
-                error = true; 
+                errorState = InterpResult::INTERP_WARN_OUT_OF_BOUNDS; 
             }
-            if(interpolate(xv[iy_u], zv[iy_u], x, z_u) < 0)
+            if(interpolate(xv[iy_u], zv[iy_u], x, &z_u) < InterpResult::INTERP_SUCCESS)
             {
                 // Error has occured in interpolation
-                error = true; 
+                errorState = InterpResult::INTERP_WARN_OUT_OF_BOUNDS; 
             }
 
             // Y bounding values
@@ -121,81 +121,89 @@ namespace avionics_sim
             y_u = yv[iy_u];
 
             // Perform interpolation
-            z = (y-y_l)/(y_u-y_l)*(z_u-z_l) + z_l;
+            *z = (y-y_l)/(y_u-y_l)*(z_u-z_l) + z_l;
 
         }  else if (y_clamped == yv.front())
         {
             // Only have the first curve to work with. 
-            if(interpolate(xv[iy_u-1], zv[iy_u-1], x, z_l) < 0)
+            if(interpolate(xv[iy_u-1], zv[iy_u-1], x, &z_l) < InterpResult::INTERP_SUCCESS)
             {
-                error = true; // Threw an error. 
+                errorState = InterpResult::INTERP_WARN_OUT_OF_BOUNDS; // Threw an error. 
             }
-            z = z_l; // No second interpolation
+            *z = z_l; // No second interpolation
         }   else  {
             // Only have the last curve to work with.
-            if(interpolate(xv[iy_u], zv[iy_u], x, z_l) < 0)
+            if(interpolate(xv[iy_u], zv[iy_u], x, &z_l) < InterpResult::INTERP_SUCCESS)
             {
-                error = true; // Threw an error. 
+                errorState = InterpResult::INTERP_WARN_OUT_OF_BOUNDS; // Threw an error. 
             }
-            z = z_l; // No second interpolation
+            *z = z_l; // No second interpolation
         }
 
-        if(error)
-        {
-            return -1; // Errors occured
-        }
-
-        return 0; // Success        
+        return errorState; 
     }
 
-    int Bilinear_interp::interpolate2D(float x, float y, float &z)
+    int Bilinear_interp::interpolate2D(float x, float y, float *z)
     {
-        if(haveXVals && haveYVals && haveZVals)
-        {
-            return interpolate2D(xVals, yVals, zVals, x, y, z);
-        } else {
-            return -2; 
-        }
+        if(!haveXVals || !haveYVals || !haveZVals)
+            return InterpResult::INTERP_ERROR_NO_LUT;
+
+        // Have LUT data. Perform interpolation. 
+        return interpolate2D(xVals, yVals, zVals, x, y, z);
     }
 
-    void Bilinear_interp::setXVals(std::string inputVals)
+    bool Bilinear_interp::setXVals(std::string inputVals)
     {
-        xVals = Bilinear_interp::get2DLUTelementsFromString(inputVals); 
-
+        if(!Bilinear_interp::get2DLUTelementsFromString(inputVals, &xVals))
+            return false;  // Parsing error 
+        
         haveXVals = true; 
+        
+        return true; // Success
     }
 
-    void Bilinear_interp::setXVals(std::vector<std::vector<float>> xv)
+    bool Bilinear_interp::setXVals(std::vector<std::vector<float>> xv)
     {
         xVals = xv; 
+        return true; 
     }
 
-    void Bilinear_interp::setYVals(std::string inputVals)
+    bool Bilinear_interp::setYVals(std::string inputVals)
     {
-        yVals = Bilinear_interp::get1DLUTelementsFromString(inputVals); 
+        if(!Bilinear_interp::get1DLUTelementsFromString(inputVals, &yVals))
+            return false; // Parsing error 
 
         haveYVals = true; 
+
+        return true; // Success
     }
 
-    void Bilinear_interp::setYVals(std::vector<float> yv)
+    bool Bilinear_interp::setYVals(std::vector<float> yv)
     {
         yVals = yv; 
+        return true; 
     }
 
-    void Bilinear_interp::setZVals(std::string inputVals)
+    bool Bilinear_interp::setZVals(std::string inputVals)
     {
-        zVals = Bilinear_interp::get2DLUTelementsFromString(inputVals); 
+        if(!Bilinear_interp::get2DLUTelementsFromString(inputVals, &zVals))
+            return false; // Parsing error  
 
         haveZVals = true; 
+
+        return true; // Success
     }
 
-    void Bilinear_interp::setZVals(std::vector<std::vector<float>> zv)
+    bool Bilinear_interp::setZVals(std::vector<std::vector<float>> zv)
     {
         zVals = zv; 
+        return true; 
     }
 
-    std::vector<float> Bilinear_interp::get1DLUTelementsFromString(std::string inputVals)
+    bool Bilinear_interp::get1DLUTelementsFromString(std::string inputVals, std::vector<float> *outputVect)
     {
+        if(!inputVals.empty())
+            return false; 
         std::stringstream ss(inputVals); 
 
         std::string delimiter = ",";
@@ -204,22 +212,34 @@ namespace avionics_sim
 
         std::vector<float> row; 
 
-        if(!inputVals.empty())
+        float tmpFloat; 
+ 
+        while((pos = inputVals.find(delimiter)) != std::string::npos)
         {
-            while((pos = inputVals.find(delimiter)) != std::string::npos)
-            {
-                token = inputVals.substr(0,pos); 
-                row.push_back(atof(token.c_str())); 
-                inputVals.erase(0, pos + delimiter.length()); 
-            }
-        row.push_back(atof(inputVals.c_str())); 
+            token = inputVals.substr(0,pos); 
+            if(sscanf(token.c_str(), "%f", &tmpFloat) != 1)
+                return false; // Return fault if sscanf fails
+            row.push_back(tmpFloat); 
+            inputVals.erase(0, pos + delimiter.length()); 
         }
 
-        return row; 
+        // Push in last value; 
+            if(sscanf(inputVals.c_str(), "%f", &tmpFloat) != 1)
+                return false; // Return fault if sscanf fails
+
+        row.push_back(tmpFloat); 
+
+        // Copy to output vector
+        *outputVect = row; 
+
+        return true; 
     }
 
-    std::vector< std::vector<float> > Bilinear_interp::get2DLUTelementsFromString(std::string inputVals)
+    bool Bilinear_interp::get2DLUTelementsFromString(std::string inputVals, std::vector<std::vector<float>> *outputVect)
     {
+        if(inputVals.empty())
+            return false; 
+
         std::stringstream ss(inputVals); 
         std::string to; 
 
@@ -230,22 +250,29 @@ namespace avionics_sim
         std::vector<std::vector<float>> vect_vals; 
         std::vector<float> row; 
 
-        if(!inputVals.empty())
-        {
-        int lines = 0 ; 
-            while(std::getline(ss, to, ';')){
-                while((pos = to.find(delimiter)) != std::string::npos)
-                {
-                    token = to.substr(0,pos); 
-                    row.push_back(atof(token.c_str())); 
-                    to.erase(0, pos + delimiter.length()); 
-                }
-                row.push_back(atof(to.c_str())); 
-                vect_vals.push_back(row); 
-                row.clear(); 
+        float tmpFloat; 
+
+        while(std::getline(ss, to, ';')){
+            while((pos = to.find(delimiter)) != std::string::npos)
+            {
+                token = to.substr(0,pos); 
+                if(sscanf(token.c_str(), "%f", &tmpFloat) != 1)
+                    return false; // Return fault if sscanf fails
+                row.push_back(tmpFloat); 
+                to.erase(0, pos + delimiter.length()); 
             }
+            // Push in last value; 
+            if(sscanf(inputVals.c_str(), "%f", &tmpFloat) != 1)
+                    return false; // Return fault if sscanf fails
+
+            row.push_back(tmpFloat); 
+            vect_vals.push_back(row); 
+            row.clear(); 
         }
 
-        return vect_vals; 
+        // Copy to output vector
+        *outputVect = vect_vals; 
+
+        return true; 
     }
 }
