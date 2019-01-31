@@ -107,7 +107,6 @@ namespace avionics_sim
           
 
 
-
           ///
           /// \brief      Sets the x vals vector.
           ///
