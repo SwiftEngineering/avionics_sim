@@ -32,16 +32,6 @@ namespace avionics_sim
         haveZVals = true; 
     }
 
-    /**
-     * @brief Interpolates in one dimension for Y given a set of X and Y values in a LUT
-     * 
-     * @param xv std::std::vector<float> contains the X values of the LUT
-     * @param yv std::std::vector<float> contains the Y values of the LUT
-     * @param x float the X value where interpolation is desired. 
-     * @param y [float&] reference to the variable to store the resulting Y value of the interpolation.
-     * @return int returns 0 if success, -1 if values were out of range of LUT and clamping was applied. 
-     */
-    // X values must be ascending
     int Bilinear_interp::interpolate(std::vector<float> xv, std::vector<float> yv, float x, float &y)
     {
         float x_l, y_l, x_u, y_u; 
@@ -80,17 +70,6 @@ namespace avionics_sim
         }
     }
 
-    /**
-     * @brief 
-     * 
-     * @param xv [std::std::vector<std::std::vector<float>>] vector of X values from LUT
-     * @param zv [std::std::vector<std::std::vector<float>>] vector of Z values from LUT
-     * @param yv [std::std::vector<float>] vector of Y values from LUT
-     * @param x  [float] X value for interpolation. 
-     * @param y  [float] Y value for interpolation. 
-     * @param z  [float&] reference to a float which will hold the resulting Z value. 
-     * @return [int] contains 0 if success, -1 if values were out of range and clamping occured. 
-     */
     int Bilinear_interp::interpolate2D(std::vector<std::vector<float>> xv, std::vector<float> yv, std::vector<std::vector<float>> zv, float x, float y, float &z)
     {
         float y_l, y_u;
