@@ -62,7 +62,7 @@ namespace avionics_sim
           /// \return     Returns 0 if interpolation is successful, -1 if clamped due to input out of bounds 
           ///             and clamped to nearest available data. 
           /// X and Y values must be ascending
-          int interpolate2D(std::vector<std::vector<float>> xv, std::vector<float> yv, std::vector<std::vector<float>> zv, float x, float y, float z&);
+          int interpolate2D(std::vector<std::vector<float>> xv, std::vector<float> yv, std::vector<std::vector<float>> zv, float x, float y, float &z);
 
           ///
           /// \brief      Performs 2D interpolations on LUT based on x, y, and z values stored within the class. 
