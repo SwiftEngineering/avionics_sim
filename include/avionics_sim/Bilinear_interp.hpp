@@ -41,11 +41,11 @@ namespace avionics_sim
           ///
           /// \brief      Constructs an interpolation object with x, y, and z vectors being passed at construciton. 
           ///
-          /// \param[in]  xv  x values of the 2D LUT
-          /// \param[in]  yv  Y values of the 2D LUT
-          /// \param[in]  zv  Z values of the 2D LUT
+          /// \param[in]  xv  Reference to x values of the 2D LUT
+          /// \param[in]  yv  Reference to Y values of the 2D LUT
+          /// \param[in]  zv  Reference to Z values of the 2D LUT
           ///
-          Bilinear_interp(const std::vector<std::vector<float>> xv, const std::vector<float> yv, const std::vector<std::vector<float>> zv);
+          Bilinear_interp(const std::vector<std::vector<float>> *xv, const std::vector<float> *yv, const std::vector<std::vector<float>> *zv);
 
           // Function to perform 1D (Linear) interpolation.     
           ///

@@ -7,9 +7,12 @@
  */
 
 #include "avionics_sim/Bilinear_interp.hpp"
+//#include "../include/Bilinear_interp.hpp"
 
 #include <sstream> 
 #include <cstdlib> 
+#include <iostream>
+#include <fstream> 
 
 
 namespace avionics_sim
@@ -21,11 +24,11 @@ namespace avionics_sim
         haveZVals = false; 
     }
 
-    Bilinear_interp::Bilinear_interp(const std::vector<std::vector<float>> xv, const std::vector<float> yv, const std::vector<std::vector<float>> zv)
+    Bilinear_interp::Bilinear_interp(const std::vector<std::vector<float>> *xv, const std::vector<float> *yv, const std::vector<std::vector<float>> *zv)
     {
-        xVals = xv; 
-        yVals = yv; 
-        zVals = zv; 
+        xVals = *xv; 
+        yVals = *yv; 
+        zVals = *zv; 
 
         haveXVals = true; 
         haveYVals = true; 
@@ -97,8 +100,8 @@ namespace avionics_sim
         int iy_u = int(lowBound - yv.begin());
 
         // Otherwise we would interpolate between x[-1] and x[0]
-        if(y == yv.front())
-        iy_u++; 
+        if(y_clamped == yv.front())
+            iy_u++; 
 
         if(y_clamped != yv.front() && y_clamped != yv.back())
         {
@@ -202,8 +205,9 @@ namespace avionics_sim
 
     bool Bilinear_interp::get1DLUTelementsFromString(std::string inputVals, std::vector<float> *outputVect)
     {
-        if(!inputVals.empty())
+        if(inputVals.empty())
             return false; 
+
         std::stringstream ss(inputVals); 
 
         std::string delimiter = ",";
@@ -213,19 +217,21 @@ namespace avionics_sim
         std::vector<float> row; 
 
         float tmpFloat; 
- 
+
         while((pos = inputVals.find(delimiter)) != std::string::npos)
         {
-            token = inputVals.substr(0,pos); 
+            token = inputVals.substr(0,pos);  
+
             if(sscanf(token.c_str(), "%f", &tmpFloat) != 1)
                 return false; // Return fault if sscanf fails
+                
             row.push_back(tmpFloat); 
             inputVals.erase(0, pos + delimiter.length()); 
         }
 
         // Push in last value; 
-            if(sscanf(inputVals.c_str(), "%f", &tmpFloat) != 1)
-                return false; // Return fault if sscanf fails
+        if(sscanf(inputVals.c_str(), "%f", &tmpFloat) != 1)
+            return false; // Return fault if sscanf fails
 
         row.push_back(tmpFloat); 
 
@@ -262,8 +268,8 @@ namespace avionics_sim
                 to.erase(0, pos + delimiter.length()); 
             }
             // Push in last value; 
-            if(sscanf(inputVals.c_str(), "%f", &tmpFloat) != 1)
-                    return false; // Return fault if sscanf fails
+            if(sscanf(to.c_str(), "%f", &tmpFloat) != 1)
+                return false; // Return fault if sscanf fails
 
             row.push_back(tmpFloat); 
             vect_vals.push_back(row); 
