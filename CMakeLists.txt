@@ -26,6 +26,7 @@ set(AVIONICS_SIM_HEADERS
 )
 
 install(TARGETS avionics_sim
+  ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   COMPONENT avionics-sim
 )
