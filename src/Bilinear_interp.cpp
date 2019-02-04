@@ -197,6 +197,21 @@ namespace avionics_sim
         return true; // Success
     }
 
+    const std::vector<std::vector<float>> Bilinear_interp::getX()
+    {
+        return xVals; 
+    }
+
+    const std::vector<float> Bilinear_interp::getY()
+    {
+        return yVals; 
+    }
+
+    const std::vector<std::vector<float>> Bilinear_interp::getZ()
+    {
+        return zVals; 
+    }
+
     bool Bilinear_interp::setZVals(std::vector<std::vector<float>> zv)
     {
         zVals = zv; 
