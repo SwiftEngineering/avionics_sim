@@ -194,6 +194,12 @@ namespace avionics_sim
           ///
           bool setZVals(std::vector<std::vector<float>> zv);
 
+          const std::vector<std::vector<float>> getX(); 
+
+          const std::vector<float> getY(); 
+
+          const std::vector<std::vector<float>> getZ(); 
+
         private: 
           /// \brief Vectors to hold LUT data.
           /// Holds 2D LUT values for X and Z points
