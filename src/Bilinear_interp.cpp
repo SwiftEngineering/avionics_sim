@@ -108,12 +108,12 @@ namespace avionics_sim
             // There are two curves to work with
 
             // Get the curve value pairs.
-            if(interpolate(xv[iy_u-1], zv[iy_u-1], x, &z_l) < 0)
+            if(interpolate(xv[iy_u-1], zv[iy_u-1], x, &z_l) != InterpResult::INTERP_SUCCESS)
             {
                 // Error has occured in interpolation
                 errorState = InterpResult::INTERP_WARN_OUT_OF_BOUNDS; 
             }
-            if(interpolate(xv[iy_u], zv[iy_u], x, &z_u) < InterpResult::INTERP_SUCCESS)
+            if(interpolate(xv[iy_u], zv[iy_u], x, &z_u) != InterpResult::INTERP_SUCCESS)
             {
                 // Error has occured in interpolation
                 errorState = InterpResult::INTERP_WARN_OUT_OF_BOUNDS; 
@@ -125,18 +125,17 @@ namespace avionics_sim
 
             // Perform interpolation
             *z = (y-y_l)/(y_u-y_l)*(z_u-z_l) + z_l;
-
         }  else if (y_clamped == yv.front())
         {
             // Only have the first curve to work with. 
-            if(interpolate(xv[iy_u-1], zv[iy_u-1], x, &z_l) < InterpResult::INTERP_SUCCESS)
+            if(interpolate(xv[iy_u-1], zv[iy_u-1], x, &z_l) != InterpResult::INTERP_SUCCESS)
             {
                 errorState = InterpResult::INTERP_WARN_OUT_OF_BOUNDS; // Threw an error. 
             }
             *z = z_l; // No second interpolation
         }   else  {
             // Only have the last curve to work with.
-            if(interpolate(xv[iy_u], zv[iy_u], x, &z_l) < InterpResult::INTERP_SUCCESS)
+            if(interpolate(xv[iy_u], zv[iy_u], x, &z_l) != InterpResult::INTERP_SUCCESS)
             {
                 errorState = InterpResult::INTERP_WARN_OUT_OF_BOUNDS; // Threw an error. 
             }
