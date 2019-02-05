@@ -35,7 +35,7 @@ namespace avionics_sim
         haveZVals = true; 
     }
 
-    Bilinear_interp::InterpResult_t Bilinear_interp::interpolate(const std::vector<float>& xv, const std::vector<float>& yv, float x, float* const y)
+    Bilinear_interp::InterpResult Bilinear_interp::interpolate(const std::vector<float>& xv, const std::vector<float>& yv, float x, float* const y)
     {
         float x_l, y_l, x_u, y_u; 
 
@@ -73,12 +73,12 @@ namespace avionics_sim
         }
     }
 
-    Bilinear_interp::InterpResult_t Bilinear_interp::interpolate2D(const std::vector<std::vector<float>>& xv, const std::vector<float>& yv, const std::vector<std::vector<float>>& zv, float x, float y, float* const z)
+    Bilinear_interp::InterpResult Bilinear_interp::interpolate2D(const std::vector<std::vector<float>>& xv, const std::vector<float>& yv, const std::vector<std::vector<float>>& zv, float x, float y, float* const z)
     {
         float y_l, y_u;
         float z_l = 0.0f; 
         float z_u = 0.0f;
-        InterpResult_t errorState = InterpResult::INTERP_SUCCESS; 
+        InterpResult errorState = InterpResult::INTERP_SUCCESS; 
 
         float y_clamped; // Bound using first and last points of LUT. Clamp if out of range, but throw an error. 
 
@@ -146,7 +146,7 @@ namespace avionics_sim
         return errorState; 
     }
 
-    Bilinear_interp::InterpResult_t Bilinear_interp::interpolate2D(float x, float y, float* const z)
+    Bilinear_interp::InterpResult Bilinear_interp::interpolate2D(float x, float y, float* const z)
     {
         if(!haveXVals || !haveYVals || !haveZVals)
             return InterpResult::INTERP_ERROR_NO_LUT;
