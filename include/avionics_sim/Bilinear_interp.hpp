@@ -61,7 +61,7 @@ namespace avionics_sim
           ///
           /// \return      Returns InterpResult enum containing potential interpolation errors. 
           /// X values must be ascending
-          InterpResult_t interpolate(const std::vector<float> &xv, const std::vector<float> &yv, float x, float* const y);
+          InterpResult interpolate(const std::vector<float> &xv, const std::vector<float> &yv, float x, float* const y);
           
 
 
@@ -81,7 +81,7 @@ namespace avionics_sim
           ///
           /// \return      Returns InterpResult enum containing potential interpolation errors. 
           /// X and Y values must be ascending
-          InterpResult_t interpolate2D(const std::vector<std::vector<float>>& xv, const std::vector<float>& yv, const std::vector<std::vector<float>>& zv, float x, float y, float* const z);
+          InterpResult interpolate2D(const std::vector<std::vector<float>>& xv, const std::vector<float>& yv, const std::vector<std::vector<float>>& zv, float x, float y, float* const z);
 
           ///
           /// \brief      Performs 2D interpolations on LUT based on x, y, and z values stored within the class. 
@@ -96,7 +96,7 @@ namespace avionics_sim
           ///
           /// \return     Returns InterpResult enum containing potential interpolation errors. 
           /// X and Y values must be ascending
-          InterpResult_t interpolate2D(float x, float y, float* const z);
+          InterpResult interpolate2D(float x, float y, float* const z);
 
 
           
