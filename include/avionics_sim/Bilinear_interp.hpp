@@ -194,10 +194,31 @@ namespace avionics_sim
           ///
           bool setZVals(std::vector<std::vector<float>> zv);
 
+          ///
+          /// \brief      Gets the x vals vector.
+          ///
+          /// \param[out]  xVect    Pointer to array which will hold returned values. 
+          /// 
+          /// \return A bool indicating whether the operation was a success.  
+          ///
           bool getX(std::vector<std::vector<float>> *xVect); 
 
+          ///
+          /// \brief      Gets the y vals vector.
+          ///
+          /// \param[out]  yVect    Pointer to array which will hold returned values. 
+          /// 
+          /// \return A bool indicating whether the operation was a success.  
+          ///
           bool getY(std::vector<float> *yVect); 
 
+          ///
+          /// \brief      Gets the z vals vector.
+          ///
+          /// \param[out]  zVect    Pointer to array which will hold returned values. 
+          /// 
+          /// \return A bool indicating whether the operation was a success.  
+          ///
           bool getZ(std::vector<std::vector<float>> *zVect); 
 
         private: 
