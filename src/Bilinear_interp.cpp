@@ -235,6 +235,7 @@ namespace avionics_sim
 
     bool Bilinear_interp::get1DLUTelementsFromString(const std::string& inputVals, std::vector<float>* const outputVect)
     {
+        // Return failure if null string. 
         if(inputVals.empty())
             return false; 
 
@@ -274,6 +275,7 @@ namespace avionics_sim
 
     bool Bilinear_interp::get2DLUTelementsFromString(const std::string& inputVals, std::vector<std::vector<float>>* const outputVect)
     {
+        // Return failure if null string. 
         if(inputVals.empty())
             return false; 
 
