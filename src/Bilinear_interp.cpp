@@ -98,7 +98,7 @@ namespace avionics_sim
 
         // Find out which y values are bounding our input point
         std::vector<float>::const_iterator lowBound = lower_bound(yv.begin(), yv.end(), y_clamped);
-        int iy_u = int(lowBound - yv.begin());
+        int iy_u = std::distance(yv.begin(), lowBound);
 
         // Otherwise we would interpolate between x[-1] and x[0]
         if(y_clamped == yv.front())
