@@ -199,19 +199,34 @@ namespace avionics_sim
         return true; // Success
     }
 
-    const std::vector<std::vector<float>> Bilinear_interp::getX()
+    bool Bilinear_interp::getX(std::vector<std::vector<float>> *xVect)
     {
-        return xVals; 
+        // Return false if values havent been set. 
+        if(!haveXVals)
+            return false; 
+        
+        *xVect = xVals; 
+        return true; 
     }
 
-    const std::vector<float> Bilinear_interp::getY()
+    bool Bilinear_interp::getY(std::vector<float> *yVect)
     {
-        return yVals; 
+        // Return false if values havent been set. 
+        if(!haveYVals)
+            return false; 
+        
+        *yVect = yVals; 
+        return true; 
     }
 
-    const std::vector<std::vector<float>> Bilinear_interp::getZ()
+    bool Bilinear_interp::getZ(std::vector<std::vector<float>> *zVect)
     {
-        return zVals; 
+        // Return false if values havent been set. 
+        if(!haveZVals)
+            return false; 
+        
+        *zVect = zVals; 
+        return true; 
     }
 
     bool Bilinear_interp::setZVals(std::vector<std::vector<float>> zv)
