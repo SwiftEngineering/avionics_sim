@@ -77,7 +77,7 @@ namespace avionics_sim
     {
         float y_l, y_u;
         float z_l, z_u = 0.0f;
-        bool errorState = InterpResult::INTERP_SUCCESS; 
+        int errorState = InterpResult::INTERP_SUCCESS; 
 
         float y_clamped; // Bound using first and last points of LUT. Clamp if out of range, but throw an error. 
 
@@ -168,6 +168,7 @@ namespace avionics_sim
     bool Bilinear_interp::setXVals(std::vector<std::vector<float>> xv)
     {
         xVals = xv; 
+        haveXVals = true; 
         return true; 
     }
 
@@ -184,6 +185,7 @@ namespace avionics_sim
     bool Bilinear_interp::setYVals(std::vector<float> yv)
     {
         yVals = yv; 
+        haveYVals = true; 
         return true; 
     }
 
@@ -215,6 +217,7 @@ namespace avionics_sim
     bool Bilinear_interp::setZVals(std::vector<std::vector<float>> zv)
     {
         zVals = zv; 
+        haveZVals = true; 
         return true; 
     }
 
