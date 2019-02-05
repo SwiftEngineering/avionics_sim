@@ -27,12 +27,12 @@ namespace avionics_sim
           //                            if this error has occured, the user must either call set[X/Y/Z]Vals(...) or must 
           //                            construct the class using the overloaded constructor which takes the LUT values as 
           //                            input parameters. 
-          typedef enum InterpResult
+          enum InterpResult
           {
             INTERP_SUCCESS =              0,  ///< Interpolation was a success. 
             INTERP_WARN_OUT_OF_BOUNDS =  -1,  ///< Interpolation was clamped because input data was out of bounds. 
             INTERP_ERROR_NO_LUT =         -2  ///< Interpolation failed due to no LUT being loaded in the class. 
-          } InterpResult_t;
+          };
 
 
 
