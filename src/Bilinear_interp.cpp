@@ -24,7 +24,7 @@ namespace avionics_sim
         haveZVals = false; 
     }
 
-    Bilinear_interp::Bilinear_interp(const std::vector<std::vector<float>> *xv, const std::vector<float> *yv, const std::vector<std::vector<float>> *zv)
+    Bilinear_interp::Bilinear_interp(const std::vector<std::vector<float>>* xv, const std::vector<float>* yv, const std::vector<std::vector<float>>* zv)
     {
         xVals = *xv; 
         yVals = *yv; 
@@ -35,7 +35,7 @@ namespace avionics_sim
         haveZVals = true; 
     }
 
-    int  Bilinear_interp::interpolate(const std::vector<float> &xv, const std::vector<float> &yv, float x, float* y)
+    Bilinear_interp::InterpResult_t Bilinear_interp::interpolate(const std::vector<float>& xv, const std::vector<float>& yv, float x, float* const y)
     {
         float x_l, y_l, x_u, y_u; 
 
@@ -73,11 +73,12 @@ namespace avionics_sim
         }
     }
 
-    int Bilinear_interp::interpolate2D(const std::vector<std::vector<float>> &xv, const std::vector<float> &yv, const std::vector<std::vector<float>> &zv, float x, float y, float *z)
+    Bilinear_interp::InterpResult_t Bilinear_interp::interpolate2D(const std::vector<std::vector<float>>& xv, const std::vector<float>& yv, const std::vector<std::vector<float>>& zv, float x, float y, float* const z)
     {
         float y_l, y_u;
-        float z_l, z_u = 0.0f;
-        int errorState = InterpResult::INTERP_SUCCESS; 
+        float z_l = 0.0f; 
+        float z_u = 0.0f;
+        InterpResult_t errorState = InterpResult::INTERP_SUCCESS; 
 
         float y_clamped; // Bound using first and last points of LUT. Clamp if out of range, but throw an error. 
 
@@ -145,7 +146,7 @@ namespace avionics_sim
         return errorState; 
     }
 
-    int Bilinear_interp::interpolate2D(float x, float y, float *z)
+    Bilinear_interp::InterpResult_t Bilinear_interp::interpolate2D(float x, float y, float* const z)
     {
         if(!haveXVals || !haveYVals || !haveZVals)
             return InterpResult::INTERP_ERROR_NO_LUT;
@@ -154,7 +155,7 @@ namespace avionics_sim
         return interpolate2D(xVals, yVals, zVals, x, y, z);
     }
 
-    bool Bilinear_interp::setXVals(std::string inputVals)
+    bool Bilinear_interp::setXVals(const std::string& inputVals)
     {
         if(!Bilinear_interp::get2DLUTelementsFromString(inputVals, &xVals))
             return false;  // Parsing error 
@@ -164,14 +165,13 @@ namespace avionics_sim
         return true; // Success
     }
 
-    bool Bilinear_interp::setXVals(std::vector<std::vector<float>> xv)
+    void Bilinear_interp::setXVals(const std::vector<std::vector<float>>& xv)
     {
         xVals = xv; 
         haveXVals = true; 
-        return true; 
     }
 
-    bool Bilinear_interp::setYVals(std::string inputVals)
+    bool Bilinear_interp::setYVals(const std::string& inputVals)
     {
         if(!Bilinear_interp::get1DLUTelementsFromString(inputVals, &yVals))
             return false; // Parsing error 
@@ -181,14 +181,13 @@ namespace avionics_sim
         return true; // Success
     }
 
-    bool Bilinear_interp::setYVals(std::vector<float> yv)
+    void Bilinear_interp::setYVals(const std::vector<float>& yv)
     {
         yVals = yv; 
         haveYVals = true; 
-        return true; 
     }
 
-    bool Bilinear_interp::setZVals(std::string inputVals)
+    bool Bilinear_interp::setZVals(const std::string& inputVals)
     {
         if(!Bilinear_interp::get2DLUTelementsFromString(inputVals, &zVals))
             return false; // Parsing error  
@@ -198,7 +197,13 @@ namespace avionics_sim
         return true; // Success
     }
 
-    bool Bilinear_interp::getX(std::vector<std::vector<float>> *xVect)
+    void Bilinear_interp::setZVals(const std::vector<std::vector<float>>& zv)
+    {
+        zVals = zv; 
+        haveZVals = true; 
+    }
+
+    bool Bilinear_interp::getX(std::vector<std::vector<float>>* const xVect)
     {
         // Return false if values havent been set. 
         if(!haveXVals)
@@ -208,7 +213,7 @@ namespace avionics_sim
         return true; 
     }
 
-    bool Bilinear_interp::getY(std::vector<float> *yVect)
+    bool Bilinear_interp::getY(std::vector<float>* const yVect)
     {
         // Return false if values havent been set. 
         if(!haveYVals)
@@ -218,7 +223,7 @@ namespace avionics_sim
         return true; 
     }
 
-    bool Bilinear_interp::getZ(std::vector<std::vector<float>> *zVect)
+    bool Bilinear_interp::getZ(std::vector<std::vector<float>>* const zVect)
     {
         // Return false if values havent been set. 
         if(!haveZVals)
@@ -228,19 +233,13 @@ namespace avionics_sim
         return true; 
     }
 
-    bool Bilinear_interp::setZVals(std::vector<std::vector<float>> zv)
-    {
-        zVals = zv; 
-        haveZVals = true; 
-        return true; 
-    }
-
-    bool Bilinear_interp::get1DLUTelementsFromString(std::string inputVals, std::vector<float> *outputVect)
+    bool Bilinear_interp::get1DLUTelementsFromString(const std::string& inputVals, std::vector<float>* const outputVect)
     {
         if(inputVals.empty())
             return false; 
 
-        std::stringstream ss(inputVals); 
+        // Explicit copy operation.
+        std::string inputString = inputVals; 
 
         std::string delimiter = ",";
         size_t pos = 0; 
@@ -250,19 +249,19 @@ namespace avionics_sim
 
         float tmpFloat; 
 
-        while((pos = inputVals.find(delimiter)) != std::string::npos)
+        while((pos = inputString.find(delimiter)) != std::string::npos)
         {
-            token = inputVals.substr(0,pos);  
+            token = inputString.substr(0,pos);  
 
             if(sscanf(token.c_str(), "%f", &tmpFloat) != 1)
                 return false; // Return fault if sscanf fails
                 
             row.push_back(tmpFloat); 
-            inputVals.erase(0, pos + delimiter.length()); 
+            inputString.erase(0, pos + delimiter.length()); 
         }
 
         // Push in last value; 
-        if(sscanf(inputVals.c_str(), "%f", &tmpFloat) != 1)
+        if(sscanf(inputString.c_str(), "%f", &tmpFloat) != 1)
             return false; // Return fault if sscanf fails
 
         row.push_back(tmpFloat); 
@@ -273,7 +272,7 @@ namespace avionics_sim
         return true; 
     }
 
-    bool Bilinear_interp::get2DLUTelementsFromString(std::string inputVals, std::vector<std::vector<float>> *outputVect)
+    bool Bilinear_interp::get2DLUTelementsFromString(const std::string& inputVals, std::vector<std::vector<float>>* const outputVect)
     {
         if(inputVals.empty())
             return false; 

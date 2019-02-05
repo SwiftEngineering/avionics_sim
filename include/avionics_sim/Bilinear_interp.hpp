@@ -27,12 +27,12 @@ namespace avionics_sim
           //                            if this error has occured, the user must either call set[X/Y/Z]Vals(...) or must 
           //                            construct the class using the overloaded constructor which takes the LUT values as 
           //                            input parameters. 
-          enum InterpResult
+          typedef enum InterpResult
           {
             INTERP_SUCCESS =              0,  ///< Interpolation was a success. 
             INTERP_WARN_OUT_OF_BOUNDS =  -1,  ///< Interpolation was clamped because input data was out of bounds. 
             INTERP_ERROR_NO_LUT =         -2  ///< Interpolation failed due to no LUT being loaded in the class. 
-          };
+          } InterpResult_t;
 
 
 
@@ -44,8 +44,8 @@ namespace avionics_sim
           /// \param[in]  xv  Reference to x values of the 2D LUT
           /// \param[in]  yv  Reference to Y values of the 2D LUT
           /// \param[in]  zv  Reference to Z values of the 2D LUT
-          ///
-          Bilinear_interp(const std::vector<std::vector<float>> *xv, const std::vector<float> *yv, const std::vector<std::vector<float>> *zv);
+          /// X values and Y values must be in ascending order. 
+          Bilinear_interp(const std::vector<std::vector<float>>* xv, const std::vector<float>* yv, const std::vector<std::vector<float>>* zv);
 
           // Function to perform 1D (Linear) interpolation.     
           ///
@@ -61,7 +61,7 @@ namespace avionics_sim
           ///
           /// \return      Returns InterpResult enum containing potential interpolation errors. 
           /// X values must be ascending
-          int interpolate(const std::vector<float> &xv, const std::vector<float> &yv, float x, float* y);
+          InterpResult_t interpolate(const std::vector<float> &xv, const std::vector<float> &yv, float x, float* const y);
           
 
 
@@ -81,7 +81,7 @@ namespace avionics_sim
           ///
           /// \return      Returns InterpResult enum containing potential interpolation errors. 
           /// X and Y values must be ascending
-          int interpolate2D(const std::vector<std::vector<float>> &xv, const std::vector<float> &yv, const std::vector<std::vector<float>> &zv, float x, float y, float *z);
+          InterpResult_t interpolate2D(const std::vector<std::vector<float>>& xv, const std::vector<float>& yv, const std::vector<std::vector<float>>& zv, float x, float y, float* const z);
 
           ///
           /// \brief      Performs 2D interpolations on LUT based on x, y, and z values stored within the class. 
@@ -96,7 +96,7 @@ namespace avionics_sim
           ///
           /// \return     Returns InterpResult enum containing potential interpolation errors. 
           /// X and Y values must be ascending
-          int interpolate2D(float x, float y, float *z);
+          InterpResult_t interpolate2D(float x, float y, float* const z);
 
 
           
@@ -111,7 +111,7 @@ namespace avionics_sim
           ///
           /// \return     A bool indicating whether the parsing was a success. 
           ///
-          static bool get1DLUTelementsFromString(std::string inputVals, std::vector<float> *outputVect);
+          static bool get1DLUTelementsFromString(const std::string& inputVals, std::vector<float>* const outputVect);
 
           ///
           /// \brief      Gets a two dimensional vector of LUT elements from a string. 
@@ -123,7 +123,7 @@ namespace avionics_sim
           ///
           /// \return     A bool indicating whether the parsing was a success. 
           ///
-          static bool get2DLUTelementsFromString(std::string inputVals, std::vector<std::vector<float>> *outputVect);
+          static bool get2DLUTelementsFromString(const std::string& inputVals, std::vector<std::vector<float>>* const outputVect);
           
 
 
@@ -136,18 +136,14 @@ namespace avionics_sim
           ///         A failure is only returned if a parse call is made to 
           ///         get[1D/2D]LUTelementsFromString() which has failed to parse. 
           ///
-          bool setXVals(std::string inputVals); 
+          bool setXVals(const std::string& inputVals); 
 
           ///
           /// \brief      Sets the x vals vector.
           ///
-          /// \param[in]  xv         Vector containing the x values. 
-          /// 
-          /// \return A bool indicating whether the operation was a success. 
-          ///         A failure is only returned if a parse call is made to 
-          ///         get[1D/2D]LUTelementsFromString() which has failed to parse. 
+          /// \param[in]  xv     Reference to vector containing the x values. 
           ///
-          bool setXVals(std::vector<std::vector<float>> xv);
+          void setXVals(const std::vector<std::vector<float>>& xv);
 
           ///
           /// \brief      Sets the y vals vector.
@@ -158,18 +154,14 @@ namespace avionics_sim
           ///         A failure is only returned if a parse call is made to 
           ///         get[1D/2D]LUTelementsFromString() which has failed to parse. 
           ///
-          bool setYVals(std::string); 
+          bool setYVals(const std::string& inputVals); 
 
           ///
           /// \brief      Sets the y vals vector.
           ///
-          /// \param[in]  yv         Vector containing the y values. 
-          /// 
-          /// \return A bool indicating whether the operation was a success. 
-          ///         A failure is only returned if a parse call is made to 
-          ///         get[1D/2D]LUTelementsFromString() which has failed to parse. 
+          /// \param[in]  yv     Reference to vector containing the y values. 
           ///
-          bool setYVals(std::vector<float> yv);
+          void setYVals(const std::vector<float>& yv);
 
 
           ///
@@ -181,18 +173,14 @@ namespace avionics_sim
           ///         A failure is only returned if a parse call is made to 
           ///         get[1D/2D]LUTelementsFromString() which has failed to parse. 
           ///
-          bool setZVals(std::string inputVals); 
+          bool setZVals(const std::string& inputVals); 
 
           ///
           /// \brief      Sets the z vals vector.
           ///
-          /// \param[in]  zv         Vector containing the z values. 
+          /// \param[in]  zv     Reference to vector containing the z values. 
           /// 
-          /// \return A bool indicating whether the operation was a success. 
-          ///         A failure is only returned if a parse call is made to 
-          ///         get[1D/2D]LUTelementsFromString() which has failed to parse. 
-          ///
-          bool setZVals(std::vector<std::vector<float>> zv);
+          void setZVals(const std::vector<std::vector<float>>& zv);
 
           ///
           /// \brief      Gets the x vals vector.
@@ -201,7 +189,7 @@ namespace avionics_sim
           /// 
           /// \return A bool indicating whether the operation was a success.  
           ///
-          bool getX(std::vector<std::vector<float>> *xVect); 
+          bool getX(std::vector<std::vector<float>>* const xVect); 
 
           ///
           /// \brief      Gets the y vals vector.
@@ -210,7 +198,7 @@ namespace avionics_sim
           /// 
           /// \return A bool indicating whether the operation was a success.  
           ///
-          bool getY(std::vector<float> *yVect); 
+          bool getY(std::vector<float>* const yVect); 
 
           ///
           /// \brief      Gets the z vals vector.
@@ -219,7 +207,7 @@ namespace avionics_sim
           /// 
           /// \return A bool indicating whether the operation was a success.  
           ///
-          bool getZ(std::vector<std::vector<float>> *zVect); 
+          bool getZ(std::vector<std::vector<float>>* const zVect); 
 
         private: 
           /// \brief Vectors to hold LUT data.
