@@ -7,7 +7,6 @@
  */
 
 #include "avionics_sim/Bilinear_interp.hpp"
-//#include "../include/Bilinear_interp.hpp"
 
 #include <sstream> 
 #include <cstdlib> 
