@@ -45,7 +45,7 @@ namespace avionics_sim
           /// \param[in]  yv  Reference to Y values of the 2D LUT
           /// \param[in]  zv  Reference to Z values of the 2D LUT
           /// X values and Y values must be in ascending order. 
-          Bilinear_interp(const std::vector<std::vector<float>>* xv, const std::vector<float>* yv, const std::vector<std::vector<float>>* zv);
+          Bilinear_interp(const std::vector<std::vector<float>>& xv, const std::vector<float>& yv, const std::vector<std::vector<float>>& zv);
 
           // Function to perform 1D (Linear) interpolation.     
           ///

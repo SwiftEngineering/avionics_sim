@@ -23,7 +23,7 @@ namespace avionics_sim
         haveZVals = false; 
     }
 
-    Bilinear_interp::Bilinear_interp(const std::vector<std::vector<float>>* xv, const std::vector<float>* yv, const std::vector<std::vector<float>>* zv)
+    Bilinear_interp::Bilinear_interp(const std::vector<std::vector<float>>& xv, const std::vector<float>& yv, const std::vector<std::vector<float>>& zv)
     {
         xVals = *xv; 
         yVals = *yv; 
