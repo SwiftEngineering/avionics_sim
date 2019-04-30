@@ -114,6 +114,7 @@ public:
 
 	static constexpr double CONSTANTS_STATIC_AIR_PRESSURE_AT_SEA_LEVEL = 101325;	// Pa
 	static constexpr double CONSTANTS_AIR_DENSITY_SEA_LEVEL_15C = 1.225;			// kg/m^3
+	static constexpr float CONSTANTS_AIR_GAS_CONST = 287.1f;				// J/(kg*K)
 
 protected:
 
