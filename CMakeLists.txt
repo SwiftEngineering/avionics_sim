@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.5)
 
 project(avionics_sim)
 
+# Find the Ignition-Math library
+set(IGN_MATH_VER 4)
+find_package(ignition-math${IGN_MATH_VER} REQUIRED)
+
 add_library(avionics_sim
 	src/Battery_model.cpp
 	src/Differential_pressure_sensor_model.cpp
@@ -10,11 +14,15 @@ add_library(avionics_sim
 	src/NPolynomial_Eval.cpp
 	src/US_1976_atmosphere.cpp
 	src/Bilinear_interp.cpp
+	src/Lift_drag_model.cpp
+	src/Coordinate_Utils.cpp
 )
 
 target_include_directories(avionics_sim PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/include
 )
+
+target_link_libraries(avionics_sim ignition-math${IGN_MATH_VER}::ignition-math${IGN_MATH_VER})
 
 set(AVIONICS_SIM_HEADERS 
 	include/avionics_sim/Battery_model.hpp
@@ -24,6 +32,8 @@ set(AVIONICS_SIM_HEADERS
 	include/avionics_sim/Math_util.hpp
 	include/avionics_sim/NPolynomial_Eval.hpp
 	include/avionics_sim/US_1976_atmosphere.hpp
+	include/avionics_sim/Lift_drag_model.hpp
+	include/avionics_sim/Coordinate_Utils.hpp
 )
 
 install(TARGETS avionics_sim

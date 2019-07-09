@@ -1,0 +1,5 @@
+*.o
+*.make
+test_freeimage.c
+build/
+.vscode/
