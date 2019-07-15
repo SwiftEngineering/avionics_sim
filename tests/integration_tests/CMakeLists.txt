@@ -1,0 +1,4 @@
+SET(AVIONICS_SIM_INTEGRATION_TEST_SRC
+	${CMAKE_CURRENT_SOURCE_DIR}/Test_LiftDrag_Enhanced_Plugin_Single_Instance.cpp
+	PARENT_SCOPE
+)

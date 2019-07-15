@@ -1,0 +1,43 @@
+//___________________________________________________________________
+//-------------------------------------------------------------------
+/*!
+\file		JenkinsfileMetrics
+
+\brief		Jenkins pipeline script
+
+\copyright  Copyright(C) 2018, Swift Engineering Inc. All rights reserved.
+*/
+//___________________________________________________________________
+//-------------------------------------------------------------------
+
+pipeline {
+  agent { label 'PX4-build' }
+  stages {
+
+    stage('Unit Test') {
+           
+        steps {
+            checkout poll: false, scm: [$class: 'GitSCM', branches: [[name: '*/${BRANCH_NAME}']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'SubmoduleOption', disableSubmodules: false, parentCredentials: true, recursiveSubmodules: true, reference: '', trackingSubmodules: false]], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '6027ccd3-92eb-4eb0-8844-1fd79e620dab', url: 'ssh://git@bitbucket.swiftengineering.com:7999/el_ai/avionics_sim_unit_tests_runner.git']]]
+            
+            sh '''
+                if [ -d "build" ]; then rm -rf build; fi
+                
+                mkdir build
+
+                cd build
+
+                cmake -DCMAKE_BUILD_TYPE=Debug ..
+
+                cmake --build .
+            '''
+        } // Steps
+    } // Unit Test
+
+  } // stages    
+    
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '10', artifactDaysToKeepStr: '30'))
+    timeout(time: 60, unit: 'MINUTES')
+  }
+  
+} //pipeline
