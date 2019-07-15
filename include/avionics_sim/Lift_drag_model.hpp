@@ -211,8 +211,18 @@ namespace avionics_sim
           /// \param[in] wingPose  ignition Pose3d of wing coorinate system.
           /// \param[in] worldVel  ignition Vector3d of world linear velocity. 
           /// \param[out] alpha pointer to the resulting alpha calculated.
-          /// \param[out] vInf_p Infinite speed
-          void calculateAlpha(ignition::math::Pose3d wingPose, ignition::math::Vector3d worldVel, double * const alpha = NULL, ignition::math::Vector3d * const vInf_p = NULL);  
+
+          /// 
+          void calculateAlpha(ignition::math::Pose3d wingPose, ignition::math::Vector3d worldVel, double * const alpha = NULL, ignition::math::Vector3d * const vInf_p = NULL); 
+
+          // Function to convert degrees to radians.   
+          ///
+          /// \brief      Returns value of angle in degrees. 
+          ///
+          /// \details    Function is public to ensure that any values returned are in radians (internal format is degrees, however).
+          /// \param[in]  _angleRadians    value of angle in radians
+          /// \return     Value for angle in degrees.
+          double convertDegreesToRadians(double _angleDegrees);
 
 
         private:

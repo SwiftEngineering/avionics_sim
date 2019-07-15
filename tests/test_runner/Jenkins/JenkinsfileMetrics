@@ -1,0 +1,70 @@
+//___________________________________________________________________
+//-------------------------------------------------------------------
+/*!
+\file		JenkinsfileMetrics
+
+\brief		Jenkins pipeline script
+
+\copyright  Copyright(C) 2018, Swift Engineering Inc. All rights reserved.
+*/
+//___________________________________________________________________
+//-------------------------------------------------------------------
+
+pipeline {
+  agent { label 'PX4-build' }
+  stages {
+
+    stage('Unit Test') {
+           
+        steps {
+
+            sh '''
+                if [ -d "build" ]; then rm -rf build; fi
+                
+                mkdir build
+
+                cd build
+
+                cmake -DCMAKE_BUILD_TYPE=Debug ..
+
+                cmake --build .
+                
+                ./avionics_sim_unit_tests_runner --gtest_output=xml:$WORKSPACE/report_googletest.xml
+            '''
+        } // Steps
+    } // Unit Test
+  
+    stage('Coverage') {
+           
+        steps {
+            dir('build') {
+                sh ('make avionics_sim_unit_tests_coverage')
+            }
+        } // Steps
+    } // Coverage
+    
+    stage('CppCheck') {
+           
+        steps {
+            script {
+                sh('cppcheck --enable=all --std=c++11 --std=c99 --std=posix --xml --xml-version=2 "$WORKSPACE/avionics_sim_unit_tests" "$WORKSPACE/avionics_sim/src" -I "$WORKSPACE/avionics_sim/include/avionics_sim" -i "$WORKSPACE/googletest" 2> "$WORKSPACE/report_cppcheck.xml"')
+            }
+        } // Steps
+    } // CppCheck    
+    
+  } // stages
+  
+  post {
+    always {
+        junit 'report_googletest.xml'
+        cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: '**/output_coverage.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false
+        publishCppcheck pattern:'report_cppcheck.xml'
+    }
+  }       
+    
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '10', artifactDaysToKeepStr: '30'))
+    timeout(time: 60, unit: 'MINUTES')
+  }
+  
+} //pipeline

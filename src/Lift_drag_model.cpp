@@ -159,6 +159,11 @@ namespace avionics_sim
         return _angleRadians * DEGREES_IN_RADIANS;
     }
 
+    double Lift_drag_model::convertDegreesToRadians(double _angleDegrees)
+    {
+        return _angleDegrees / DEGREES_IN_RADIANS;
+    }
+
     void Lift_drag_model::calculateDynamicPressure()
     {
         q=0.5*rho*vInf*vInf;
