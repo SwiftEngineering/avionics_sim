@@ -1,3 +1,6 @@
+#ifndef UTILITIES_H_
+#define UTILITIES_H_
+
 /**
  * @brief       Utility functions for integration tests
  * @file        utilities.h
@@ -53,3 +56,4 @@ void getDataInt(unsigned int idx, std::vector<std::string> &src, int &dest);
 /// \return     N/A
 ///
 void getDataString(unsigned int idx, std::vector<std::string> &src, std::string &dest);
+#endif

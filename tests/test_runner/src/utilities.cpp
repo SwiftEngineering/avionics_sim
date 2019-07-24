@@ -5,7 +5,7 @@
  * @copyright   Copyright (c) 2019, Swift Engineering Inc.
  * @license     Licensed under the MIT license. See LICENSE for details.
  */
-#include "../include/utilities.h"
+#include "utilities.h"
 #include <boost/foreach.hpp>
 #include <boost/tokenizer.hpp>
 

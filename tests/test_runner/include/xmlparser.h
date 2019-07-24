@@ -1,3 +1,6 @@
+#ifndef XMLPARSER_H_
+#define XMLPARSER_H_
+
 /**
  * @brief       XML parser class
  * @file        xmlparser.h
@@ -75,5 +78,4 @@ private:
 	//Pointer to root node
 	xmlNodePtr rootNode;
 };
-
-
+#endif

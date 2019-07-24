@@ -1,10 +1,8 @@
 #include "avionics_sim/GaussianMarkov_noise.hpp"
 
 // gtest
-#include "gtest/gtest.h"
-#include "gmock/gmock.h"
-
-
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 #include <array>
 #include <cmath>
 #include <vector>

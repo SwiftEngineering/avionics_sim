@@ -8,7 +8,6 @@
 #include "CombinatoricalLiftDragTest.h"
 
 
-//TODO: Implement this and generateReportOverview.
 void CombinatoricalLiftDragTest::TearDown()
 {
 
@@ -16,5 +15,5 @@ void CombinatoricalLiftDragTest::TearDown()
 
 void CombinatoricalLiftDragTest::generateReportOverview()
 {
-    //int totalTests, int testsPassed, int testsFailed
+
 }

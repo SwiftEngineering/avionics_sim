@@ -25,7 +25,7 @@ void IntegrationTestEnvironment::TearDown()
 	/*NB: More documentation can be found here:
 	http://docs.ros.org/melodic/api/self_test/html/classtesting_1_1TestCase.html#ab61929942a202f03903182866bd0e086*/
 	::testing::UnitTest* unit_test = ::testing::UnitTest::GetInstance();
-	generateReportOverview(unit_test->test_to_run_count(), unit_test->successful_test_count(), unit_test->failed_test_count());
+	generateReportOverview(unit_test->total_test_count(), unit_test->successful_test_count(), unit_test->failed_test_count());
 }
 
 void IntegrationTestEnvironment::generateReportOverview(int totalTests, int testsPassed, int testsFailed)

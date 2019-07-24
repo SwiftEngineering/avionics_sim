@@ -8,7 +8,8 @@
 #include <string>
 #include <tuple>
 #include <vector>
-#include "IntegrationTestEnvironment.h"
+#include "TestRunnerEnvironment.h"
+#include "TestEventListener.h"
 #include "xmlparser.h"
 #include "utilities.h"
 #include "CombinatoricalLiftDragTest.h"
@@ -23,23 +24,24 @@ LiftDragParameterCollections noPropWashControlSurfaceParamCollections;
 LiftDragParameterCollections propWashNoControlSurfaceParamCollections;
 LiftDragParameterCollections propWashControlSurfaceParamCollections;
 
+//NB: Disable test by prefacing first parameter with "DISABLED_"
 //Instantiation of parameterized integration test for non prop wash, non control surface.
 INSTANTIATE_TEST_CASE_P(NoPropWashNoControlSurface,
                         CombinatoricalLiftDragTest,
                         ::testing::ValuesIn(noPropWashNoControlSurfaceParamCollections));
 
-//Instantiation of parameterized integration test for non prop wash, control surface. Currently failing at test #320.
-INSTANTIATE_TEST_CASE_P(DISABLED_NoPropWashControlSurface,
+//Instantiation of parameterized integration test for non prop wash, control surface.
+INSTANTIATE_TEST_CASE_P(NoPropWashControlSurface,
 CombinatoricalLiftDragTest,
 ::testing::ValuesIn(noPropWashControlSurfaceParamCollections));
 
-//Instantiation of parameterized integration test for prop wash, non control surface. 
+//Instantiation of parameterized integration test for prop wash, non control surface.
 INSTANTIATE_TEST_CASE_P(PropWashNoControlSurface,
 CombinatoricalLiftDragTest,
 ::testing::ValuesIn(propWashNoControlSurfaceParamCollections));
 
-//Instantiation of parameterized integration test for prop wash, control surface. Currently failing at test #165.
-INSTANTIATE_TEST_CASE_P(DISABLED_PropWashControlSurface,
+//Instantiation of parameterized integration test for prop wash, control surface.
+INSTANTIATE_TEST_CASE_P(PropWashControlSurface,
 CombinatoricalLiftDragTest,
 ::testing::ValuesIn(propWashControlSurfaceParamCollections));
 
@@ -249,17 +251,24 @@ int main(int argc, char **argv)
 				}
 			}
 		}
-
-		//Add Integration Environment. This contains global tear down tasks, such as report generation, etc.	
-		::testing::AddGlobalTestEnvironment(new IntegrationTestEnvironment);
 	}
 
 	//Establish test filters.
 	::testing::GTEST_FLAG(filter)=envFilters;
 
+	//Add Integration Environment. This contains global tear down tasks, such as report generation, etc.	
+	::testing::AddGlobalTestEnvironment(new TestRunnerEnvironment);
+
 	//Init Google Test Framework.
 	::testing::InitGoogleTest(&argc, argv);
 
-	//Run all tests.
+	// Obtain the reference to the active listeners.
+  	 ::testing::TestEventListeners& listeners =
+      ::testing::UnitTest::GetInstance()->listeners();
+	
+	// Add custom test event listener.
+	listeners.Append(new TestEventListener());
+
+	//Run all tests
 	return RUN_ALL_TESTS();
 }

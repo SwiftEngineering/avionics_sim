@@ -39,7 +39,6 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/ihimu/avionics_sim/tests/test_runner/googletest/cmake_install.cmake")
   include("/home/ihimu/avionics_sim/tests/integration_tests/cmake_install.cmake")
   include("/home/ihimu/avionics_sim/tests/unit_tests/cmake_install.cmake")
 
