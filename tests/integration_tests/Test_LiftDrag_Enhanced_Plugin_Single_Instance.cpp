@@ -7,6 +7,7 @@
  */
 
 #include "CombinatoricalLiftDragTest.h"
+#include <boost/algorithm/string.hpp>
 
 static const float acceptable_error=10E-3;
 static const int linkIDIdxInPlantModels=0;
@@ -17,12 +18,31 @@ static const int propWashBoolIdx=4;
 static const int propWashValIdx=5;
 static const std::string linkIDPrefix="link_";
 
+//Function to condition angle to make sure it is within range. See conditionAngle.m for more data.
+//Last param should default to 360.
+double conditionAngle(double angle_in, double lowerlimit, double upperlimit, int increment)
+{
+	double angle_out=angle_in;
+        
+    while (angle_out > upperlimit)
+	{
+		angle_out = angle_out - increment ;
+	}
+        
+    while (angle_out < lowerlimit)
+	{
+		angle_out = angle_in + increment ; 
+	}
+    
+	return angle_out;
+}
+
 // Parameterized test for lift drag plugin.   
 ///
 /// \brief      Tests lift drag plugin input data to ensure correctness of lift drag plugin calculation.
 ///
 /// \details    N/A
-/// \param[in]  N/A
+/// \param[in]  GetParam()   Parameter passed by driver containing test data.
 /// \return     N/A
 ///  
 TEST_P(CombinatoricalLiftDragTest, SingleInstanceLiftDragPluginIntegrationTest) {
@@ -41,7 +61,12 @@ TEST_P(CombinatoricalLiftDragTest, SingleInstanceLiftDragPluginIntegrationTest) 
 	double exitVelocityY=std::stof(param.exitVelocities.at(1));
 	double exitVelocityZ=std::stof(param.exitVelocities.at(2));
 	double exitVelocityW=std::stof(param.exitVelocities.at(3));
-	double exitVelocities[4]={exitVelocityX, exitVelocityY, exitVelocityW, exitVelocityZ};
+	double exitVelocities[4]={exitVelocityX, exitVelocityY, exitVelocityZ, exitVelocityW};
+	double controlSurfaceX=std::stof(param.controlSurfaceDeflections.at(0));
+	double controlSurfaceY=std::stof(param.controlSurfaceDeflections.at(1));
+	double controlSurfaceZ=std::stof(param.controlSurfaceDeflections.at(2));
+	double controlSurfaceW=std::stof(param.controlSurfaceDeflections.at(3));
+	double controlSurfaces[4]={controlSurfaceX, controlSurfaceY, controlSurfaceZ, controlSurfaceW};
 	double motorExitVelocity=0.0;
 	double area=std::stof(param.plantModels.at(areaIdxInPlantModels));
 	double wingPoseX=std::stof(param.worldOrientations.at(0));
@@ -74,11 +99,13 @@ TEST_P(CombinatoricalLiftDragTest, SingleInstanceLiftDragPluginIntegrationTest) 
 	ignition::math::Vector3d vel = ignition::math::Vector3d(worldVelocityX, worldVelocityY, worldVelocityZ);
 	ignition::math::Pose3d pose = ignition::math::Pose3d(0.0,0.0,0.0,wingPoseX, wingPoseY, wingPoseZ);
 
+	std::string failStr="Values of interest:\n";
+
 	int controlSurfaceBool=std::stoi(param.plantModels.at(controlSurfaceBoolIdx));
 	if (controlSurfaceBool==1)
 	{
 		isControlSurface=true;
-		controlSurfaceIdx=std::stoi(param.plantModels.at(controlSurfaceIDIdx));
+		controlSurfaceIdx=std::stoi(param.plantModels.at(controlSurfaceIDIdx))-1;
 	}
 	else
 	{
@@ -89,7 +116,7 @@ TEST_P(CombinatoricalLiftDragTest, SingleInstanceLiftDragPluginIntegrationTest) 
 	if (propWashBool==1)
 	{
 		isPropWash=true;
-		propWashIdx=std::stoi(param.plantModels.at(propWashValIdx));
+		propWashIdx=std::stoi(param.plantModels.at(propWashValIdx))-1;
 	}
 	else
 	{
@@ -100,36 +127,45 @@ TEST_P(CombinatoricalLiftDragTest, SingleInstanceLiftDragPluginIntegrationTest) 
 	if(isControlSurface) // Control surface
 	{
 		LiftDragModel.setLUTs(LUTcontrolSurfaceDeflectionsalpha, LUTcontrolSurfaceDeflectionsCL, LUTcontrolSurfaceDeflectionsCD);
+		
 		// Get the control surface deflection angle for use as alpha
-		double controlAngle; // if controlJoint does not exist, set controlAngle to zero.
-		controlAngle = std::stoi(param.controlSurfaceDeflections.at(controlSurfaceIdx)); // if controlJoint does exist, set controlAngle to control joint value.
+		double controlAngle=0;
+
+		controlAngle = controlSurfaces[controlSurfaceIdx];//std::stoi(param.controlSurfaceDeflections.at(controlSurfaceIdx)); // if controlJoint does exist, set controlAngle to control joint value.
+		failStr.append("Control angle="+std::to_string(controlAngle)+"\n");
 		if(isPropWash) // Propwash over control surface
 		{
 			// Set alpha equal to control surface angle.
-			motorExitVelocity=exitVelocities[propWashIdx-1]; 
-			LiftDragModel.setAlpha(controlAngle,true);
+			motorExitVelocity=exitVelocities[propWashIdx]; 
+			LiftDragModel.setAlpha(controlAngle);//Append true in liftdrag_enhanced_plugin.cpp.
 			LiftDragModel.setSpeed(motorExitVelocity); // Set velocity from motor V_e
-		} 
+		}
+
 		else
 		{ 	// No propwash on control surface
 			LiftDragModel.calculateAlpha(pose, vel, &alpha);
-			//std::cout<<"controlAngle is "<<std::to_string(controlAngle)<<", in radians: "<<std::to_string(LiftDragModel.convertDegreesToRadians(controlAngle))<<", alpha is "<<std::to_string(alpha)<<std::endl;
 
-			//Alpha returned is in radians, but controlAngle is not in radians. Convert to radians first before adding.
-			alpha += controlAngle; // Alpha offset by control surface angle. 
-			//std::cout<<"alpha is now "<<std::to_string(alpha)<<std::endl;
+			//Convert alpha to degrees before adding. Stored internally as degrees, but returns as a radian from atan operation.
+			alpha=LiftDragModel.convertRadiansToDegrees(alpha);
+
+			alpha += controlAngle;
+
+			//Condition the angle to be within bounds of LUT angles.
+			alpha=conditionAngle(alpha, -180, 180, 360);
+
+			//Should be updated if added to. Alpha is otherwise only an output.
+			LiftDragModel.setAlpha(alpha); 
 		}  
 	} 
 	else if(!isPropWash && !isControlSurface) // No propwash non-control surface
 	{
 		//Calculate and set alpha / set_v_infinity 
-		//ignition::math::Vector3d tmp3d = ignition::math::Vector3d(0,-1,10.0); 
 		ignition::math::Vector3d vInf_transformed; 
 		LiftDragModel.calculateAlpha(pose, vel, &alpha, &vInf_transformed);
 	} 
 	else if(isPropWash && !isControlSurface) //PropWashNoControlSurface
 	{ // Propwash on non-control surface
-		motorExitVelocity=exitVelocities[propWashIdx-1];
+		motorExitVelocity=exitVelocities[propWashIdx];
 		LiftDragModel.setSpeed(motorExitVelocity); // Set velocity from motor V_e
 		LiftDragModel.setAlpha(0); // Assume alpha = 0 (aligned with motor)  ,true
 	}
@@ -145,7 +181,6 @@ TEST_P(CombinatoricalLiftDragTest, SingleInstanceLiftDragPluginIntegrationTest) 
 	drag = LiftDragModel.getDrag(); 
 	ignition::math::Vector3d force = ignition::math::Vector3d(-lift, 0, -drag);
 
-	std::string failStr="Values of interest:\n";
 	failStr.append("Wing Pose=("+std::to_string(wingPoseX)+", "+std::to_string(wingPoseY)+", "+std::to_string(wingPoseZ)+")\n");
 	failStr.append("World velocity=("+std::to_string(worldVelocityX)+", "+std::to_string(worldVelocityY)+", "+std::to_string(worldVelocityZ)+")\n");
 	failStr.append("Exit velocity=(");
@@ -154,11 +189,14 @@ TEST_P(CombinatoricalLiftDragTest, SingleInstanceLiftDragPluginIntegrationTest) 
 		failStr.append(std::to_string(exitVelocities[i])+", ");
 	}
 	failStr.append(std::to_string(exitVelocities[3])+")\n");
-	failStr.append("Control surfaces=(0,0,0,0)\n");
+	failStr.append("Control surfaces=(\n");
+	for (int i=0; i<3; i++)
+	{
+		failStr.append(std::to_string(controlSurfaces[i])+", ");
+	}
+	failStr.append(std::to_string(controlSurfaces[3])+")\n");
 	failStr.append("Alpha (in degrees, as stored in LiftDragModel)=");
 	failStr.append(std::to_string(LiftDragModel.getAlpha())+"\n");
-	failStr.append("Alpha (local, in radians)=");
-	failStr.append(std::to_string(alpha)+"\n");
 	failStr.append("vInf=");
 	failStr.append(std::to_string(speed)+"\n");
 	failStr.append("Area=");
@@ -194,9 +232,29 @@ TEST_P(CombinatoricalLiftDragTest, SingleInstanceLiftDragPluginIntegrationTest) 
 	failStr.append(std::to_string(controlSurfaceIdx)+"\n");
 	failStr.append("Propwash ID=");
 	failStr.append(std::to_string(propWashIdx)+"\n");
+
+	std::string trueLiftAsStr=param.liftDragForceVectorTruths.at(0);
+	std::string trueDragAsStr=param.liftDragForceVectorTruths.at(2);
+	std::string nan="NaN";
+	float trueLift=0;
+	float trueDrag=0;
+
+	//In the MATLAB data, some of the force components are NaN. If this is the case, skip test when gtest updated (else, 0 it out)
+	if ( (boost::iequals(trueLiftAsStr,"NaN")) || (boost::iequals(trueDragAsStr,"NaN")) )
+	{
+		//std::cout<<"NaN case"<<std::endl;
+		ASSERT_EQ(1,1);
+	}
+	else
+	{
+		trueLift=std::stof(param.liftDragForceVectorTruths.at(0));
+		trueDrag=std::stof(param.liftDragForceVectorTruths.at(2));
+	}
 	
-	float trueLift=std::stof(param.liftDragForceVectorTruths.at(0));
-	float trueDrag=std::stof(param.liftDragForceVectorTruths.at(2));
+	failStr.append("true lift=");
+	failStr.append(std::to_string(trueLift)+"\n");
+	failStr.append("true drag=");
+	failStr.append(std::to_string(trueDrag)+"\n");
 
 	//If there is a failure in assertion, print out the data for the case.
    	ASSERT_NEAR(force[0],trueLift,acceptable_error)<< failStr;

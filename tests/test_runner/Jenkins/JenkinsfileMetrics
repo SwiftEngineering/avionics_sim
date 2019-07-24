@@ -47,7 +47,7 @@ pipeline {
            
         steps {
             script {
-                sh('cppcheck --enable=all --std=c++11 --std=c99 --std=posix --xml --xml-version=2 "$WORKSPACE/avionics_sim_unit_tests" "$WORKSPACE/avionics_sim/src" -I "$WORKSPACE/avionics_sim/include/avionics_sim" -i "$WORKSPACE/googletest" 2> "$WORKSPACE/report_cppcheck.xml"')
+                sh('cppcheck --enable=all --std=c++11 --std=c99 --std=posix --xml --xml-version=2 "$WORKSPACE/avionics_sim_unit_tests" "$WORKSPACE/avionics_sim/src" -I "$WORKSPACE/avionics_sim/include/avionics_sim" 2> "$WORKSPACE/report_cppcheck.xml"')
             }
         } // Steps
     } // CppCheck    

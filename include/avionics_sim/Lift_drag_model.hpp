@@ -211,7 +211,6 @@ namespace avionics_sim
           /// \param[in] wingPose  ignition Pose3d of wing coorinate system.
           /// \param[in] worldVel  ignition Vector3d of world linear velocity. 
           /// \param[out] alpha pointer to the resulting alpha calculated.
-
           /// 
           void calculateAlpha(ignition::math::Pose3d wingPose, ignition::math::Vector3d worldVel, double * const alpha = NULL, ignition::math::Vector3d * const vInf_p = NULL); 
 
@@ -223,6 +222,15 @@ namespace avionics_sim
           /// \param[in]  _angleRadians    value of angle in radians
           /// \return     Value for angle in degrees.
           double convertDegreesToRadians(double _angleDegrees);
+
+          // Function to convert radians to degrees.   
+          ///
+          /// \brief      Returns value of angle in degrees. 
+          ///
+          /// \details    N/A 
+          /// \param[in]  _angleRadians    value of angle in radians
+          /// \return     Value for angle in degrees.
+          double convertRadiansToDegrees(double _angleRadians);
 
 
         private:
@@ -263,14 +271,5 @@ namespace avionics_sim
 
           /// dynamic pressure
           double q;
-
-          // Function to convert radians to degrees.   
-          ///
-          /// \brief      Returns value of angle in degrees. 
-          ///
-          /// \details    N/A 
-          /// \param[in]  _angleRadians    value of angle in radians
-          /// \return     Value for angle in degrees.
-          double convertRadiansToDegrees(double _angleRadians);
     };
 }

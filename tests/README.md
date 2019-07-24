@@ -26,7 +26,6 @@ To run unit tests only, run ```avionics_sim_test_runner``` with the  flag ```-Un
  * C++11
  * Boost
  * CMake
- * GTest
 
 ## Related repositories
 

@@ -86,22 +86,22 @@ namespace avionics_sim
         }
 
         if (!alphas.empty())
-	{
-	    Aero_LUT_alpha.reserve(alphas.size());
-  	    copy(alphas.begin(),alphas.end(),std::back_inserter(Aero_LUT_alpha));
-	}
+        {
+            Aero_LUT_alpha.reserve(alphas.size());
+            copy(alphas.begin(),alphas.end(),std::back_inserter(Aero_LUT_alpha));
+        }
 
-        if (!cls.empty())
-	{
-	    Aero_LUT_CL.reserve(cls.size());
-  	    copy(cls.begin(),cls.end(),std::back_inserter(Aero_LUT_CL));
-	}
+            if (!cls.empty())
+        {
+            Aero_LUT_CL.reserve(cls.size());
+            copy(cls.begin(),cls.end(),std::back_inserter(Aero_LUT_CL));
+        }
 
-        if (!alphas.empty())
-	{
-	    Aero_LUT_CD.reserve(cds.size());
-  	    copy(cds.begin(),cds.end(),std::back_inserter(Aero_LUT_CD));
-	}
+            if (!alphas.empty())
+        {
+            Aero_LUT_CD.reserve(cds.size());
+            copy(cds.begin(),cds.end(),std::back_inserter(Aero_LUT_CD));
+        }
     }
 
     void Lift_drag_model::setAirDensity(double _rho)
@@ -206,9 +206,7 @@ namespace avionics_sim
         this->setSpeed(vInLDPlane_s); // Set velocity. 
 
         // Calculate alpha
-        alpha = atan2(wingFrameVelocity.X(), wingFrameVelocity.Z()); 
-
-        this->setAlpha(alpha); // Set alpha based on calculation. 
+        alpha = atan2(wingFrameVelocity.X(), wingFrameVelocity.Z());  
 
         // Set value for alpha_p if provided. 
         if(alpha_p != NULL) 
@@ -222,5 +220,9 @@ namespace avionics_sim
         {
             *vInf_p = vInf; 
         }
+
+        /*Set isRadians flag to true for simulators that use radians. Do this last to prevent use of alpha_p in radians
+        within model.*/
+        this->setAlpha(alpha,true); // Set alpha based on calculation.
     }
 }

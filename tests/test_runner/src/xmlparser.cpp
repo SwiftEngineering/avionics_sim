@@ -5,7 +5,7 @@
  * @copyright   Copyright (c) 2019, Swift Engineering Inc.
  * @license     Licensed under the MIT license. See LICENSE for details.
  */
-#include "../include/xmlparser.h"
+#include "xmlparser.h"
 #include <iostream>
 #include <boost/foreach.hpp>
 #include <boost/tokenizer.hpp>
@@ -107,15 +107,7 @@ void XMLParser :: getXMLVector(const char *vectorName, std::vector<std::string> 
 
 void XMLParser :: openXMLFile(const char *filename)
 {
-	/* doc = xmlParseFile(filename);
-
-	if (doc == NULL ) {
-        fprintf(stderr,"Unable to open XML file %s. \n",filename);
-        return;
-    }
-	rootNode=xmlDocGetRootElement(doc); */
-
-	//Because the data files can have large nodes, set option of XML_PARSE_HUGE.
+	//Because the data files can have large nodes, set option of XML_PARSE_HUGE and use xmlReadFile instead of xmlParseFile.
 	doc = xmlReadFile(filename, NULL, XML_PARSE_HUGE);
 	rootNode=xmlDocGetRootElement(doc);
 }
