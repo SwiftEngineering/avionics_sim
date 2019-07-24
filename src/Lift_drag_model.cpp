@@ -1,7 +1,7 @@
 /**
  * @brief       Lift_drag_model
  * @file        Lift_drag_model.cpp
- * @author      Ihimu Ukpo <iukpo@swiftengineering.com>
+ * @author      Ihimu Ukpo <iukpo@swiftengineering.com>, Evan Johnson <erjohnson227@gmail.com>
  * @copyright   Copyright (c) 2019, Swift Engineering Inc.
  * @license     Licensed under the MIT license. See LICENSE for details.
  */

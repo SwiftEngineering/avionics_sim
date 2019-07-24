@@ -13,10 +13,13 @@
 #include "xmlparser.h"
 #include "utilities.h"
 #include "CombinatoricalLiftDragTest.h"
+#include "CoordUtilsTest.h"
 
 //Uncomment this to use the smaller hand calc tests.
 //#define HANDTEST 1
 #define NO_TESTS_EXECUTED 0
+
+CoordUtilsDataCollections coordUtilData;
 
 //Parameter collections for each of the four combinations for prop wash and control surface conditions.
 LiftDragParameterCollections noPropWashNoControlSurfaceParamCollections;
@@ -44,6 +47,11 @@ CombinatoricalLiftDragTest,
 INSTANTIATE_TEST_CASE_P(PropWashControlSurface,
 CombinatoricalLiftDragTest,
 ::testing::ValuesIn(propWashControlSurfaceParamCollections));
+
+//Instantiation of parameterized CoordUtils test.
+INSTANTIATE_TEST_CASE_P(CoordUtilsTestProjectVectorGlobal,
+                        CoordUtilsTest,
+                        ::testing::ValuesIn(coordUtilData));
 
 bool runUnitTests=false;
 bool runIntegrationTests=false;
@@ -102,6 +110,31 @@ int main(int argc, char **argv)
 		else
 		{
 			envFilters=unitTestFilter;
+		}
+
+		XMLParser inputs;
+
+		//Read in coordinate utils test data.
+		std::string coordUtilsTestDataFile="../unit_tests/TestData/Test_Coordinate_Utils.txt";
+		inputs.openXMLFile(coordUtilsTestDataFile.c_str());
+		
+		std::vector<std::string> worldLinearVelocitiesData;
+		std::vector<std::string> worldOrientationsData;
+		std::vector<std::string> canonicalLinearVels;
+
+		//Store each node data for input into a vector of strings.
+		inputs.getXMLVector("worldLinearVels", worldLinearVelocitiesData);
+		inputs.getXMLVector("poseVectors", worldOrientationsData);
+		inputs.getXMLVector("canonicalLinearVels", canonicalLinearVels);
+
+		unsigned int numParams=worldOrientationsData.size();
+		for (unsigned int j=0; j<numParams; j++)
+		{
+			CoordUtilsParams params;
+			getDataVector(j, worldLinearVelocitiesData, params.worldLinearVelocities);
+			getDataVector(j, worldOrientationsData, params.worldOrientations);
+			getDataVector(j, canonicalLinearVels, params.globalVelocities);
+			coordUtilData.push_back(params);
 		}
 	}
 
@@ -266,8 +299,44 @@ int main(int argc, char **argv)
   	 ::testing::TestEventListeners& listeners =
       ::testing::UnitTest::GetInstance()->listeners();
 	
-	// Add custom test event listener.
-	listeners.Append(new TestEventListener());
+	// Add custom test event listeners for each test type.
+	if (runUnitTests)
+	{
+		listeners.Append(new TestEventListener("unit_test"));
+	}
+
+	if (runIntegrationTests)
+	{
+		//Create TestEventListener, populate descriptions for each test.
+        TestEventListener* testEventListener=new TestEventListener("integration_test");
+
+        std::string inputParams="pitch: {-2pi, 2pi}, increments of pi.<br/> roll: {-2pi, 2pi}, increments of pi.<br/> yaw: \
+        {-2pi, 2pi}, increments of pi.<br/> velocity, x component: {0,20}, increments of 20.<br/> \
+        velocity, y component: {0,20}, increments of 20.<br/> velocity, z component: {0,20}, increments of 20.<br/> \
+        exit velocity, x component: {0,5}, increments of 5.<br/> \
+        exit velocity, y component: {0,5}, increments of 5.<br/> \
+        exit velocity, z component: {0,5}, increments of 5.<br/> \
+        exit velocity, w component: {0,5}, increments of 5.<br/> \
+        Control surface deflection values: {-45, -15, 0, 15, 45}<br/> \
+        Number of possible control surface slots: 4<br/> \
+        Number of slots per used for control surface slot variation: 1 (Each slot tested with one of the five possible \
+        deflection values.)";
+
+        testEventListener->addTestClassNameAndDescription("NoPropWashNoControlSurface/CombinatoricalLiftDragTest",
+        "No prop wash, no control surface. \n\nInput parameter bounds:\n "+inputParams);
+
+        testEventListener->addTestClassNameAndDescription("NoPropWashControlSurface/CombinatoricalLiftDragTest",
+        "No prop wash, control surface. \n\nInput parameter bounds:\n "+inputParams);
+
+        testEventListener->addTestClassNameAndDescription("PropWashNoControlSurface/CombinatoricalLiftDragTest",
+        "Prop wash, no control surface. \n\nInput parameter bounds:\n "+inputParams);
+
+        testEventListener->addTestClassNameAndDescription("PropWashControlSurface/CombinatoricalLiftDragTest",
+        "Prop wash, control surface. \n\nInput parameter bounds:\n "+inputParams);
+
+		// Add the custom test event listener.
+        listeners.Append(testEventListener);
+	}
 
 	//Run all tests
 	return RUN_ALL_TESTS();
