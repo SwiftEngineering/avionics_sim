@@ -54,7 +54,7 @@ bool Logger::open(const fs::path pPath)
     return true;
 }
 
-void Logger::writeLog(const std::string& pMessage)
+void Logger::write(const std::string& pMessage)
 {
     try
     {
@@ -72,7 +72,19 @@ void Logger::writeLog(const std::string& pMessage)
     }
 }
 
-void Logger::writeLog(const std::vector<std::string>& pMessages)
+void Logger::writeHTML(const std::string& pHTMLMessage)
+{
+    try
+    {
+        mStream << pHTMLMessage << std::endl;
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Error while trying to log a message:\n" << e.what() << std::endl;
+    }
+}
+
+void Logger::write(const std::vector<std::string>& pMessages)
 {
     try
     {

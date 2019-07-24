@@ -34,19 +34,5 @@ class TestRunnerEnvironment : public ::testing::Environment {
   /// \return     N/A
   ///
   virtual void TearDown();
-  
- private:
-
-  // Function to generate HTML report upon completion of all tests.   
-  ///
-  /// \brief      N/A 
-  ///
-  /// \details    adapted from https://unmesh.me/2012/05/15/using-google-charts-api-for-test-results-dashboard/
-  /// \param[in]  totalTests (number of total tests)
-  /// \param[in]  testsPassed (number of tests passed)
-  /// \param[in]  testsFailed (number of tests failed)
-  /// \return     N/A
-  ///
-  void generateReportOverview(int totalTests, int testsPassed, int testsFailed);
 };
 #endif

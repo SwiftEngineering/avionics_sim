@@ -85,7 +85,7 @@ file(GLOB AVIONICS_SIM_TEST_RUNNER_SRCS
         )
 
 #Include a reference to find out where avionics_sim headers are.
-include_directories(include ${DIR_ONE_ABOVE}/include ${DIR_ONE_ABOVE}/integration_tests ${DIR_TWO_ABOVE}/include)
+include_directories(include ${DIR_ONE_ABOVE}/include ${DIR_ONE_ABOVE}/integration_tests ${DIR_ONE_ABOVE}/unit_tests ${DIR_TWO_ABOVE}/include)
 
 add_executable(avionics_sim_test_runner
     ${AVIONICS_SIM_TEST_RUNNER_SRCS}

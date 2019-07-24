@@ -1,9 +1,8 @@
 /**
  * @brief       Header defining Logger class, a class used for generating log files. 
+ * Class adapted from https://codereview.stackexchange.com/questions/147882/simple-log-writer-class
  * @file        Logger.h
  * @author      Ihimu Ukpo <iukpo@swiftengineering.com>
- * @Reference   Shores, K. (2017) Logger source code 
- * (https://codereview.stackexchange.com/questions/147882/simple-log-writer-class)
  * @copyright   Copyright (c) 2019, Swift Engineering Inc.
  * @license     Licensed under the MIT license. See LICENSE for details.
  */
@@ -67,7 +66,7 @@ class Logger
         /// \param[in]  pMessage    String to write to log file.
         /// \return     N/A
         ///
-        void writeLog(const std::string& pMessage);
+        void write(const std::string& pMessage);
 
         // Function to write vector of strings to log file.  
         ///
@@ -77,7 +76,17 @@ class Logger
         /// \param[in]  pMessages    Vector of strings to write to log file.
         /// \return     N/A
         ///
-        void writeLog(const std::vector<std::string>& pMessages);
+        void write(const std::vector<std::string>& pMessages);
+
+        // Function to write HTML to log file.  
+        ///
+        /// \brief      N/A
+        ///
+        /// \details    N/A
+        /// \param[in]  pMessage    String to write to log file.
+        /// \return     N/A
+        ///
+        void writeHTML(const std::string& pHTMLMessage);
 
         // Function to close log file.  
         ///

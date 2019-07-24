@@ -1,7 +1,7 @@
 /**
  * @brief       Coordinate_Utils
  * @file        Coordinate_Utils.cpp
- * @author      Evan Johnson <iukpo@swiftengineering.com>
+ * @author      Evan Johnson <erjohnson227@gmail.com>
  * @copyright   Copyright (c) 2019, Swift Engineering Inc.
  * @license     Licensed under the MIT license. See LICENSE for details.
  */
