@@ -1,0 +1,97 @@
+@Library('SwiftPipelineLibrary') _
+pipeline {
+  agent { label 'PX4-build' }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10', artifactDaysToKeepStr: '30'))
+        timeout(time: 60, unit: 'MINUTES')
+        disableConcurrentBuilds()
+    }
+  stages {
+    stage ('Setup') {
+        steps {
+            sh '''
+            rm -vf ${WORKSPACE}/tests/test_runner/test_*_test_*.html
+            rm -rf publish; mkdir -p publish/reports/HTML; mkdir -p publish/reports/XML
+            '''
+        }
+    }
+    stage('Unit Test') {
+        steps {
+            dir ('tests/test_runner') {
+              sh '''
+                cmake -DCMAKE_BUILD_TYPE=Debug .
+                cmake --build .
+                ./avionics_sim_test_runner -UnitTests
+                cp -vf test_unit_test_*.html ${WORKSPACE}/publish/reports/HTML/unit-tests.html
+              '''
+            }
+        }
+    }
+     stage('Integration Test') {
+        steps {
+            dir ('tests/test_runner') {
+                 sh '''
+                  ./avionics_sim_test_runner -IntegrationTests
+                   cp -vf test_integration_test*.html ${WORKSPACE}/publish/reports/HTML/integration-tests.html
+                 '''
+            }
+        }
+      }
+      stage('Coverage') {
+          steps {
+              dir('tests/test_runner') {
+                  sh ('make avionics_sim_test_runner_coverage')
+              }
+          }
+      }
+      stage('CPP Check') {
+          steps {
+                sh '''
+                  cppcheck --enable=all --std=c++11 --std=c99 --std=posix --xml --xml-version=2 \
+                    "$WORKSPACE/tests/unit_tests" \
+                    "$WORKSPACE/src" -I "$WORKSPACE/include/avionics_sim" \
+                    2> "$WORKSPACE/publish/reports/XML/unit_report_cppcheck.xml"
+                '''
+              }
+          }
+      }
+  post {
+    always {
+            script {
+                publishHTML(
+                  [
+                   allowMissing: true, alwaysLinkToLastBuild: true, keepAll: false,
+                   reportDir: 'publish/reports/HTML',
+                   reportFiles: 'unit-tests.html , integration-tests.html',
+                   reportTitles: 'Unit-Tests, Integration-Tests',
+                   reportName: 'Reports'
+                  ]
+                )
+                // TODO: Define Cobertura and CPPCheck thresholds in JSON loaded by SPL.
+                cobertura(
+                   autoUpdateHealth: false, autoUpdateStability: false,
+                   coberturaReportFile: '**/output_coverage.xml',
+                   conditionalCoverageTargets: '70, 0, 0',
+                   lineCoverageTargets: '80, 0, 0',
+                   methodCoverageTargets: '80, 0, 0',
+                   maxNumberOfBuilds: 0,
+                   failUnhealthy: false, failUnstable: false,
+                   onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false
+                )
+                publishCppcheck(
+                    displayErrorSeverity: true, displayNoCategorySeverity: true, displayPerformanceSeverity: true,
+                    displayPortabilitySeverity: true, displayStyleSeverity: true, displayWarningSeverity: true,
+                    ignoreBlankFiles: true,
+                    failureThreshold: '30', healthy: '20',
+                    newFailureThreshold: '5', newThreshold: '5',
+                    threshold: '20', unHealthy: '25',
+                    pattern: 'publish/reports/XML/unit_report_cppcheck.xml'
+                )
+                archiveArtifacts(
+                    artifacts: 'publish/**/*',
+                    fingerprint: true
+                )
+            }
+    }
+  }       
+}
