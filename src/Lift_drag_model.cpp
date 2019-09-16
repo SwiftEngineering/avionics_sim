@@ -185,25 +185,25 @@ namespace avionics_sim
 
     void Lift_drag_model::calculateAlpha(ignition::math::Pose3d wingPose, ignition::math::Vector3d worldVel, double * const alpha_p, ignition::math::Vector3d * const vInf_p)
     {
-        ignition::math::Vector3d vInf; // vInf = -world velocity
+        ignition::math::Vector3d vInfbar; // vInf = -world velocity
         ignition::math::Vector3d wingFrameVelocity; // Vector 3 of world linear velocity in wing frame. 
         ignition::math::Vector3d vInLDPlane_v; // Vector 3 of velocity in LD plane. 
         double alpha; 
 
         double vInLDPlane_s; // Scalar magnitude of speed in LD plane. 
 
-        // Vinf is in the opposite direction as world velocity. 
-        vInf = ignition::math::Vector3d(worldVel.X(), worldVel.Y(), worldVel.Z());
+        // Vinfbar is in the opposite direction as world velocity. 
+        vInfbar = ignition::math::Vector3d(worldVel.X(), worldVel.Y(), worldVel.Z());
 
-        // Calculate world linear velocity in wing coordinate frame. 
-        avionics_sim::Coordinate_Utils::project_vector_global(wingPose, vInf, &wingFrameVelocity); 
+        // Calculate world linear velocity in wing coordinate frame.    
+        avionics_sim::Coordinate_Utils::project_vector_global(wingPose, vInfbar, &wingFrameVelocity); 
 
-        // Remove spanwise component
-        vInLDPlane_v = ignition::math::Vector3d(-wingFrameVelocity.X(), 0, wingFrameVelocity.Z()); 
+        // Remove spanwise and vertical component
+        vInLDPlane_v = ignition::math::Vector3d(-wingFrameVelocity.Z(), 0, 0); //wingFrameVelocity.Z()); 
 
         vInLDPlane_s = vInLDPlane_v.Length(); // Calculate scalar
-
-        this->setSpeed(vInLDPlane_s); // Set velocity. 
+        
+        this->setSpeed(vInLDPlane_s); // Set velocity.
 
         // Calculate alpha
         alpha = atan2(wingFrameVelocity.X(), wingFrameVelocity.Z());  
@@ -218,7 +218,7 @@ namespace avionics_sim
         // Set value for vInf_p if provided
         if(vInf_p != NULL)
         {
-            *vInf_p = vInf; 
+            *vInf_p = vInfbar; 
         }
 
         /*Set isRadians flag to true for simulators that use radians. Do this last to prevent use of alpha_p in radians
