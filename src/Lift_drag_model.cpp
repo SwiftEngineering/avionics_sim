@@ -200,6 +200,10 @@ namespace avionics_sim
 
         // Remove spanwise and vertical component
         vInLDPlane_v = ignition::math::Vector3d(-wingFrameVelocity.Z(), 0, 0); //wingFrameVelocity.Z()); 
+        //vInLDPlane_v = ignition::math::Vector3d(-wingFrameVelocity.Z(), 0, 0); //wingFrameVelocity.Z()); 
+
+        //Above should not be used until a solution that passes integration tests has been found.
+        vInLDPlane_v = ignition::math::Vector3d(wingFrameVelocity.X(), 0, wingFrameVelocity.Z());
 
         vInLDPlane_s = vInLDPlane_v.Length(); // Calculate scalar
         
