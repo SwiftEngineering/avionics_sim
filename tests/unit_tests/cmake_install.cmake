@@ -1,4 +1,4 @@
-# Install script for directory: /home/ihimu/avionics_sim/tests/unit_tests
+# Install script for directory: /home/ihimu/PX4/firmware/Tools/sitl_gazebo/external/avionics_sim/tests/unit_tests
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

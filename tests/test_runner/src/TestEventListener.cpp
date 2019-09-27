@@ -5,23 +5,10 @@
 #include <sstream>
 #include <string>
 
-TestEventListener::TestEventListener(std::string testType)
+TestEventListener::TestEventListener(std::string tstType)
 {
     resetStats();
-    logFileName="./test_"+testType+"_"+GetCurrentDateAndTime()+".html";
-
-    /* 
-    Open file. Done here in constructor so that the file handle is kept open for writing during the course of tests.
-    Opening and closing in OnTestStart and OnTestEnd would result in filesystem thrashing, especially in large number of
-    tests.*/
-    testReporter.open(logFileName);
-
-    //Write header HTML header information.
-    std::string testDateAndTime=GetCurrentDateAndTime(false);
-	testReporter.writeHTML("<html><head><title> Test Execution Summary Report, "+testDateAndTime+"</title>");
-    testReporter.writeHTML("</head>");
-	testReporter.writeHTML("<body style='font-weight: bold; font-size: 10pt; color: black; font-family: Tahoma'> \
-    <br />Test Execution Summary Report, "+testDateAndTime+"<br/><br/>");
+    testType=tstType;
 }
 
 TestEventListener::~TestEventListener()
@@ -233,3 +220,28 @@ void TestEventListener::resetStats()
     testsFailed=0;
     currentClassName="";
 }
+
+void TestEventListener::initLogFile(std::string filename) 
+{
+    if (filename=="")
+    {
+        logFileName="./test_"+testType+"_"+GetCurrentDateAndTime()+".html";
+    }
+    else
+    {
+        logFileName="./"+filename;
+    }
+
+    /* 
+    Open file. Done here in constructor so that the file handle is kept open for writing during the course of tests.
+    Opening and closing in OnTestStart and OnTestEnd would result in filesystem thrashing, especially in large number of
+    tests.*/
+    testReporter.open(logFileName);
+
+    //Write header HTML header information.
+    std::string testDateAndTime=GetCurrentDateAndTime(false);
+	testReporter.writeHTML("<html><head><title> Test Execution Summary Report, "+testDateAndTime+"</title>");
+    testReporter.writeHTML("</head>");
+	testReporter.writeHTML("<body style='font-weight: bold; font-size: 10pt; color: black; font-family: Tahoma'> \
+    <br />Test Execution Summary Report, "+testDateAndTime+"<br/><br/>");
+};

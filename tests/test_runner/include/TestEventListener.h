@@ -11,8 +11,24 @@ class TestEventListener : public ::testing::EmptyTestEventListener {
 
   public:
 
-    TestEventListener(std::string testType);
+    // Constructor
+    ///
+    /// \brief      N/A 
+    ///
+    /// \details    N/A
+    /// \param[in]  testType     Test type (Integration, Unit, etc.)
+    /// \return     Instance of TestEventListener
+    ///
+    TestEventListener(std::string tstType);
 
+    // Destructor.
+    ///
+    /// \brief      N/A 
+    ///
+    /// \details    N/A
+    /// \param[in]  N/A
+    /// \return     N/A
+    ///
     ~TestEventListener();
 
     // Fired before the test starts.
@@ -56,6 +72,17 @@ class TestEventListener : public ::testing::EmptyTestEventListener {
     ///
     void addTestClassNameAndDescription(std::string testClassName, std::string testClassDescription);
 
+    // Function to initialize log file after filename has been set. 
+    ///
+    /// \brief      N/A 
+    ///
+    /// \details    N/A
+    /// \param[in]  testClassName     Test Class Name
+    /// \param[in]  testClassDescription     Test class description
+    /// \return     N/A
+    ///
+    void initLogFile(std::string filename="");
+
     
 private:
     Logger testReporter;
@@ -63,6 +90,8 @@ private:
     std::string logFileName;
 
     std::string currentClassName;
+
+    std::string testType;
 
     struct errDatum : public boost::intrusive::list_base_hook<>
     {
