@@ -134,7 +134,7 @@ void TestEventListener::generateTestCaseOverview()
     //Generate javascript for chart. Cannot parameterize this, as there must be a callback for each fn in order to execute.
     testReporter.writeHTML("<script type='text/javascript' src='https://www.gstatic.com/charts/loader.js'></script>");
 	testReporter.writeHTML("<script type='text/javascript'>");
-    testReporter.writeHTML("google.load('visualization', '1', {packages:['gauge']});");
+    testReporter.writeHTML("google.charts.load('visualization', '1', {packages:['gauge']});");
     testReporter.writeHTML("google.charts.setOnLoadCallback("+drawChartInstanceName+");");
     testReporter.writeHTML("function "+drawChartInstanceName+"() { var passedData = new google.visualization.DataTable();");
     testReporter.writeHTML("var chartWidth = 500;");
