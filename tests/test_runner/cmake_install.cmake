@@ -1,4 +1,4 @@
-# Install script for directory: /home/ihimu/avionics_sim/tests/test_runner
+# Install script for directory: /home/ihimu/PX4/firmware/Tools/sitl_gazebo/external/avionics_sim/tests/test_runner
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,8 +39,8 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/ihimu/avionics_sim/tests/integration_tests/cmake_install.cmake")
-  include("/home/ihimu/avionics_sim/tests/unit_tests/cmake_install.cmake")
+  include("/home/ihimu/PX4/firmware/Tools/sitl_gazebo/external/avionics_sim/tests/integration_tests/cmake_install.cmake")
+  include("/home/ihimu/PX4/firmware/Tools/sitl_gazebo/external/avionics_sim/tests/unit_tests/cmake_install.cmake")
 
 endif()
 
@@ -52,5 +52,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/ihimu/avionics_sim/tests/test_runner/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/ihimu/PX4/firmware/Tools/sitl_gazebo/external/avionics_sim/tests/test_runner/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

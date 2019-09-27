@@ -56,6 +56,8 @@ INSTANTIATE_TEST_CASE_P(CoordUtilsTestProjectVectorGlobal,
 bool runUnitTests=false;
 bool runIntegrationTests=false;
 bool runSystemTests=false;
+const int minNumArguments=2;
+const int maxNumArguments=3;
 
 int main(int argc, char **argv)
 {
@@ -65,9 +67,9 @@ int main(int argc, char **argv)
 	const std::string systemTestFilter="*System*";
 
 	//If no flags have been specified (or there has been unexpected number of arguments), display an usage message.
-	if (argc!=2)
+	if ( (argc<minNumArguments) || (argc>maxNumArguments) )
 	{
-		std::cout<<"Usage: avionics_sim_test_runner {-UnitTests | -IntegrationTests | -SystemTests}"<<std::endl<<std::endl;
+		std::cout<<"Usage: avionics_sim_test_runner {-UnitTests | -IntegrationTests | -SystemTests} [html log filename]"<<std::endl<<std::endl;
 		exit(NO_TESTS_EXECUTED);
 	}
 	else
@@ -292,6 +294,9 @@ int main(int argc, char **argv)
 	//Add Integration Environment. This contains global tear down tasks, such as report generation, etc.	
 	::testing::AddGlobalTestEnvironment(new TestRunnerEnvironment);
 
+	//setLogFilename(std::string filename) {logFileName=filename;}
+	TestEventListener* testEventListener;
+
 	//Init Google Test Framework.
 	::testing::InitGoogleTest(&argc, argv);
 
@@ -302,13 +307,13 @@ int main(int argc, char **argv)
 	// Add custom test event listeners for each test type.
 	if (runUnitTests)
 	{
-		listeners.Append(new TestEventListener("unit_test"));
+		testEventListener=new TestEventListener("unit_test");
 	}
 
 	if (runIntegrationTests)
 	{
 		//Create TestEventListener, populate descriptions for each test.
-        TestEventListener* testEventListener=new TestEventListener("integration_test");
+        testEventListener=new TestEventListener("integration_test");
 
         std::string inputParams="pitch: {-2pi, 2pi}, increments of pi.<br/> roll: {-2pi, 2pi}, increments of pi.<br/> yaw: \
         {-2pi, 2pi}, increments of pi.<br/> velocity, x component: {0,20}, increments of 20.<br/> \
@@ -333,10 +338,22 @@ int main(int argc, char **argv)
 
         testEventListener->addTestClassNameAndDescription("PropWashControlSurface/CombinatoricalLiftDragTest",
         "Prop wash, control surface. \n\nInput parameter bounds:\n "+inputParams);
-
-		// Add the custom test event listener.
-        listeners.Append(testEventListener);
 	}
+
+	//If the user added specific log filename, use that instead of the one automatically generated.
+	if (argc==maxNumArguments)
+	{
+		std::string userSpecifiedLogFilename=argv[2];
+		testEventListener->initLogFile(userSpecifiedLogFilename);
+	}
+	else
+	{
+		testEventListener->initLogFile();
+	}
+	
+	
+	// Add the custom test event listener.
+	listeners.Append(testEventListener);
 
 	//Run all tests
 	return RUN_ALL_TESTS();
