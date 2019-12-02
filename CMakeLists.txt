@@ -34,6 +34,8 @@ set(AVIONICS_SIM_HEADERS
 	include/avionics_sim/US_1976_atmosphere.hpp
 	include/avionics_sim/Lift_drag_model.hpp
 	include/avionics_sim/Coordinate_Utils.hpp
+	include/avionics_sim/AvionicsSimException.hpp
+	include/avionics_sim/Lift_drag_model_exception.hpp
 )
 
 install(TARGETS avionics_sim

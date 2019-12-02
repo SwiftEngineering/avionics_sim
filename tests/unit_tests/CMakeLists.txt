@@ -7,7 +7,17 @@ SET(AVIONICS_SIM_UNIT_TEST_SRC
 	${CMAKE_CURRENT_SOURCE_DIR}/Test_Prop_wash.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Test_US_1976_atmosphere.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Test_Bilinear_interp.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_drag_model.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Calculate_Dynamic_Pressure.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Test_Coordinate_Utils.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Set_Get_Alpha.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Set_Get_Speed.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Set_Get_Air_Density.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Lookup_CL.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Lookup_CD.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Set_Get_Area.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Calculate_Lift.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Calculate_Drag.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Test_Motor_Model_Set_Get_Thrust.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Test_Motor_Model_Set_Get_Motor_Exit_Velocity.cpp
 	PARENT_SCOPE
 )

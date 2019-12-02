@@ -1,7 +1,7 @@
 /**
  * @brief       Math_util
  * @file        Math_util.hpp
- * @author      Jacob Schloss <jschloss@swiftengineering.com>
+ * @author      Jacob Schloss <jschloss@swiftengineering.com>, Ihimu Ukpo <iukpo@swiftengineering.com>
  * @copyright   Copyright (c) 2018, Swift Engineering Inc.
  * @license     Licensed under the MIT license. See LICENSE for details.
  */
@@ -10,6 +10,7 @@
 
 #include <ctgmath>
 #include <numeric>
+#include <limits>
 
 namespace avionics_sim
 {
@@ -133,6 +134,124 @@ public:
 		const size_t count = std::distance(first, last);
 
 		return calculate_mean<InputIt, AccumType, ResultType>(first, last, count);
+	}
+
+	///
+	/// to_string_with_precision
+	///
+	/// Prints a number up to a certain precision of digits
+	///
+	/// Adapted from https://stackoverflow.com/questions/16605967/set-precision-of-stdto-string-when-converting-floating-point-values
+	/// \param [in] first	Floating point value
+	/// \param [in] last	Precision
+	/// \return				Value to precision as string
+	///
+	template <typename T>
+	std::string to_string_with_precision(const T a_value, const int n = 6)
+	{
+		std::ostringstream out;
+		out.precision(n);
+		out << std::fixed << a_value;
+		return out.str();
+	}
+
+	///
+	/// rough_eq
+	///
+	/// Performs equality comparison for floating point numbers up to a given epsilon (tolerance)
+	///
+	/// Adapted from https://stackoverflow.com/questions/2833153/floating-point-comparison-in-stl-boost
+	/// \param [in] first	First Floating point value
+	/// \param [in] second	Second Floating point value
+	/// \param [in] last	Precision
+	/// \return				Boolean indicating whether or not the floating point values are equal.
+	///
+	template <typename T>
+	bool rough_eq(T lhs, T rhs, T epsilon = std::numeric_limits<T>::epsilon())
+	{ 
+		return fabs(lhs - rhs) < epsilon;
+	}
+
+	///
+	/// rough_lt
+	///
+	/// Performs less than comparison for floating point numbers up to a given epsilon (tolerance)
+	///
+	/// Adapted from https://stackoverflow.com/questions/2833153/floating-point-comparison-in-stl-boost
+	/// \param [in] first	First Floating point value
+	/// \param [in] second	Second Floating point value
+	/// \param [in] last	Precision
+	/// \return				Boolean indicating whether or not the the first value is less than the second.
+	///
+	template <typename T>
+	bool rough_lt(T lhs, T rhs, T epsilon = std::numeric_limits<T>::epsilon())
+	{
+		//Check first if they are equal per rough_eq. If so, return false. Else, return evaluation.
+		if (rough_eq(lhs,rhs,epsilon))
+		{
+			return false;
+		}
+		return rhs - lhs >= epsilon;
+		// tricky >= because if the difference is equal to epsilon
+		// then they are not equal per the rough_eq method
+	}
+
+	///
+	/// rough_lte
+	///
+	/// Performs less than comparison for floating point numbers up to a given epsilon (tolerance)
+	///
+	/// Adapted from https://stackoverflow.com/questions/2833153/floating-point-comparison-in-stl-boost
+	/// \param [in] first	First Floating point value
+	/// \param [in] second	Second Floating point value
+	/// \param [in] last	Precision
+	/// \return				Boolean indicating whether or not the the first value is less than or equal to the second.
+	///
+	template <typename T>
+	bool rough_lte(T lhs, T rhs, T epsilon = std::numeric_limits<T>::epsilon())
+	{
+		return rhs - lhs > -epsilon;
+	}
+
+	///
+	/// rough_gt
+	///
+	/// Performs less than comparison for floating point numbers up to a given epsilon (tolerance)
+	///
+	/// Adapted from https://stackoverflow.com/questions/2833153/floating-point-comparison-in-stl-boost
+	/// \param [in] first	First Floating point value
+	/// \param [in] second	Second Floating point value
+	/// \param [in] last	Precision
+	/// \return				Boolean indicating whether or not the the first value is greater than the second.
+	///
+	template <typename T>
+	bool rough_gt(T lhs, T rhs, T epsilon = std::numeric_limits<T>::epsilon())
+	{
+		//Check first if they are equal per rough_eq. If so, return false. Else, return evaluation.
+		if (rough_eq(lhs,rhs,epsilon))
+		{
+			return false;
+		}
+		return rhs - lhs <= epsilon;
+		// tricky >= because if the difference is equal to epsilon
+		// then they are not equal per the rough_eq method
+	}
+
+	///
+	/// rough_gte
+	///
+	/// Performs less than comparison for floating point numbers up to a given epsilon (tolerance)
+	///
+	/// Adapted from https://stackoverflow.com/questions/2833153/floating-point-comparison-in-stl-boost
+	/// \param [in] first	First Floating point value
+	/// \param [in] second	Second Floating point value
+	/// \param [in] last	Precision
+	/// \return				Boolean indicating whether or not the the first value is greater than or equal to the second.
+	///
+	template <typename T>
+	bool rough_gte(T lhs, T rhs, T epsilon = std::numeric_limits<T>::epsilon())
+	{
+		return rhs - lhs < -epsilon;
 	}
 
 protected:

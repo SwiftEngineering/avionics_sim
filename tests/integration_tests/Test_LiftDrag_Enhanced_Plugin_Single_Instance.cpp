@@ -7,6 +7,7 @@
  */
 
 #include "CombinatoricalLiftDragTest.h"
+#include "avionics_sim/Lift_drag_model_exception.hpp"
 #include <boost/algorithm/string.hpp>
 
 static const float acceptable_error=10E-3;
@@ -31,9 +32,9 @@ double conditionAngle(double angle_in, double lowerlimit, double upperlimit, int
         
     while (angle_out < lowerlimit)
 	{
-		angle_out = angle_in + increment ; 
+		angle_out = angle_out + increment ; 
 	}
-    
+
 	return angle_out;
 }
 
@@ -50,6 +51,7 @@ TEST_P(CombinatoricalLiftDragTest, SingleInstanceLiftDragPluginIntegrationTest) 
 	LiftDragParams param=GetParam();
 
 	double cl, cd, lift, drag, rho, speed, alpha;
+	ignition::math::Vector3d vInf_transformed;
 	int controlSurfaceIdx, propWashIdx;
 	bool isControlSurface, isPropWash;
 
@@ -124,6 +126,10 @@ TEST_P(CombinatoricalLiftDragTest, SingleInstanceLiftDragPluginIntegrationTest) 
 	}
 
 	LiftDragModel.setLUTs(LUTalpha, LUTCL, LUTCD);
+
+	
+	//Old way
+	/*
 	if(isControlSurface) // Control surface
 	{
 		LiftDragModel.setLUTs(LUTcontrolSurfaceDeflectionsalpha, LUTcontrolSurfaceDeflectionsCL, LUTcontrolSurfaceDeflectionsCD);
@@ -136,15 +142,42 @@ TEST_P(CombinatoricalLiftDragTest, SingleInstanceLiftDragPluginIntegrationTest) 
 		if(isPropWash) // Propwash over control surface
 		{
 			// Set alpha equal to control surface angle.
-			motorExitVelocity=exitVelocities[propWashIdx]; 
-			LiftDragModel.setAlpha(controlAngle);//Append true in liftdrag_enhanced_plugin.cpp.
-			LiftDragModel.setSpeed(motorExitVelocity); // Set velocity from motor V_e
+			motorExitVelocity=exitVelocities[propWashIdx];
+
+			try
+			{
+				LiftDragModel.setAlpha(controlAngle);
+			}
+			catch(const Lift_drag_model_exception& e)
+			{
+				std::cerr<<"Exception successfully caught for SingleInstanceLiftDragPluginIntegrationTest."<<std::endl;
+				std::cerr << e.what() <<std::endl;
+			}
+			try
+			{
+				LiftDragModel.setSpeed(motorExitVelocity); // Set velocity from motor V_e
+			}
+			catch(const Lift_drag_model_exception& e)
+			{
+				std::cerr<<"Exception successfully caught for SingleInstanceLiftDragPluginIntegrationTest."<<std::endl;
+				std::cerr << e.what() <<std::endl;
+			}
 		}
 
 		else
-		{ 	// No propwash on control surface
-			LiftDragModel.calculateAlpha(pose, vel, &alpha);
-
+		{ 	
+			//Why are we doing like this? What need to expose value of alpha outside, only to store again? Why not just all do inside? Ensure that all tests pass, commit and push.  then make changes here. If pass, propagate to plugin, ensure all in line. Commit and push.
+			// No propwash on control surface
+			try
+			{
+				LiftDragModel.calculateAlpha(pose, vel, &alpha);
+			}
+			catch(const std::exception& e)
+			{
+				std::cerr<<"Exception successfully caught for SingleInstanceLiftDragPluginIntegrationTest."<<std::endl;
+				std::cerr << e.what() <<std::endl;
+			}
+			
 			//Convert alpha to degrees before adding. Stored internally as degrees, but returns as a radian from atan operation.
 			alpha=LiftDragModel.convertRadiansToDegrees(alpha);
 
@@ -153,33 +186,162 @@ TEST_P(CombinatoricalLiftDragTest, SingleInstanceLiftDragPluginIntegrationTest) 
 			//Condition the angle to be within bounds of LUT angles.
 			alpha=conditionAngle(alpha, -180, 180, 360);
 
-			//Should be updated if added to. Alpha is otherwise only an output.
-			LiftDragModel.setAlpha(alpha); 
+			try
+			{
+				//Should be updated if there was an addition of controlAngle. Alpha is otherwise only an output.
+				LiftDragModel.setAlpha(alpha); 
+			}
+			catch(const Lift_drag_model_exception& e)
+			{
+				std::cerr<<"Exception successfully caught for SingleInstanceLiftDragPluginIntegrationTest."<<std::endl;
+				std::cerr << e.what() <<std::endl;
+			}
 		}  
 	} 
 	else if(!isPropWash && !isControlSurface) // No propwash non-control surface
 	{
-		//Calculate and set alpha / set_v_infinity 
-		ignition::math::Vector3d vInf_transformed; 
-		LiftDragModel.calculateAlpha(pose, vel, &alpha, &vInf_transformed);
+		ignition::math::Vector3d vInf_transformed;
+		
+		try
+		{
+			//Calculate and set alpha / set_v_infinity 
+			LiftDragModel.calculateAlpha(pose, vel, &alpha, &vInf_transformed);
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr<<"Exception successfully caught for SingleInstanceLiftDragPluginIntegrationTest."<<std::endl;
+			std::cerr << e.what() <<std::endl;
+		}
 	} 
 	else if(isPropWash && !isControlSurface) //PropWashNoControlSurface
 	{ // Propwash on non-control surface
 		motorExitVelocity=exitVelocities[propWashIdx];
-		LiftDragModel.setSpeed(motorExitVelocity); // Set velocity from motor V_e
-		LiftDragModel.setAlpha(0); // Assume alpha = 0 (aligned with motor)  ,true
+		try
+		{
+			LiftDragModel.setSpeed(motorExitVelocity); // Set velocity from motor V_e
+		}
+		catch(const Lift_drag_model_exception& e)
+		{
+			std::cerr<<"Exception successfully caught for SingleInstanceLiftDragPluginIntegrationTest."<<std::endl;
+			std::cerr << e.what() <<std::endl;
+		}
+		try
+		{
+			LiftDragModel.setAlpha(0); // Assume alpha = 0 (aligned with motor)  ,true
+		}
+		catch(const Lift_drag_model_exception& e)
+		{
+			std::cerr<<"Exception successfully caught for SingleInstanceLiftDragPluginIntegrationTest."<<std::endl;
+			std::cerr << e.what() <<std::endl;
+		}	
+	}
+	*/
+
+	//New way
+	//Calcuate Angles and Velocities
+
+	//Use control surface alphas, cls, and cds if dealing with a control surface.
+	double controlAngle = 0 ;
+	alpha = 0;
+	if(isControlSurface)
+	{
+		LiftDragModel.setLUTs(LUTcontrolSurfaceDeflectionsalpha, LUTcontrolSurfaceDeflectionsCL, LUTcontrolSurfaceDeflectionsCD);
+		
+		// Get the control surface deflection angle for use as alpha
+		controlAngle = controlSurfaces[controlSurfaceIdx]; // if controlJoint does exist, set controlAngle to control joint value.
+	}
+	if (!isPropWash)
+	{
+		try
+		{
+			LiftDragModel.calculateAlpha(pose, vel, &alpha, &vInf_transformed);
+		}
+		catch(const Lift_drag_model_exception& e)
+		{
+			std::cerr<<"Exception successfully caught for SingleInstanceLiftDragPluginIntegrationTest."<<std::endl;
+			std::cerr << e.what() <<std::endl;
+		}
+
+		alpha=LiftDragModel.convertRadiansToDegrees(alpha);
+
+		// Control surface
+		if(isControlSurface)
+		{
+			alpha += controlAngle;
+
+			//Condition the angle to be within bounds of LUT angles.
+			alpha=conditionAngle(alpha, -180, 180, 360);
+		}
 	}
 
+	//Set speed if this is a propwash
+	else
+	{
+		motorExitVelocity=exitVelocities[propWashIdx];
+		try
+		{
+			LiftDragModel.setSpeed(motorExitVelocity); //override freestream velocity (motor exit velocity most likely faster)
+		}
+		catch(const Lift_drag_model_exception& e)
+		{
+			std::cerr<<"Exception successfully caught for SingleInstanceLiftDragPluginIntegrationTest."<<std::endl;
+			std::cerr << e.what() <<std::endl;
+		}
+
+		// Control surface
+		if(isControlSurface)
+		{
+			alpha = controlAngle;
+		}
+	}
+
+	try
+	{
+		LiftDragModel.setAlpha(alpha); 
+	}
+	catch(const Lift_drag_model_exception& e)
+	{
+		std::cerr<<"Exception successfully caught for SingleInstanceLiftDragPluginIntegrationTest."<<std::endl;
+		std::cerr << e.what() <<std::endl;
+	}
+	
+
 	rho = 1.225; 
-	LiftDragModel.setAirDensity(rho); 
-	LiftDragModel.setArea(area);
-	LiftDragModel.calculateLiftDragModelValues(); // Calculate values
-	speed = LiftDragModel.getSpeed();
-	cl = LiftDragModel.getCL();
-	cd = LiftDragModel.getCD();
+	try
+	{
+		LiftDragModel.setAirDensity(rho); 
+	}
+	catch(const Lift_drag_model_exception& e)
+	{
+		std::cerr<<"Exception successfully caught for SingleInstanceLiftDragPluginIntegrationTest."<<std::endl;
+		std::cerr << e.what() <<std::endl;
+	}
+	try
+	{
+		LiftDragModel.setArea(area);
+	}
+	catch(const Lift_drag_model_exception& e)
+	{
+		std::cerr<<"Exception successfully caught for SingleInstanceLiftDragPluginIntegrationTest."<<std::endl;
+		std::cerr << e.what() <<std::endl;
+	}
+
+	try
+	{
+		// Calculate values
+		LiftDragModel.calculateLiftDragModelValues(); 
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+	
 	lift = LiftDragModel.getLift();
 	drag = LiftDragModel.getDrag(); 
 	ignition::math::Vector3d force = ignition::math::Vector3d(-lift, 0, -drag);
+	speed = LiftDragModel.getSpeed();
+	cl = LiftDragModel.getCL();
+	cd = LiftDragModel.getCD();
 
 	failStr.append("Wing Pose=("+std::to_string(wingPoseX)+", "+std::to_string(wingPoseY)+", "+std::to_string(wingPoseZ)+")\n");
 	failStr.append("World velocity=("+std::to_string(worldVelocityX)+", "+std::to_string(worldVelocityY)+", "+std::to_string(worldVelocityZ)+")\n");
@@ -232,6 +394,7 @@ TEST_P(CombinatoricalLiftDragTest, SingleInstanceLiftDragPluginIntegrationTest) 
 	failStr.append(std::to_string(controlSurfaceIdx)+"\n");
 	failStr.append("Propwash ID=");
 	failStr.append(std::to_string(propWashIdx)+"\n");
+	failStr.append("Wing frame velocity=("+std::to_string(vInf_transformed.X())+", "+std::to_string(vInf_transformed.Y())+", "+std::to_string(vInf_transformed.Z())+")\n");
 
 	std::string trueLiftAsStr=param.liftDragForceVectorTruths.at(0);
 	std::string trueDragAsStr=param.liftDragForceVectorTruths.at(2);
@@ -259,4 +422,7 @@ TEST_P(CombinatoricalLiftDragTest, SingleInstanceLiftDragPluginIntegrationTest) 
 	//If there is a failure in assertion, print out the data for the case.
    	ASSERT_NEAR(force[0],trueLift,acceptable_error)<< failStr;
 	ASSERT_NEAR(force[2],trueDrag,acceptable_error)<< failStr;
+
+	//Force through for US1046 because of changed pushed into master without integration test. Will remove and restore original code above when fixed.
+	//ASSERT_NEAR(1,1,acceptable_error);
 }
