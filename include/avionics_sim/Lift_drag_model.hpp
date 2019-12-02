@@ -11,15 +11,26 @@
 #include <vector>
 #include <string>
 #include "avionics_sim/Bilinear_interp.hpp"
+#include "avionics_sim/Math_util.hpp"
 #include <ignition/math.hh>
 
 namespace avionics_sim
 {
+    
     class Lift_drag_model
     {
         public:
          
           Lift_drag_model(); ///< Default constructor
+
+          // Destructor.  
+          ///
+          /// \brief      Destructor
+          ///
+          /// \details    Made virtual to allow for subclass destructor handling. 
+          /// \param[in]  N/A
+          /// \return     N/A
+          virtual ~Lift_drag_model();
           
           // Function to set value of alpha.   
           ///
@@ -94,7 +105,7 @@ namespace avionics_sim
           /// \return     Value for surface area.
           double getArea();
 
-	  // Function to set LUTs.   
+	        // Function to set LUTs.   
           ///
           /// \brief      Sets value of CL, CD, and Alpha look up tables. 
           ///
@@ -232,8 +243,93 @@ namespace avionics_sim
           /// \return     Value for angle in degrees.
           double convertRadiansToDegrees(double _angleRadians);
 
+          /// \brief minimum acceptable air density.
+          /*
+          Air density minimum and maximum values presume the following:
+          30 degrees Celsius at Sea Level = 1.160 kg/m^3
+          0 degrees Celsius at sea level = 1.29 kg/m^3
+          3000 ft Density altitude = 0.9093 kg/m^3
+          */
+          constexpr static double MIN_AIR_DENSITY=0.9;
+
+          /// \brief maximum acceptable air density.
+          constexpr static double MAX_AIR_DENSITY=1.3;
+
+          /// \brief minimum acceptable vInf (speed).
+          constexpr static double MIN_VINF=0.0;
+
+          /// \brief maximum acceptable vInf (speed).
+          constexpr static double MAX_VINF=20.0;
+
+          /// \brief minimum acceptable vInf (speed) for checking value of alpha.
+          constexpr static double MIN_VINF_ALPHA=2.5;
+
+          /// \brief minimum acceptable angle-of-attack (aka AoA, aka alpha) in degrees.
+          /*
+          AoA minimum and maximum values presme the following:
+          Hover and Forward flight + 10 degrees buffer on either side.
+          */
+          constexpr static double MIN_AOA=-10.0;
+
+          /// \brief maximum acceptable angle-of-attack (aka AoA, aka alpha) in degrees.
+          constexpr static double MAX_AOA=110.0;
+
+          /// \brief minimum acceptable coefficient of lift (CL)
+          /*
+          CL presumes limits of aircraft + margin
+          */
+          constexpr static float MIN_CL=-1.5;
+
+          /// \brief maximum acceptable coefficient of lift (CL)
+          constexpr static float MAX_CL=1.4;
+
+          /// \brief minimum acceptable coefficient of drag (CD)
+          /*
+          CD presumes limits of aircraft + margin
+          */
+          constexpr static float MIN_CD=0.0;
+
+          /// \brief maximum acceptable coefficient of drag (CD)
+          constexpr static float MAX_CD=2.0;
+
+          /// \brief minimum acceptable lift
+          /*
+          Lift corresponds to pushing roughly 1g.
+          */
+          constexpr static double MIN_LIFT=0.0;
+
+          /// \brief maximum acceptable lift
+          constexpr static double MAX_LIFT=200.0;
+
+          /// \brief minimum acceptable drag
+          /*
+          Drag corresponds to pushing roughly 1g.
+          */
+          constexpr static double MIN_DRAG=0.0;
+
+          /// \brief maximum acceptable drag
+          constexpr static double MAX_DRAG=100.0;
+
+          /// \brief minimum acceptable surface area
+          /*
+          Drag corresponds to pushing roughly 1g.
+          */
+          constexpr static double MIN_AREA=0.0;
+
+          /// \brief maximum acceptable surface area
+          constexpr static double MAX_AREA=1.5;
 
         private:
+
+          // Function to clear the LUT, CL, and CD vectors.   
+          ///
+          /// \brief      Make empty the the LUT, CL, and CD vectors. 
+          ///
+          /// \details     N/A
+          /// \param[in]   N/A
+          /// \return      N/A
+          /// 
+          void emptyLUTAndCoefficientVectors();
 
           /// \Value of alpha
           double alpha;
@@ -260,16 +356,26 @@ namespace avionics_sim
           double drag;
 
           /// LUTs for control surface.
-	  std::vector<float> Aero_LUT_alpha;
+	        std::vector<float> Aero_LUT_alpha;
 
-	  std::vector<float> Aero_LUT_CL;
+	        std::vector<float> Aero_LUT_CL;
 
-	  std::vector<float> Aero_LUT_CD;
+	        std::vector<float> Aero_LUT_CD;
+
+          /// dynamic pressure
+          double q;
+
+          //Tolerance for floating point comparisons (double)
+          constexpr static double tolerance=0.0001; //0.000000000001
+
+          //Tolerance for floating point comparisons (float)
+          constexpr static float floatTolerance=0.0001; //0.000000000001
 
           /// Bilinear interpolator instance
           avionics_sim::Bilinear_interp AeroInterp;
 
-          /// dynamic pressure
-          double q;
+          //Math utility object (used for floating point comparison, display of digits to a certain precision)
+          Math_util mu;
+
     };
 }
