@@ -366,14 +366,11 @@ namespace avionics_sim
         // Calculate world linear velocity in wing coordinate frame. 
         avionics_sim::Coordinate_Utils::project_vector_global(wingPose, vInfbar, &wingFrameVelocity); 
 
-        // Remove spanwise and vertical component
+         // Remove spanwise and vertical component
         vInLDPlane_v = ignition::math::Vector3d(wingFrameVelocity.X(), 0, wingFrameVelocity.Z());
 
-        //Original remedy for "egregious reverse velocity" issue. Does not pass integration test. Originally, US 1046 had completely passed until this solution below was put into master without an integration test run. Since PX/Firmware US1046 does not work with the modified solution commented out below this line, this will be retained, despite test failure (avionics_sim does not run integration tests always) to get PX4/Firmware to pass. This will be corrected such that integration and flight tests pass in US1061.
+        //Original remedy for "egregious reverse velocity" issue below. Does not pass integration test. Originally, US 1046 had completely passed until this solution below was put into master without an integration test run. Since PX/Firmware US1046 does not work with the modified solution commented out below this line, this will be retained, despite test failure (avionics_sim does not run integration tests always) to get PX4/Firmware to pass. This will be corrected such that integration and flight tests pass in US1083.
         //vInLDPlane_v = ignition::math::Vector3d(-wingFrameVelocity.Z(), 0, 0);
-
-        //Updated version of solution above that passes integration tests.
-        //vInLDPlane_v = ignition::math::Vector3d(-wingFrameVelocity.Z(), 0, wingFrameVelocity.X());
 
         vInLDPlane_s = vInLDPlane_v.Length(); // Calculate scalar
 

@@ -3,3 +3,13 @@
 test_freeimage.c
 build/
 .vscode/
+src/Lift_drag_model.cpp.orig
+CMakeFiles/
+Makefile
+cmake_install.cmake
+CMakeCache.txt
+googletest-build/
+googletest-download/
+googletest-src/
+test_integration_test*
+test_unit_test_*
