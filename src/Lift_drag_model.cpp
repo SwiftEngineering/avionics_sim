@@ -84,7 +84,9 @@ namespace avionics_sim
             {
                 alpha=_alpha;
             }
-            if (mu.rough_gte(vInf, MIN_VINF_ALPHA, tolerance))
+            
+            /*because we have CL, CD data from -187 to 188 degrees (main wing, as described in Main_Wing_Aero_LUT.xml) and -180 to 180 (control surface, as described in ControlSurface_Aero_LUT.xml), there is no need to check this: every value for alpha can be interpolated for.*/
+            /*if (mu.rough_gte(vInf, MIN_VINF_ALPHA, tolerance))
             {
                 if ( (mu.rough_lt(alpha, MIN_AOA, tolerance)) || (mu.rough_gt(alpha, MAX_AOA, tolerance)) )
                 {
@@ -93,7 +95,7 @@ namespace avionics_sim
                     Lift_drag_model_exception e(errMsg);
                     throw e;
                 }
-            }
+            }*/
         }
     }
 
