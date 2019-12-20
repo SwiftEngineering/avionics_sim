@@ -37,7 +37,8 @@ namespace avionics_sim
         lift(0.0), 
         drag(0.0),
         q(0.0),
-        AeroInterp(avionics_sim::Bilinear_interp()){}
+        AeroInterp(avionics_sim::Bilinear_interp()),
+        isControlSurface(false){}
     
     void Lift_drag_model::emptyLUTAndCoefficientVectors()
     {
@@ -166,7 +167,7 @@ namespace avionics_sim
         return area;
     }
 
-    void Lift_drag_model::setLUTs(const std::vector<float>& alphas, const std::vector<float>& cls, const std::vector<float>& cds)
+    void Lift_drag_model::setLUTs(const std::vector<double>& alphas, const std::vector<double>& cls, const std::vector<double>& cds)
     {
 	    //Clear out the vectors if they are not empty.
         emptyLUTAndCoefficientVectors();
@@ -219,12 +220,12 @@ namespace avionics_sim
         return rho;
     }
 
-    float Lift_drag_model::getCL()
+    double Lift_drag_model::getCL()
     {
         return cl;
     }
 
-    float Lift_drag_model::getCD()
+    double Lift_drag_model::getCD()
     {
         return cd;
     }
@@ -235,7 +236,7 @@ namespace avionics_sim
 
         /*
         Check if the lift coefficient is within bounds. Throw an exception if it is not. 
-        NB: There is no need to test for NaN in the lookup tables, as those values must be of type float for the vector that holds those values.
+        NB: There is no need to test for NaN in the lookup tables, as those values must be of type double for the vector that holds those values.
         */
         //if ( (cl<MIN_CL) || (cl>MAX_CL) )
         if ( mu.rough_lt(cl, MIN_CL, floatTolerance) || mu.rough_gt(cl, MAX_CL, floatTolerance) )
@@ -249,16 +250,18 @@ namespace avionics_sim
 
     void Lift_drag_model::lookupCD()
     {
-         AeroInterp.interpolate(Aero_LUT_alpha,Aero_LUT_CD, alpha, &cd);
-
-        //Check if the lift coefficient is within bounds. Throw an exception if it is not.
-        //if ( (cd<MIN_CD) || (cd>MAX_CD) )
-        if ( mu.rough_lt(cd, MIN_CD, floatTolerance) || mu.rough_gt(cd, MAX_CD, floatTolerance) )
+        if (isControlSurface)
         {
-            std::string errMsg="CD (Coefficient of Drag) is not within bounds of ["+mu.to_string_with_precision(MIN_CD,16)+", "+mu.to_string_with_precision(MAX_CD,16)+"]. CD= "+mu.to_string_with_precision(cd,16);
-            //throw new Lift_drag_model_exception(errMsg);
-            Lift_drag_model_exception e(errMsg);
-            throw e;
+            double cdAtAlphaZero;
+
+            //Now, we subtract cd @ alpha=0 from the one obtained at alpha iff alpha not zero.
+            AeroInterp.interpolate(Aero_LUT_alpha,Aero_LUT_CD, alpha, &cd);
+            AeroInterp.interpolate(Aero_LUT_alpha,Aero_LUT_CD, 0, &cdAtAlphaZero);
+            cd=cd-cdAtAlphaZero;
+        }
+        else
+        {
+            AeroInterp.interpolate(Aero_LUT_alpha,Aero_LUT_CD, alpha, &cd);
         }
     }
 
@@ -327,9 +330,6 @@ namespace avionics_sim
 
         std::string exceptions="Lift_drag_model::calculateLiftDragModelValues:\n";
 
-        /*bool exceptionOccurred=false;
-        bool criticalExceptionOccurred=false;*/
-
         AvionicsSimTryCatchBlock cldmvBlock;
 
         cldmvBlock.tryCatch(this,&avionics_sim::Lift_drag_model::lookupCL);
@@ -368,11 +368,8 @@ namespace avionics_sim
         // Calculate world linear velocity in wing coordinate frame. 
         avionics_sim::Coordinate_Utils::project_vector_global(wingPose, vInfbar, &wingFrameVelocity); 
 
-         // Remove spanwise and vertical component
-        vInLDPlane_v = ignition::math::Vector3d(wingFrameVelocity.X(), 0, wingFrameVelocity.Z());
-
-        //Original remedy for "egregious reverse velocity" issue below. Does not pass integration test. Originally, US 1046 had completely passed until this solution below was put into master without an integration test run. Since PX/Firmware US1046 does not work with the modified solution commented out below this line, this will be retained, despite test failure (avionics_sim does not run integration tests always) to get PX4/Firmware to pass. This will be corrected such that integration and flight tests pass in US1083.
-        //vInLDPlane_v = ignition::math::Vector3d(-wingFrameVelocity.Z(), 0, 0);
+        // Remove spanwise and vertical component
+        vInLDPlane_v = ignition::math::Vector3d(-wingFrameVelocity.X(), 0, wingFrameVelocity.Z());
 
         vInLDPlane_s = vInLDPlane_v.Length(); // Calculate scalar
 
@@ -408,11 +405,10 @@ namespace avionics_sim
         if(vInf_p != NULL)
         {
             //Was set originally to vInfBar, which is the same as worldVel. Shouldn't wingFrameVelocity be returned?
-            *vInf_p = wingFrameVelocity;//vInfbar; 
+            *vInf_p = vInfbar; 
         }
 
         //Set alpha
-        /**/
         try
         {
             setAlpha(alpha,true);
@@ -435,6 +431,15 @@ namespace avionics_sim
             Lift_drag_model_exception e(exceptions, criticalExceptionOccurred);
             throw e;
         }
+    }
 
+    void Lift_drag_model::setControlSurfaceFlag(bool isCSSurface)
+    {
+        isControlSurface=isCSSurface;
+    }
+
+    bool Lift_drag_model::getControlSurfaceFlag()
+    {
+        return isControlSurface;
     }
 }

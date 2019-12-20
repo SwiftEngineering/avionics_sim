@@ -11,5 +11,7 @@ CMakeCache.txt
 googletest-build/
 googletest-download/
 googletest-src/
-test_integration_test*
-test_unit_test_*
+*integration_test*
+*unit_test_*
+avionics_sim_test_runner
+tests/test_runner/lib/

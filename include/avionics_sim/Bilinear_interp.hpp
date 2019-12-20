@@ -45,7 +45,7 @@ namespace avionics_sim
           /// \param[in]  yv  Reference to Y values of the 2D LUT
           /// \param[in]  zv  Reference to Z values of the 2D LUT
           /// X values and Y values must be in ascending order. 
-          Bilinear_interp(const std::vector<std::vector<float>>& xv, const std::vector<float>& yv, const std::vector<std::vector<float>>& zv);
+          Bilinear_interp(const std::vector<std::vector<double>>& xv, const std::vector<double>& yv, const std::vector<std::vector<double>>& zv);
 
           // Function to perform 1D (Linear) interpolation.     
           ///
@@ -61,7 +61,7 @@ namespace avionics_sim
           ///
           /// \return      Returns InterpResult enum containing potential interpolation errors. 
           /// X values must be ascending
-          InterpResult interpolate(const std::vector<float> &xv, const std::vector<float> &yv, float x, float* const y);
+          InterpResult interpolate(const std::vector<double> &xv, const std::vector<double> &yv, double x, double* const y);
           
 
 
@@ -81,7 +81,7 @@ namespace avionics_sim
           ///
           /// \return      Returns InterpResult enum containing potential interpolation errors. 
           /// X and Y values must be ascending
-          InterpResult interpolate2D(const std::vector<std::vector<float>>& xv, const std::vector<float>& yv, const std::vector<std::vector<float>>& zv, float x, float y, float* const z);
+          InterpResult interpolate2D(const std::vector<std::vector<double>>& xv, const std::vector<double>& yv, const std::vector<std::vector<double>>& zv, double x, double y, double* const z);
 
           ///
           /// \brief      Performs 2D interpolations on LUT based on x, y, and z values stored within the class. 
@@ -96,7 +96,7 @@ namespace avionics_sim
           ///
           /// \return     Returns InterpResult enum containing potential interpolation errors. 
           /// X and Y values must be ascending
-          InterpResult interpolate2D(float x, float y, float* const z);
+          InterpResult interpolate2D(double x, double y, double* const z);
 
 
           
@@ -107,11 +107,11 @@ namespace avionics_sim
           ///            withing a LUT. 
           ///
           /// \param[in]  inputVals The input string to be processed. 
-          /// \param[out] outputVect A pointer to std::vector<float> containing the LUT elements.
+          /// \param[out] outputVect A pointer to std::vector<double> containing the LUT elements.
           ///
           /// \return     A bool indicating whether the parsing was a success. 
           ///
-          static bool get1DLUTelementsFromString(const std::string& inputVals, std::vector<float>* const outputVect);
+          static bool get1DLUTelementsFromString(const std::string& inputVals, std::vector<double>* const outputVect);
 
           ///
           /// \brief      Gets a two dimensional vector of LUT elements from a string. 
@@ -119,11 +119,11 @@ namespace avionics_sim
           ///            values representing points on a 2D LUT. 
           ///
           /// \param[in]  inputVals  The input string to be processed. 
-          /// \param[out] outputVect A pointer to std::vector<std::vector<<float>> containing the 2D LUT elements.
+          /// \param[out] outputVect A pointer to std::vector<std::vector<<double>> containing the 2D LUT elements.
           ///
           /// \return     A bool indicating whether the parsing was a success. 
           ///
-          static bool get2DLUTelementsFromString(const std::string& inputVals, std::vector<std::vector<float>>* const outputVect);
+          static bool get2DLUTelementsFromString(const std::string& inputVals, std::vector<std::vector<double>>* const outputVect);
           
 
 
@@ -143,7 +143,7 @@ namespace avionics_sim
           ///
           /// \param[in]  xv     Reference to vector containing the x values. 
           ///
-          void setXVals(const std::vector<std::vector<float>>& xv);
+          void setXVals(const std::vector<std::vector<double>>& xv);
 
           ///
           /// \brief      Sets the y vals vector.
@@ -161,7 +161,7 @@ namespace avionics_sim
           ///
           /// \param[in]  yv     Reference to vector containing the y values. 
           ///
-          void setYVals(const std::vector<float>& yv);
+          void setYVals(const std::vector<double>& yv);
 
 
           ///
@@ -180,7 +180,7 @@ namespace avionics_sim
           ///
           /// \param[in]  zv     Reference to vector containing the z values. 
           /// 
-          void setZVals(const std::vector<std::vector<float>>& zv);
+          void setZVals(const std::vector<std::vector<double>>& zv);
 
           ///
           /// \brief      Gets the x vals vector.
@@ -189,7 +189,7 @@ namespace avionics_sim
           /// 
           /// \return A bool indicating whether the operation was a success.  
           ///
-          bool getX(std::vector<std::vector<float>>* const xVect); 
+          bool getX(std::vector<std::vector<double>>* const xVect); 
 
           ///
           /// \brief      Gets the y vals vector.
@@ -198,7 +198,7 @@ namespace avionics_sim
           /// 
           /// \return A bool indicating whether the operation was a success.  
           ///
-          bool getY(std::vector<float>* const yVect); 
+          bool getY(std::vector<double>* const yVect); 
 
           ///
           /// \brief      Gets the z vals vector.
@@ -207,13 +207,13 @@ namespace avionics_sim
           /// 
           /// \return A bool indicating whether the operation was a success.  
           ///
-          bool getZ(std::vector<std::vector<float>>* const zVect); 
+          bool getZ(std::vector<std::vector<double>>* const zVect); 
 
         private: 
           /// \brief Vectors to hold LUT data.
           /// Holds 2D LUT values for X and Z points
-          std::vector< std::vector<float> > xVals, zVals;
-          std::vector<float> yVals; ///< Holds Y values for LUT data.
+          std::vector< std::vector<double> > xVals, zVals;
+          std::vector<double> yVals; ///< Holds Y values for LUT data.
 
           /// Bools to keep track of which LUT data values have been added. 
           bool haveXVals, haveYVals, haveZVals; 
