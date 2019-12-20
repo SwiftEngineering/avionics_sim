@@ -16,7 +16,6 @@
 
 namespace avionics_sim
 {
-    
     class Lift_drag_model
     {
         public:
@@ -105,7 +104,7 @@ namespace avionics_sim
           /// \return     Value for surface area.
           double getArea();
 
-	        // Function to set LUTs.   
+	  // Function to set LUTs.   
           ///
           /// \brief      Sets value of CL, CD, and Alpha look up tables. 
           ///
@@ -115,7 +114,7 @@ namespace avionics_sim
           /// \param[in]  cds           reference to vector containing drag coefficients.
           /// \return      N/A
           /// 
-          void setLUTs(const std::vector<float>& alphas, const std::vector<float>& cls, const std::vector<float>& cds);
+          void setLUTs(const std::vector<double>& alphas, const std::vector<double>& cls, const std::vector<double>& cds);
 
           // Function to calculate dynamic pressure.   
           ///
@@ -178,7 +177,7 @@ namespace avionics_sim
           /// \details    N/A 
           /// \param[in]  N/A
           /// \return     Value for lift coefficient.
-          float getCL();
+          double getCL();
 
           // Function to get the drag coefficient.   
           ///
@@ -187,7 +186,7 @@ namespace avionics_sim
           /// \details    N/A 
           /// \param[in]  N/A
           /// \return     Value for drag coefficient.
-          float getCD();
+          double getCD();
 
           // Function to get lift.   
           ///
@@ -243,6 +242,24 @@ namespace avionics_sim
           /// \return     Value for angle in degrees.
           double convertRadiansToDegrees(double _angleRadians);
 
+          // Function to toggle isControlSurface boolean   
+          ///
+          /// \brief      Toggles isControlSurface boolean 
+          ///
+          /// \details    N/A 
+          /// \param[in]  isCSSurface    boolean indicating whether or not performing calculations for control surface.
+          /// \return     Value for angle in degrees.
+          void setControlSurfaceFlag(bool isCSSurface);
+
+          // Function to get isControlSurface boolean   
+          ///
+          /// \brief      Retrieve isControlSurface boolean 
+          ///
+          /// \details    N/A 
+          /// \param[in]  N/A
+          /// \return     Control surface boolean
+          bool getControlSurfaceFlag();
+
           /// \brief minimum acceptable air density.
           /*
           Air density minimum and maximum values presume the following:
@@ -259,7 +276,7 @@ namespace avionics_sim
           constexpr static double MIN_VINF=0.0;
 
           /// \brief maximum acceptable vInf (speed).
-          constexpr static double MAX_VINF=25.0;
+          constexpr static double MAX_VINF=30.0;
 
           /// \brief minimum acceptable vInf (speed) for checking value of alpha.
           constexpr static double MIN_VINF_ALPHA=2.5;
@@ -278,19 +295,19 @@ namespace avionics_sim
           /*
           CL presumes limits of aircraft + margin
           */
-          constexpr static float MIN_CL=-1.5;
+          constexpr static double MIN_CL=-1.5;
 
           /// \brief maximum acceptable coefficient of lift (CL)
-          constexpr static float MAX_CL=1.4;
+          constexpr static double MAX_CL=1.4;
 
           /// \brief minimum acceptable coefficient of drag (CD)
           /*
           CD presumes limits of aircraft + margin
           */
-          constexpr static float MIN_CD=0.0;
+          constexpr static double MIN_CD=0.0;
 
           /// \brief maximum acceptable coefficient of drag (CD)
-          constexpr static float MAX_CD=2.0;
+          constexpr static double MAX_CD=2.0;
 
           /// \brief minimum acceptable lift
           /*
@@ -344,10 +361,10 @@ namespace avionics_sim
           double area;
 
           /// Lift coefficient
-          float cl;
+          double cl;
 
           /// Drag coefficient
-          float cd;
+          double cd;
 
           ///Lift
           double lift;
@@ -356,11 +373,11 @@ namespace avionics_sim
           double drag;
 
           /// LUTs for control surface.
-	        std::vector<float> Aero_LUT_alpha;
+	        std::vector<double> Aero_LUT_alpha;
 
-	        std::vector<float> Aero_LUT_CL;
+	        std::vector<double> Aero_LUT_CL;
 
-	        std::vector<float> Aero_LUT_CD;
+	        std::vector<double> Aero_LUT_CD;
 
           /// dynamic pressure
           double q;
@@ -368,14 +385,17 @@ namespace avionics_sim
           //Tolerance for floating point comparisons (double)
           constexpr static double tolerance=0.0001; //0.000000000001
 
-          //Tolerance for floating point comparisons (float)
-          constexpr static float floatTolerance=0.0001; //0.000000000001
+          //Tolerance for floating point comparisons (double)
+          constexpr static double floatTolerance=0.0001; //0.000000000001
 
           /// Bilinear interpolator instance
           avionics_sim::Bilinear_interp AeroInterp;
 
           //Math utility object (used for floating point comparison, display of digits to a certain precision)
           Math_util mu;
+
+          //Variable determining if performing calculation for control surface (or not)
+          bool isControlSurface;
 
     };
 }

@@ -22,7 +22,7 @@ namespace
         std::string badVals2 = "";
         std::string badVals3 = "0,20.0,30.0,40.0,50.0,60.0,abc";
 
-        std::vector<float> outVect; 
+        std::vector<double> outVect; 
 
         // Expect success == false for string with null element. 
         EXPECT_FALSE(avionics_sim::Bilinear_interp::get1DLUTelementsFromString(badVals1, &outVect));
@@ -52,7 +52,7 @@ namespace
         std::string badVals2 = "";
         std::string badVals3 = "0.0,596.92,1193.6,1790.4,2387.1,2983.8,3580.5,4177.2,4774.0,5370.7,5967.4,6564.1,7160.8,7757.6,8354.3,8951.0,8951.0;0.0,606.61,1212.8,1819.0,2425.2,3031.4,3637.6,4243.8,4850.1,5456.3,6062.5,6668.7,7274.9,7881.1,8487.3,9093.5,9093.5;0.0,2265.4,2719.2,3173.0,3626.7,4080.5,4534.3,4988.1,5441.9,5895.6,6349.4,6803.2,7257.0,7710.8,8164.5,8618.3,9072.1;0.0,3115.6,3511.0,3906.4,4301.8,4697.1,5092.5,5487.9,5883.3,6278.7,6674.1,7069.5,7464.9,7860.2,8255.6,8651.0,9046.4;0.0,3915.8,4256.5,4597.1,4937.8,5278.4,5619.1,5959.8,6300.4,6641.1,6981.7,7322.4,7663.1,8003.7,8344.4,8685.0,9025.7;0.0,4854.5,5134.3,5414.1,5693.9,5973.6,6253.4,6533.2,6813.0,7092.8,7372.6,7652.4,7932.2,8211.9,8491.7,8771.5,9051.3;0.0,5685.4,5915.7,6146.1,6376.4,6606.8,6837.1,7067.5,7297.8,7528.2,7758.5,7988.9,8219.2,8449.6,8679.9,8910.3,abc;";
 
-        std::vector<std::vector<float>> outVect; 
+        std::vector<std::vector<double>> outVect; 
 
         // Expect success == false for string with null element. 
         EXPECT_FALSE(avionics_sim::Bilinear_interp::get2DLUTelementsFromString(badVals1, &outVect));
@@ -207,11 +207,11 @@ namespace
 
     TEST_F(BilinearInterp_UnitTest, interpolate2D_withData)
     {
-        std::vector<std::vector<float>> xVals, zVals; 
-        std::vector<float> yVals; 
+        std::vector<std::vector<double>> xVals, zVals; 
+        std::vector<double> yVals; 
 
-        float z; // Holds calculated value. 
-        float expect; // Expected value
+        double z; // Holds calculated value. 
+        double expect; // Expected value
 
         // Load values into vectors. 
         ASSERT_TRUE(avionics_sim::Bilinear_interp::get2DLUTelementsFromString(xValsString, &xVals)); 
@@ -292,10 +292,9 @@ namespace
         std::string badVals1 = "0.0,596.92,1193.6,1790.4,,2983.8,3580.5,4177.2,4774.0,5370.7,5967.4,6564.1,7160.8,7757.6,8354.3,8951.0,8951.0;0.0,606.61,1212.8,1819.0,2425.2,3031.4,3637.6,4243.8,4850.1,5456.3,6062.5,6668.7,7274.9,7881.1,8487.3,9093.5,9093.5;0.0,2265.4,2719.2,3173.0,3626.7,4080.5,4534.3,4988.1,5441.9,5895.6,6349.4,6803.2,7257.0,7710.8,8164.5,8618.3,9072.1;0.0,3115.6,3511.0,3906.4,4301.8,4697.1,5092.5,5487.9,5883.3,6278.7,6674.1,7069.5,7464.9,7860.2,8255.6,8651.0,9046.4;0.0,3915.8,4256.5,4597.1,4937.8,5278.4,5619.1,5959.8,6300.4,6641.1,6981.7,7322.4,7663.1,8003.7,8344.4,8685.0,9025.7;0.0,4854.5,5134.3,5414.1,5693.9,5973.6,6253.4,6533.2,6813.0,7092.8,7372.6,7652.4,7932.2,8211.9,8491.7,8771.5,9051.3;0.0,5685.4,5915.7,6146.1,6376.4,6606.8,6837.1,7067.5,7297.8,7528.2,7758.5,7988.9,8219.2,8449.6,8679.9,8910.3,9140.6;";
         std::string badVals2 = "";
 
-        float z; // Holds calculated value. 
-        float expect; // Expected value
+        double z; // Holds calculated value. 
 
-        std::vector<std::vector<float>> xVals; 
+        std::vector<std::vector<double>> xVals; 
 
         avionics_sim::Bilinear_interp interp; 
 
@@ -336,10 +335,9 @@ namespace
         std::string badVals1 = "0,20.0,30.0,,50.0,60.0,70.0";
         std::string badVals2 = "";
 
-        float z; // Holds calculated value. 
-        float expect; // Expected value
+        double z; // Holds calculated value. 
 
-        std::vector<float> yVals; 
+        std::vector<double> yVals; 
 
         avionics_sim::Bilinear_interp interp; 
 
@@ -374,10 +372,9 @@ namespace
         std::string badVals1 = "0.0,596.92,1193.6,1790.4,,2983.8,3580.5,4177.2,4774.0,5370.7,5967.4,6564.1,7160.8,7757.6,8354.3,8951.0,8951.0;0.0,606.61,1212.8,1819.0,2425.2,3031.4,3637.6,4243.8,4850.1,5456.3,6062.5,6668.7,7274.9,7881.1,8487.3,9093.5,9093.5;0.0,2265.4,2719.2,3173.0,3626.7,4080.5,4534.3,4988.1,5441.9,5895.6,6349.4,6803.2,7257.0,7710.8,8164.5,8618.3,9072.1;0.0,3115.6,3511.0,3906.4,4301.8,4697.1,5092.5,5487.9,5883.3,6278.7,6674.1,7069.5,7464.9,7860.2,8255.6,8651.0,9046.4;0.0,3915.8,4256.5,4597.1,4937.8,5278.4,5619.1,5959.8,6300.4,6641.1,6981.7,7322.4,7663.1,8003.7,8344.4,8685.0,9025.7;0.0,4854.5,5134.3,5414.1,5693.9,5973.6,6253.4,6533.2,6813.0,7092.8,7372.6,7652.4,7932.2,8211.9,8491.7,8771.5,9051.3;0.0,5685.4,5915.7,6146.1,6376.4,6606.8,6837.1,7067.5,7297.8,7528.2,7758.5,7988.9,8219.2,8449.6,8679.9,8910.3,9140.6;";
         std::string badVals2 = "";
 
-        float z; // Holds calculated value. 
-        float expect; // Expected value
+        double z; // Holds calculated value. 
 
-        std::vector<std::vector<float>> zVals; 
+        std::vector<std::vector<double>> zVals; 
 
         avionics_sim::Bilinear_interp interp; 
 
@@ -415,11 +412,11 @@ namespace
 
     TEST_F(BilinearInterp_UnitTest, interpolate2D)
     {
-        std::vector<std::vector<float>> xVals, zVals; 
-        std::vector<float> yVals; 
+        std::vector<std::vector<double>> xVals, zVals; 
+        std::vector<double> yVals; 
 
-        float z; // Holds calculated value. 
-        float expect; // Expected value
+        double z; // Holds calculated value. 
+        double expect; // Expected value
 
         // Load values into vectors. 
         ASSERT_TRUE(avionics_sim::Bilinear_interp::get2DLUTelementsFromString(xValsString, &xVals)); 

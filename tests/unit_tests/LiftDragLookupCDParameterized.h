@@ -19,9 +19,9 @@
 
 typedef struct LiftDragLookupCDParams {
 	double value;
-	std::vector<float> LUT_alpha;
-	std::vector<float> LUT_CL;
-	std::vector<float> LUT_CD;
+	std::vector<double> LUT_alpha;
+	std::vector<double> LUT_CL;
+	std::vector<double> LUT_CD;
 }LiftDragLookupCDParams;
 
 //Type definition for LiftDragParameterCollections.
