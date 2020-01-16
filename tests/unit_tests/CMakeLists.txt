@@ -18,6 +18,10 @@ SET(AVIONICS_SIM_UNIT_TEST_SRC
 	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Calculate_Lift.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Calculate_Drag.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Test_Motor_Model_Set_Get_Thrust.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Calculate_Lateral_Force.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Test_Motor_Model_Set_Get_Motor_Exit_Velocity.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Set_Get_Beta.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Test_Atan2.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Set_Get_Lateral_Area.cpp
 	PARENT_SCOPE
 )
