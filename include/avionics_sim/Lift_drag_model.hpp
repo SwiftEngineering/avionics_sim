@@ -104,7 +104,26 @@ namespace avionics_sim
           /// \return     Value for surface area.
           double getArea();
 
-	  // Function to set LUTs.   
+          // Function to set lateral area.   
+          ///
+          /// \brief      Sets value of lateral area.
+          ///
+          /// \details    It is presumed that the value of _alpha is in radians. Method will convert value to degrees otherwise.
+          /// \param[in]  area       Lateral area in feet squared.
+          /// \return      N/A
+          /// 
+          void setLateralArea(double area);
+
+          // Function to get value of lateral area.   
+          ///
+          /// \brief      Returns value of lateral area. 
+          ///
+          /// \details    N/A 
+          /// \param[in]  N/A
+          /// \return     Value for lateral area.
+          double getLateralArea();
+
+	        // Function to set LUTs.   
           ///
           /// \brief      Sets value of CL, CD, and Alpha look up tables. 
           ///
@@ -154,7 +173,7 @@ namespace avionics_sim
 
           // Function to calculate drag.   
           ///
-          /// \brief      Returns value of drag. 
+          /// \brief      Calculates value of drag. 
           ///
           /// \details    N/A 
           /// \param[in]  N/A
@@ -163,12 +182,21 @@ namespace avionics_sim
 
           // Function to calculate lift.   
           ///
-          /// \brief      Returns value of lift. 
+          /// \brief      Calculates value of lift. 
           ///
           /// \details    N/A 
           /// \param[in]  N/A
           /// \return     Value for lift.
           void calculateLift();
+
+          // Function to calculate lateral force.   
+          ///
+          /// \brief      Calculates lateral force. 
+          ///
+          /// \details    N/A 
+          /// \param[in]  N/A
+          /// \return     Value for lift.
+          void calculateLateralForce();
           
           // Function to get the lift coefficient.   
           ///
@@ -205,6 +233,15 @@ namespace avionics_sim
           /// \param[in]  N/A
           /// \return     Value for drag.
           double getDrag();
+
+          // Function to get lateral force.   
+          ///
+          /// \brief      Returns value of lateral force. 
+          ///
+          /// \details    N/A 
+          /// \param[in]  N/A
+          /// \return     Value for lateral force.
+          double getLateralForce();
 
           // Function to get calculate cl, cd, lift, and drag.   
           ///
@@ -336,6 +373,49 @@ namespace avionics_sim
           /// \brief maximum acceptable surface area
           constexpr static double MAX_AREA=1.5;
 
+          /// \brief Minimum lateral force (where minimum lateral velocity is -50)
+          constexpr static double MIN_LATERAL_FORCE=0;
+
+          /// \brief Maximum lateral force (where minimum lateral velocity is 50 and rho is 1.225)
+          constexpr static double MAX_LATERAL_FORCE=796.25;
+
+          /// \brief Drag coefficient for lateral drag
+          //Until a range of values are provided for coefficient of lateral force, a value of 0.2 will be presumed.
+          constexpr static double coefficientLateralForce=0.2;
+
+          /// \brief Lowest possible value for LUT angle.
+          constexpr static int lowestLUTAngle=-180;
+
+          /// \brief Highest possible value for LUT angle.
+          constexpr static int highestLUTAngle=180;
+
+          /// 
+          /// /brief Calculates beta (side slip angle) from wing pose and world velocity. 
+          /// 
+          /// \param[in] wingPose  ignition Pose3d of wing coorinate system.
+          /// \param[in] worldVel  ignition Vector3d of world linear velocity. 
+          /// \return N/A
+          /// 
+          void calculateBeta(ignition::math::Pose3d wingPose, ignition::math::Vector3d worldVel, double * const beta_p = NULL);
+
+          // Function to set value of beta.   
+          ///
+          /// \brief      Sets value of beta. 
+          ///
+          /// \details    It is presumed that the value of _beta is in degrees. Method will convert value to degrees otherwise.
+          /// \param[in]  _alphaRad    value for alpha
+          /// \return      N/A
+          /// 
+          void setBeta(double _beta, bool isInRadians=false);
+
+          /// 
+          /// /brief Returns value of beta (side slip angle) from wing pose and world velocity. 
+          /// 
+          /// \param[in] N/A 
+          /// \param[out] Value for beta (side slip angle) in degrees
+          /// 
+          double getBeta();
+
         private:
 
           // Function to clear the LUT, CL, and CD vectors.   
@@ -372,6 +452,9 @@ namespace avionics_sim
           ///Drag
           double drag;
 
+          //Lateral force
+          double lateral_force;
+
           /// LUTs for control surface.
 	        std::vector<double> Aero_LUT_alpha;
 
@@ -397,5 +480,24 @@ namespace avionics_sim
           //Variable determining if performing calculation for control surface (or not)
           bool isControlSurface;
 
+          /// \Value of beta (side slip angle)
+          double beta;
+
+          /// \brief Lateral area of aircraft (in ft squared)
+          double lateralArea;
+
+          // Function to condition any angle outside of [-lowerBound, upperBound] to be within that range.   
+          ///
+          /// \brief      Conditions any angle outside of [-lowerBound, upperBound] to be within that range. Presumes that angle is in degrees.
+          ///
+          /// \details     N/A
+          /// \param[in]  angle_in    Angle to condition.
+          /// \param[in]  lowerLimit  Lower limit for condition range.
+          /// \param[in]  upperLimit  Upper limit for condition range.
+          /// \param[in]  increment   Increment amount to get into range.
+
+          /// \return      N/A
+          ///
+          double conditionAngle(double angle_in, double lowerLimit=lowestLUTAngle, double upperLimit=highestLUTAngle, int increment=5);
     };
 }
