@@ -1,6 +1,6 @@
 /**
- * @brief       LiftDrag::CalculateDynamicPressure Parameterized Unit Test Class
- * @file        LiftDragCalculateDynamicPressureParameterized.h
+ * @brief       MathUtil Linear Map Parameterized Unit Test Class
+ * @file        MathUtilCalculateRMSParameterized.h
  * @author      Ihimu Ukpo <iukpo@swiftengineering.com>
  * @copyright   Copyright (c) 2019, Swift Engineering Inc.
  * @license     Licensed under the MIT license. See LICENSE for details.
@@ -10,31 +10,32 @@
 #include <boost/array.hpp>
 #include <stdio.h>
 
-// LiftDragCalculateDynamicPressureParameterized class  
+// MathUtilCalculateRMSParameterized class  
 ///
 /// \brief      Subclass of testing::TestWithParam that accepts setSpeed related parameters as input for test.
 ///
 /// \details    N/A
 ///
 
-typedef struct LiftDragCalculateDynamicPressureParams {
-	double vInf;
-	double rho;
-}LiftDragCalculateDynamicPressureParams;
+typedef struct MathUtilCalculateRMSParams {
+	std::vector<double> samples;
+	double count;
+	double testValue;
+}MathUtilCalculateRMSParams;
 
 //Type definition for LiftDragParameterCollections.
-typedef std::vector<LiftDragCalculateDynamicPressureParams> LiftDragCalculateDynamicPressureParameterCollections;
+typedef std::vector<MathUtilCalculateRMSParams> MathUtilCalculateRMSParameterCollections;
 
-class LiftDragCalculateDynamicPressureParameterized :
-    public ::testing::TestWithParam<LiftDragCalculateDynamicPressureParams> {
+class MathUtilCalculateRMSParameterized :
+    public ::testing::TestWithParam<MathUtilCalculateRMSParams> {
 
 		protected:
 
 			///Default constructor
-			LiftDragCalculateDynamicPressureParameterized() {};
+			MathUtilCalculateRMSParameterized() {};
 
 			///Destructor
-			virtual ~LiftDragCalculateDynamicPressureParameterized() {};
+			virtual ~MathUtilCalculateRMSParameterized() {};
 
 			// Function to prepare the objects for each test.   
 			///
