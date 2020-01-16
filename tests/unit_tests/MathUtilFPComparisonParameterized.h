@@ -1,6 +1,6 @@
 /**
- * @brief       LiftDrag::CalculateDynamicPressure Parameterized Unit Test Class
- * @file        LiftDragCalculateDynamicPressureParameterized.h
+ * @brief       MathUtil FP (Floating Point) Comparison Parameterized Unit Test Class
+ * @file        MathUtilFPComparisonParameterized.h
  * @author      Ihimu Ukpo <iukpo@swiftengineering.com>
  * @copyright   Copyright (c) 2019, Swift Engineering Inc.
  * @license     Licensed under the MIT license. See LICENSE for details.
@@ -10,31 +10,38 @@
 #include <boost/array.hpp>
 #include <stdio.h>
 
-// LiftDragCalculateDynamicPressureParameterized class  
+// MathUtilFPComparisonParameterized class  
 ///
 /// \brief      Subclass of testing::TestWithParam that accepts setSpeed related parameters as input for test.
 ///
 /// \details    N/A
 ///
 
-typedef struct LiftDragCalculateDynamicPressureParams {
-	double vInf;
-	double rho;
-}LiftDragCalculateDynamicPressureParams;
+const unsigned int EQUALS=1;
+const unsigned int LESS_THAN=2;
+const unsigned int GREATER_THAN=3;
+const unsigned int LESS_THAN_EQ=4;
+const unsigned int GREATER_THAN_EQ=5; 
+typedef struct MathUtilFPComparisonParams {
+	double lhs;
+	double rhs;
+	unsigned int operation;
+	bool testValue;
+}MathUtilFPComparisonParams;
 
 //Type definition for LiftDragParameterCollections.
-typedef std::vector<LiftDragCalculateDynamicPressureParams> LiftDragCalculateDynamicPressureParameterCollections;
+typedef std::vector<MathUtilFPComparisonParams> MathUtilFPComparisonParameterCollections;
 
-class LiftDragCalculateDynamicPressureParameterized :
-    public ::testing::TestWithParam<LiftDragCalculateDynamicPressureParams> {
+class MathUtilFPComparisonParameterized :
+    public ::testing::TestWithParam<MathUtilFPComparisonParams> {
 
 		protected:
 
 			///Default constructor
-			LiftDragCalculateDynamicPressureParameterized() {};
+			MathUtilFPComparisonParameterized() {};
 
 			///Destructor
-			virtual ~LiftDragCalculateDynamicPressureParameterized() {};
+			virtual ~MathUtilFPComparisonParameterized() {};
 
 			// Function to prepare the objects for each test.   
 			///

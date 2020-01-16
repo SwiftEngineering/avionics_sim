@@ -1,6 +1,6 @@
 /**
- * @brief       LiftDrag::CalculateDynamicPressure Parameterized Unit Test Class
- * @file        LiftDragCalculateDynamicPressureParameterized.h
+ * @brief       MathUtil Linear Map Parameterized Unit Test Class
+ * @file        MathUtilPowInteger.h
  * @author      Ihimu Ukpo <iukpo@swiftengineering.com>
  * @copyright   Copyright (c) 2019, Swift Engineering Inc.
  * @license     Licensed under the MIT license. See LICENSE for details.
@@ -10,31 +10,32 @@
 #include <boost/array.hpp>
 #include <stdio.h>
 
-// LiftDragCalculateDynamicPressureParameterized class  
+// MathUtilPowIntegerParameterized class  
 ///
 /// \brief      Subclass of testing::TestWithParam that accepts setSpeed related parameters as input for test.
 ///
 /// \details    N/A
 ///
 
-typedef struct LiftDragCalculateDynamicPressureParams {
-	double vInf;
-	double rho;
-}LiftDragCalculateDynamicPressureParams;
+typedef struct MathUtilPowIntegerParams {
+	double base;
+	size_t power;
+	double testValue;
+}MathUtilPowIntegerParams;
 
 //Type definition for LiftDragParameterCollections.
-typedef std::vector<LiftDragCalculateDynamicPressureParams> LiftDragCalculateDynamicPressureParameterCollections;
+typedef std::vector<MathUtilPowIntegerParams> MathUtilPowIntegerParameterCollections;
 
-class LiftDragCalculateDynamicPressureParameterized :
-    public ::testing::TestWithParam<LiftDragCalculateDynamicPressureParams> {
+class MathUtilPowIntegerParameterized :
+    public ::testing::TestWithParam<MathUtilPowIntegerParams> {
 
 		protected:
 
 			///Default constructor
-			LiftDragCalculateDynamicPressureParameterized() {};
+			MathUtilPowIntegerParameterized() {};
 
 			///Destructor
-			virtual ~LiftDragCalculateDynamicPressureParameterized() {};
+			virtual ~MathUtilPowIntegerParameterized() {};
 
 			// Function to prepare the objects for each test.   
 			///

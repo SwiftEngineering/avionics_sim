@@ -1,6 +1,6 @@
 /**
- * @brief       LiftDrag::CalculateDynamicPressure Parameterized Unit Test Class
- * @file        LiftDragCalculateDynamicPressureParameterized.h
+ * @brief       MathUtil Calculate Mean Parameterized Unit Test Class
+ * @file        MathUtilCalculateMeanParameterized.h
  * @author      Ihimu Ukpo <iukpo@swiftengineering.com>
  * @copyright   Copyright (c) 2019, Swift Engineering Inc.
  * @license     Licensed under the MIT license. See LICENSE for details.
@@ -10,31 +10,32 @@
 #include <boost/array.hpp>
 #include <stdio.h>
 
-// LiftDragCalculateDynamicPressureParameterized class  
+// MathUtilCalculateMeanParameterized class  
 ///
 /// \brief      Subclass of testing::TestWithParam that accepts setSpeed related parameters as input for test.
 ///
 /// \details    N/A
 ///
 
-typedef struct LiftDragCalculateDynamicPressureParams {
-	double vInf;
-	double rho;
-}LiftDragCalculateDynamicPressureParams;
+typedef struct MathUtilCalculateMeanParams {
+	std::vector<double> samples;
+	double count;
+	double testValue;
+}MathUtilCalculateMeanParams;
 
 //Type definition for LiftDragParameterCollections.
-typedef std::vector<LiftDragCalculateDynamicPressureParams> LiftDragCalculateDynamicPressureParameterCollections;
+typedef std::vector<MathUtilCalculateMeanParams> MathUtilCalculateMeanParameterCollections;
 
-class LiftDragCalculateDynamicPressureParameterized :
-    public ::testing::TestWithParam<LiftDragCalculateDynamicPressureParams> {
+class MathUtilCalculateMeanParameterized :
+    public ::testing::TestWithParam<MathUtilCalculateMeanParams> {
 
 		protected:
 
 			///Default constructor
-			LiftDragCalculateDynamicPressureParameterized() {};
+			MathUtilCalculateMeanParameterized() {};
 
 			///Destructor
-			virtual ~LiftDragCalculateDynamicPressureParameterized() {};
+			virtual ~MathUtilCalculateMeanParameterized() {};
 
 			// Function to prepare the objects for each test.   
 			///
