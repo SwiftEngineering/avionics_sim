@@ -41,7 +41,8 @@ namespace avionics_sim
         AeroInterp(avionics_sim::Bilinear_interp()),
         isControlSurface(false),
         beta(0.0),
-        lateralArea(0.0){}
+        lateralArea(0.0),
+        lateral_velocity(0.0){}
 
     void Lift_drag_model::emptyLUTAndCoefficientVectors()
     {
@@ -485,9 +486,9 @@ namespace avionics_sim
         /*
         Need to convert beta to radians because domain of atan2 is [-pi,pi]and radians are inherently dimensionless (they are the ratio of two lengths).
         */
-        lateral_force=q*coefficientLateralForce*convertDegreesToRadians(getBeta())*getLateralArea();
+        double q_lat=q=0.5*rho*lateral_velocity*lateral_velocity;
+        lateral_force=q_lat*coefficientLateralForce*convertDegreesToRadians(getBeta())*getLateralArea();
 
-        //if ( mu.rough_lt(lateral_force, MIN_LATERAL_FORCE, tolerance) || mu.rough_gt(lateral_force, MAX_LATERAL_FORCE, tolerance) )
         std::string errMsg;
         if (!valueIsWithinBounds(lateral_force, MIN_LATERAL_FORCE, MAX_LATERAL_FORCE, "Lateral force", errMsg))
         {
@@ -723,5 +724,28 @@ namespace avionics_sim
         }
 
         return withinBounds;
+    }
+
+        void Lift_drag_model::setLateralVelocity(ignition::math::Pose3d wingPose, ignition::math::Vector3d worldVel)
+    {
+        ignition::math::Vector3d vInfbar; // vInf = -world velocity
+        ignition::math::Vector3d wingFrameVelocity; // Vector 3 of world linear velocity in wing frame.
+        ignition::math::Vector3d vInLDPlane_v; // Vector 3 of velocity in LD plane.
+
+        double vInLDPlane_s; // Scalar magnitude of speed in LD plane.
+
+        std::string exceptions="Lift_drag_model::calculateAlpha:\n";
+
+        bool exceptionOccurred=false;
+        bool criticalExceptionOccurred=false;
+
+        // Vinf is in the opposite direction as world velocity.
+        vInfbar = ignition::math::Vector3d(worldVel.X(), worldVel.Y(), worldVel.Z());
+
+        // Calculate world linear velocity in wing coordinate frame.
+        avionics_sim::Coordinate_Utils::project_vector_global(wingPose, vInfbar, &wingFrameVelocity);
+
+        //Set lateral velocity for lateral force calculation (will move code for beta angle in here, hence placed here and not in calculateBeta)
+        lateral_velocity = wingFrameVelocity.Y();
     }
 }
