@@ -67,7 +67,6 @@ namespace avionics_sim
 
     void Lift_drag_model::setAlpha(double _alpha, bool isInRadians)
     {
-
         //Check if incoming alpha is NaN. Throw an exception if it is.
         if (isnan(_alpha))
         {
@@ -111,6 +110,7 @@ namespace avionics_sim
 
     void Lift_drag_model::calculateBeta(ignition::math::Pose3d wingPose, ignition::math::Vector3d worldVel, double * const beta_p)
     {
+        //TODO: Refactor (combine into calculateAlpha)
         ignition::math::Vector3d vInfbar; // vInf = -world velocity
         ignition::math::Vector3d wingFrameVelocity; // Vector 3 of world linear velocity in wing frame. 
         ignition::math::Vector3d vInLDPlane_v; // Vector 3 of velocity in LD plane. 
@@ -201,9 +201,9 @@ namespace avionics_sim
                 beta=_beta;
             }
 
-            /*
-            Check if beta is in [-180, 180]. If not, condition it to be so, then throw an exception. While this should not happen (atan2 guarantees that resulting value is in the range of [-pi, pi]), this check is put into place in case a function that does not use atan2 sets the value of the angle).
-            */
+            /*Check if beta is in [-180, 180]. If not, condition it to be so, then throw an exception. While this should not happen (atan2 guarantees that resulting value is in the range of [-pi, pi]), this check is put into place in case a function that does not use atan2 sets the value of the angle).*/
+            
+            //Use floating point comparison in DE260
             if ((beta<-180)||(beta>180))
             {
                 double conditionedAngle=conditionAngle(beta);
@@ -216,6 +216,7 @@ namespace avionics_sim
                 throw e;
             }
         }
+        
     }
 
     double Lift_drag_model::getBeta()
@@ -225,27 +226,31 @@ namespace avionics_sim
 
     void Lift_drag_model::setSpeed(double _speed)
     {
-        //Check if incoming speed is NaN. Throw an exception if it is.
+        std::string errMsg;
+
+        //Check if incoming speed is NaN. Throw critical exception if it is.
         if (isnan(_speed))
         {
-            std::string errMsg="Lift_drag_model::setSpeed: vInf is NaN";
-            //throw new Lift_drag_model_exception(errMsg,true);
+            errMsg="Lift_drag_model::setSpeed: vInf is NaN";
             Lift_drag_model_exception e(errMsg, true);
             throw e;
         }
         
         else
         {
-            vInf=_speed;
-
-            //Check if vInf is within bounds. Throw an exception if it is not.
-            if ( mu.rough_lt(vInf, MIN_VINF, tolerance) || mu.rough_gt(vInf, MAX_VINF, tolerance) )
+            //Check if vInf is within bounds. If not, store vInf as either MIN_VINF or MAX_VINF if bounds exceeded, then throw an exception.
+            if (!valueIsWithinBounds(vInf, MIN_VINF, MAX_VINF, "VInf (speed)", errMsg, true))
             {
-                std::string errMsg="vInf (speed) is not within bounds of ["+mu.to_string_with_precision(MIN_VINF,16)+", "+mu.to_string_with_precision(MAX_VINF,16)+"]. vInf= "+mu.to_string_with_precision(vInf,16);
-                //throw new Lift_drag_model_exception(errMsg);
                 Lift_drag_model_exception e(errMsg);
                 throw e;
             }
+
+            //Velocity passed in is acceptable. Store.
+            else
+            {
+                vInf=_speed;
+            }
+            
         }
     }
 
@@ -256,35 +261,37 @@ namespace avionics_sim
 
     void Lift_drag_model::setArea(double _area)
     {
-        //Check if incoming area is NaN. Throw an exception if it is.
+        std::string errMsg;
+
+        //Check if incoming area is NaN. Throw a critical exception if it is.
         if (isnan(_area))
         {
-            std::string errMsg="Lift_drag_model::setArea: area is NaN";
-            //throw new Lift_drag_model_exception(errMsg,true);
+            errMsg="Lift_drag_model::setArea: area is NaN";
             Lift_drag_model_exception e(errMsg, true);
             throw e;
         }
 
-        //Check if the area is less than zero. If it is, throw an exception.
+        //Check if the area is less than zero. If it is, throw a critical exception.
         else if (_area<0)
         {
-            std::string errMsg="Lift_drag_model::setArea: area is less than zero";
-            //throw new Lift_drag_model_exception(errMsg,true);
+            errMsg="Lift_drag_model::setArea: area is less than zero";
             Lift_drag_model_exception e(errMsg, true);
             throw e;
         }
         
         else
         {
-            area=_area;
-
-            //Check if area is within bounds. Throw an exception if it is not.
-            if ( mu.rough_lt(area, MIN_AREA, tolerance) || mu.rough_gt(area, MAX_AREA, tolerance) )
+            //Check if area is within bounds. If not, store vInf as either MIN_AREA or MAX_AREA if bounds exceeded, then throw an exception.
+            if (!valueIsWithinBounds(area, MIN_AREA, MAX_AREA, "Area", errMsg, true))
             {
-                std::string errMsg="Area is not within bounds of ["+mu.to_string_with_precision(MIN_AREA,16)+", "+mu.to_string_with_precision(MAX_AREA,16)+"]. Area= "+mu.to_string_with_precision(area,16);
-                //throw new Lift_drag_model_exception(errMsg);
                 Lift_drag_model_exception e(errMsg);
                 throw e;
+            }
+
+            //Area passed in is acceptable. Store.
+            else
+            {
+                area=_area;
             }
         }
     }
@@ -297,38 +304,26 @@ namespace avionics_sim
     void Lift_drag_model::setLateralArea(double _area)
     {
         
-        //Check if incoming area is NaN. Throw an exception if it is.
+        //Check if incoming area is NaN. Throw a critical exception if it is.
         if (isnan(_area))
         {
             std::string errMsg="Lift_drag_model::setLateralArea: area is NaN";
-            //throw new Lift_drag_model_exception(errMsg,true);
             Lift_drag_model_exception e(errMsg, true);
             throw e;
         }
 
-        //Check if the area is less than zero. If it is, throw an exception.
+        //Check if the area is less than zero. If it is, throw a critical exception.
         else if (_area<0)
         {
             std::string errMsg="Lift_drag_model::setLateralArea: area is less than zero";
-            //throw new Lift_drag_model_exception(errMsg,true);
             Lift_drag_model_exception e(errMsg, true);
             throw e;
         }
         
         else
         {
+            //No minimum or maximum has been specified for lateral area, so just set the value as received.
             lateralArea=_area;
-
-            //No minimum or maximum has been specified for lateral area.
-            //Check if area is within bounds. Throw an exception if it is not.
-            /*if ( mu.rough_lt(area, MIN_AREA, tolerance) || mu.rough_gt(area, MAX_AREA, tolerance) )
-            {
-                std::string errMsg="Area is not within bounds of ["+mu.to_string_with_precision(MIN_AREA,16)+", "+mu.to_string_with_precision(MAX_AREA,16)+"]. Area= "+mu.to_string_with_precision(area,16);
-                //throw new Lift_drag_model_exception(errMsg);
-                Lift_drag_model_exception e(errMsg);
-                throw e;
-            }
-            */
         }
     }
 
@@ -363,25 +358,31 @@ namespace avionics_sim
 
     void Lift_drag_model::setAirDensity(double _rho)
     {
-        //Check if incoming _rho is NaN. Throw an exception if it is.
+        std::string errMsg;
+
+        //Check if incoming _rho is NaN. Throw a critical exception if it is.
         if (isnan(_rho))
         {
-            std::string errMsg="Lift_drag_model::setAirDensity: rho (air density) is NaN";
-            //throw new Lift_drag_model_exception(errMsg,true);
+            errMsg="Lift_drag_model::setAirDensity: rho (air density) is NaN";
             Lift_drag_model_exception e(errMsg, true);
             throw e;
         }
         else
         {
-            rho=_rho;
-            //Check if air density is within bounds. Throw an exception if it is not.
-            if ( mu.rough_lt(rho, MIN_AIR_DENSITY, tolerance) || mu.rough_gt(rho, MAX_AIR_DENSITY, tolerance) )
+            
+            //Check if air density is within bounds. If not, store air density as either MIN_AIR_DENSITY or MAX_AIR_DENSITY if bounds exceeded, then throw an exception.
+            if (!valueIsWithinBounds(rho, MIN_AIR_DENSITY, MAX_AIR_DENSITY, "Air density", errMsg, true))
             {
-                std::string errMsg="rho (air density) is not within bounds of ["+mu.to_string_with_precision(MIN_AIR_DENSITY,16)+", "+mu.to_string_with_precision(MAX_AIR_DENSITY,16)+"]. rho= "+mu.to_string_with_precision(rho,16);
-                //throw new Lift_drag_model_exception(errMsg);
                 Lift_drag_model_exception e(errMsg);
                 throw e;
             }
+
+            //Air density passed in is acceptable. Store.
+            else
+            {
+                rho=_rho;
+            }
+
         } 
     }
 
@@ -411,7 +412,6 @@ namespace avionics_sim
         if ( mu.rough_lt(cl, MIN_CL, floatTolerance) || mu.rough_gt(cl, MAX_CL, floatTolerance) )
         {
             std::string errMsg="CL (Coefficient of Lift) is not within bounds of ["+mu.to_string_with_precision(MIN_CL,16)+", "+mu.to_string_with_precision(MAX_CL,16)+"]. CL= "+mu.to_string_with_precision(cl,16);
-            //throw new Lift_drag_model_exception(errMsg);
             Lift_drag_model_exception e(errMsg);
             throw e;
         }
@@ -441,7 +441,6 @@ namespace avionics_sim
         if ( (mu.rough_lt(lift, MIN_LIFT, tolerance)) || (mu.rough_gt(lift, MAX_LIFT, tolerance)) )
         {
             std::string errMsg="Lift is not within bounds of ["+mu.to_string_with_precision(MIN_LIFT,16)+", "+mu.to_string_with_precision(MAX_LIFT,16)+"]. Lift= "+mu.to_string_with_precision(lift,16)+", cl="+mu.to_string_with_precision(cl,16)+", q="+mu.to_string_with_precision(q,16)+", area="+mu.to_string_with_precision(getArea(),16);
-            //throw new Lift_drag_model_exception(errMsg);
             Lift_drag_model_exception e(errMsg);
             throw e;
         }
@@ -456,7 +455,6 @@ namespace avionics_sim
         if ( mu.rough_lt(drag, MIN_DRAG, tolerance) || mu.rough_gt(drag, MAX_DRAG, tolerance) )
         {
             std::string errMsg="Drag is not within bounds of ["+mu.to_string_with_precision(MIN_DRAG,16)+", "+mu.to_string_with_precision(MAX_DRAG,16)+"]. Drag= "+mu.to_string_with_precision(drag,16);
-            //throw new Lift_drag_model_exception(errMsg);
             Lift_drag_model_exception e(errMsg);
             throw e;
         }
@@ -472,7 +470,6 @@ namespace avionics_sim
         if ( mu.rough_lt(lateral_force, MIN_LATERAL_FORCE, tolerance) || mu.rough_gt(lateral_force, MAX_LATERAL_FORCE, tolerance) )
         {
             std::string errMsg="Lateral force is not within bounds of ["+mu.to_string_with_precision(MIN_LATERAL_FORCE,16)+", "+mu.to_string_with_precision(MAX_LATERAL_FORCE,16)+"]. Drag= "+mu.to_string_with_precision(lateral_force,16);
-            //throw new Lift_drag_model_exception(errMsg);
             Lift_drag_model_exception e(errMsg);
             throw e;
         }
@@ -556,11 +553,18 @@ namespace avionics_sim
         // Vinf is in the opposite direction as world velocity. 
         vInfbar = ignition::math::Vector3d(worldVel.X(), worldVel.Y(), worldVel.Z());
 
+        //Problem: world velocity as coming in from Gazebo is way too high.
+        //std::cout<<"World velocity X="<<worldVel.X()<<", world velocity Y="<<worldVel.Y()<<", world velocity Z="<<worldVel.Z()<<std::endl;
+
         // Calculate world linear velocity in wing coordinate frame. 
         avionics_sim::Coordinate_Utils::project_vector_global(wingPose, vInfbar, &wingFrameVelocity); 
 
         // Remove spanwise and vertical component
         vInLDPlane_v = ignition::math::Vector3d(-wingFrameVelocity.X(), 0, wingFrameVelocity.Z());
+
+        //std::cout<<"Wing frame velocity X="<<-wingFrameVelocity.X()<<", wing frame velocity z="<<wingFrameVelocity.Z()<<std::endl;
+
+        //Examine components. The corresponding length is way too big at times.
 
         vInLDPlane_s = vInLDPlane_v.Length(); // Calculate scalar
 
@@ -594,7 +598,7 @@ namespace avionics_sim
             beta=0;
             
             //Package up again as a lift drag exception and throw again.
-            std::string errMsg="Lift_drag_model::setBeta: domain error for atan";
+            std::string errMsg="Lift_drag_model::setAlpha: domain error for atan";
             Lift_drag_model_exception lde(errMsg, true);
             throw lde;
         }  
@@ -665,5 +669,38 @@ namespace avionics_sim
             }
         }
         return angle_out;
+    }
+
+    bool Lift_drag_model::valueIsWithinBounds(double &value, double lowerBound, double upperBound, std::string itemName, std::string &errMsg, bool capToBound)
+    {
+        bool withinBounds=true;
+
+        bool below=mu.rough_lt(value, lowerBound, tolerance);
+        bool above=mu.rough_gt(value, upperBound, tolerance);
+
+        if ( below || above )
+        {
+            withinBounds=false;
+
+            //Set error message.
+            errMsg=itemName+"= "+mu.to_string_with_precision(value,16)+" and is not within bounds of ["+mu.to_string_with_precision(lowerBound,16)+", "+mu.to_string_with_precision(upperBound,16)+"]. ";
+
+            //Set to nearest bound if capToBound.
+            if (capToBound)
+            {
+                if (below)
+                {
+                    value=lowerBound;
+                }
+                else if (above)
+                {
+                    value=upperBound;
+                }
+
+                errMsg=errMsg+itemName+" will be constrained to "+mu.to_string_with_precision(value,16);
+            }
+        }
+
+        return withinBounds;
     }
 }
