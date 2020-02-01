@@ -147,8 +147,7 @@ namespace avionics_sim
         }
         catch(const std::exception& e)
         {
-            //Set angle to zero.// failsafe into multicopter mode
-			_vtol_schedule.flight_mode = vtol_mode::MC_MODE;
+            //Set angle to zero.;
             beta=0;
 
             //Package up again as a lift drag exception and throw again.
