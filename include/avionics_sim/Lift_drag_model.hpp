@@ -19,280 +19,280 @@ namespace avionics_sim
     class Lift_drag_model
     {
         public:
-         
+
           Lift_drag_model(); ///< Default constructor
 
-          // Destructor.  
+          // Destructor.
           ///
           /// \brief      Destructor
           ///
-          /// \details    Made virtual to allow for subclass destructor handling. 
+          /// \details    Made virtual to allow for subclass destructor handling.
           /// \param[in]  N/A
           /// \return     N/A
           virtual ~Lift_drag_model();
-          
-          // Function to set value of alpha.   
+
+          // Function to set value of alpha.
           ///
-          /// \brief      Sets value of alpha. 
+          /// \brief      Sets value of alpha.
           ///
           /// \details    It is presumed that the value of _alpha is in degrees. Method will convert value to degrees otherwise.
           /// \param[in]  _alphaRad    value for alpha
           /// \return      N/A
-          /// 
+          ///
           void setAlpha(double _alpha, bool isInRadians=false);
 
-          // Function to get value of alpha.   
+          // Function to get value of alpha.
           ///
-          /// \brief      Returns value of alpha. 
+          /// \brief      Returns value of alpha.
           ///
-          /// \details    N/A 
+          /// \details    N/A
           /// \param[in]  N/A
           /// \return     Value for alpha in degrees.
           double getAlpha();
 
-          // Function to set value of speed (v infinity).   
+          // Function to set value of speed (v infinity).
           ///
-          /// \brief      Sets value of speed. 
+          /// \brief      Sets value of speed.
           ///
-          /// \details    N/A 
+          /// \details    N/A
           /// \param[in]  _speed    value for speed
-          /// \return      N/A 
+          /// \return      N/A
           void setSpeed(double _speed);
 
-          // Function to get value of speed.   
+          // Function to get value of speed.
           ///
-          /// \brief      Returns value of speed. 
+          /// \brief      Returns value of speed.
           ///
-          /// \details    N/A 
+          /// \details    N/A
           /// \param[in]  N/A
-          /// \return     Value for speed. 
+          /// \return     Value for speed.
           double getSpeed();
 
-          // Function to set value of air density (rho).   
+          // Function to set value of air density (rho).
           ///
-          /// \brief      Sets value of rho. 
+          /// \brief      Sets value of rho.
           ///
-          /// \details    N/A 
+          /// \details    N/A
           /// \param[in]  _rho    value for air density (rho)
-          /// \return      N/A 
+          /// \return      N/A
           void setAirDensity(double _rho);
 
-          // Function to get value of rho.   
+          // Function to get value of rho.
           ///
-          /// \brief      Returns value of air density (rho). 
+          /// \brief      Returns value of air density (rho).
           ///
-          /// \details    N/A 
+          /// \details    N/A
           /// \param[in]  N/A
-          /// \return     Value for air density (rho). 
+          /// \return     Value for air density (rho).
           double getAirDensity();
 
-          // Function to set value of surface area.   
+          // Function to set value of surface area.
           ///
-          /// \brief      Sets value of surface area. 
+          /// \brief      Sets value of surface area.
           ///
-          /// \details    This function is provided for convenience. A default of 1.0 will be presumed. 
+          /// \details    This function is provided for convenience. A default of 1.0 will be presumed.
           /// \param[in]  _area    value for surface area
           /// \return      N/A
           void setArea(double _area);
 
-          // Function to get value of surface area.   
+          // Function to get value of surface area.
           ///
-          /// \brief      Returns value of surface area. 
+          /// \brief      Returns value of surface area.
           ///
-          /// \details    N/A 
+          /// \details    N/A
           /// \param[in]  N/A
           /// \return     Value for surface area.
           double getArea();
 
-          // Function to set lateral area.   
+          // Function to set lateral area.
           ///
           /// \brief      Sets value of lateral area.
           ///
           /// \details    It is presumed that the value of _alpha is in radians. Method will convert value to degrees otherwise.
           /// \param[in]  area       Lateral area in feet squared.
           /// \return      N/A
-          /// 
+          ///
           void setLateralArea(double area);
 
-          // Function to get value of lateral area.   
+          // Function to get value of lateral area.
           ///
-          /// \brief      Returns value of lateral area. 
+          /// \brief      Returns value of lateral area.
           ///
-          /// \details    N/A 
+          /// \details    N/A
           /// \param[in]  N/A
           /// \return     Value for lateral area.
           double getLateralArea();
 
-	        // Function to set LUTs.   
+	        // Function to set LUTs.
           ///
-          /// \brief      Sets value of CL, CD, and Alpha look up tables. 
+          /// \brief      Sets value of CL, CD, and Alpha look up tables.
           ///
           /// \details    It is presumed that the value of _alpha is in radians. Method will convert value to degrees otherwise.
           /// \param[in]  alphas       reference to vector containing alpha values.
           /// \param[in]  cls           reference to vector containing lift coefficients.
           /// \param[in]  cds           reference to vector containing drag coefficients.
           /// \return      N/A
-          /// 
+          ///
           void setLUTs(const std::vector<double>& alphas, const std::vector<double>& cls, const std::vector<double>& cds);
 
-          // Function to calculate dynamic pressure.   
+          // Function to calculate dynamic pressure.
           ///
-          /// \brief      Calculates dynamic pressure (q) 
+          /// \brief      Calculates dynamic pressure (q)
           ///
-          /// \details    Call this function once speed and rho have been set. 
+          /// \details    Call this function once speed and rho have been set.
           /// \param[in]  N/A
           /// \return     N/A
           void calculateDynamicPressure();
 
-          // Function to retrieve dynamic pressure.   
+          // Function to retrieve dynamic pressure.
           ///
-          /// \brief      Calculates dynamic pressure (q) 
+          /// \brief      Calculates dynamic pressure (q)
           ///
-          /// \details    Call this function once speed and rho have been set. 
+          /// \details    Call this function once speed and rho have been set.
           /// \param[in]  N/A
           /// \return     N/A
           double getDynamicPressure();
 
-          // Function to get coefficient of lift from LUT.   
+          // Function to get coefficient of lift from LUT.
           ///
           /// \brief      Calculate/retrieve coefficient of lift from LUTs.
           ///
-          /// \details    N/A 
+          /// \details    N/A
           /// \param[in]  N/A
           /// \return     N/A.
           void lookupCL();
 
-          // Function to get coefficient of drag from LUT.   
+          // Function to get coefficient of drag from LUT.
           ///
           /// \brief      Calculate/retrieve coefficient of drag from LUTs.
           ///
-          /// \details    N/A 
+          /// \details    N/A
           /// \param[in]  N/A
           /// \return     N/A.
           void lookupCD();
 
-          // Function to calculate drag.   
+          // Function to calculate drag.
           ///
-          /// \brief      Calculates value of drag. 
+          /// \brief      Calculates value of drag.
           ///
-          /// \details    N/A 
+          /// \details    N/A
           /// \param[in]  N/A
           /// \return     Value for drag.
           void calculateDrag();
 
-          // Function to calculate lift.   
+          // Function to calculate lift.
           ///
-          /// \brief      Calculates value of lift. 
+          /// \brief      Calculates value of lift.
           ///
-          /// \details    N/A 
+          /// \details    N/A
           /// \param[in]  N/A
           /// \return     Value for lift.
           void calculateLift();
 
-          // Function to calculate lateral force.   
+          // Function to calculate lateral force.
           ///
-          /// \brief      Calculates lateral force. 
+          /// \brief      Calculates lateral force.
           ///
-          /// \details    N/A 
+          /// \details    N/A
           /// \param[in]  N/A
           /// \return     Value for lift.
           void calculateLateralForce();
-          
-          // Function to get the lift coefficient.   
+
+          // Function to get the lift coefficient.
           ///
-          /// \brief      Returns value of lift coefficient. 
+          /// \brief      Returns value of lift coefficient.
           ///
-          /// \details    N/A 
+          /// \details    N/A
           /// \param[in]  N/A
           /// \return     Value for lift coefficient.
           double getCL();
 
-          // Function to get the drag coefficient.   
+          // Function to get the drag coefficient.
           ///
-          /// \brief      Returns value of drag coefficient. 
+          /// \brief      Returns value of drag coefficient.
           ///
-          /// \details    N/A 
+          /// \details    N/A
           /// \param[in]  N/A
           /// \return     Value for drag coefficient.
           double getCD();
 
-          // Function to get lift.   
+          // Function to get lift.
           ///
-          /// \brief      Returns value of lift. 
+          /// \brief      Returns value of lift.
           ///
-          /// \details    N/A 
+          /// \details    N/A
           /// \param[in]  N/A
           /// \return     Value for lift.
           double getLift();
 
-          // Function to get drag.   
+          // Function to get drag.
           ///
-          /// \brief      Returns value of drag. 
+          /// \brief      Returns value of drag.
           ///
-          /// \details    N/A 
+          /// \details    N/A
           /// \param[in]  N/A
           /// \return     Value for drag.
           double getDrag();
 
-          // Function to get lateral force.   
+          // Function to get lateral force.
           ///
-          /// \brief      Returns value of lateral force. 
+          /// \brief      Returns value of lateral force.
           ///
-          /// \details    N/A 
+          /// \details    N/A
           /// \param[in]  N/A
           /// \return     Value for lateral force.
           double getLateralForce();
 
-          // Function to get calculate cl, cd, lift, and drag.   
+          // Function to get calculate cl, cd, lift, and drag.
           ///
-          /// \brief      Calculates cl, cd, lift, and drag. 
+          /// \brief      Calculates cl, cd, lift, and drag.
           ///
-          /// \details    N/A 
+          /// \details    N/A
           /// \param[in]  N/A
           /// \return     N/A.
           void calculateLiftDragModelValues();
 
-          /// 
-          /// /brief Calculates alpha from wing pose and world velocity. 
-          /// 
-          /// \param[in] wingPose  ignition Pose3d of wing coorinate system.
-          /// \param[in] worldVel  ignition Vector3d of world linear velocity. 
-          /// \param[out] alpha pointer to the resulting alpha calculated.
-          /// 
-          void calculateAlpha(ignition::math::Pose3d wingPose, ignition::math::Vector3d worldVel, double * const alpha = NULL, ignition::math::Vector3d * const vInf_p = NULL); 
-
-          // Function to convert degrees to radians.   
           ///
-          /// \brief      Returns value of angle in degrees. 
+          /// /brief Calculates alpha from wing pose and world velocity.
+          ///
+          /// \param[in] wingPose  ignition Pose3d of wing coorinate system.
+          /// \param[in] worldVel  ignition Vector3d of world linear velocity.
+          /// \param[out] alpha pointer to the resulting alpha calculated.
+          ///
+          void calculateAlpha(ignition::math::Pose3d wingPose, ignition::math::Vector3d worldVel, double * const alpha = NULL, ignition::math::Vector3d * const vInf_p = NULL);
+
+          // Function to convert degrees to radians.
+          ///
+          /// \brief      Returns value of angle in degrees.
           ///
           /// \details    Function is public to ensure that any values returned are in radians (internal format is degrees, however).
           /// \param[in]  _angleRadians    value of angle in radians
           /// \return     Value for angle in degrees.
           double convertDegreesToRadians(double _angleDegrees);
 
-          // Function to convert radians to degrees.   
+          // Function to convert radians to degrees.
           ///
-          /// \brief      Returns value of angle in degrees. 
+          /// \brief      Returns value of angle in degrees.
           ///
-          /// \details    N/A 
+          /// \details    N/A
           /// \param[in]  _angleRadians    value of angle in radians
           /// \return     Value for angle in degrees.
           double convertRadiansToDegrees(double _angleRadians);
 
-          // Function to toggle isControlSurface boolean   
+          // Function to toggle isControlSurface boolean
           ///
-          /// \brief      Toggles isControlSurface boolean 
+          /// \brief      Toggles isControlSurface boolean
           ///
-          /// \details    N/A 
+          /// \details    N/A
           /// \param[in]  isCSSurface    boolean indicating whether or not performing calculations for control surface.
           /// \return     Value for angle in degrees.
           void setControlSurfaceFlag(bool isCSSurface);
 
-          // Function to get isControlSurface boolean   
+          // Function to get isControlSurface boolean
           ///
-          /// \brief      Retrieve isControlSurface boolean 
+          /// \brief      Retrieve isControlSurface boolean
           ///
-          /// \details    N/A 
+          /// \details    N/A
           /// \param[in]  N/A
           /// \return     Control surface boolean
           bool getControlSurfaceFlag();
@@ -389,43 +389,54 @@ namespace avionics_sim
           /// \brief Highest possible value for LUT angle.
           constexpr static int highestLUTAngle=180;
 
-          /// 
-          /// /brief Calculates beta (side slip angle) from wing pose and world velocity. 
-          /// 
+          ///
+          /// /brief Calculates beta (side slip angle) from wing pose and world velocity.
+          ///
           /// \param[in] wingPose  ignition Pose3d of wing coorinate system.
-          /// \param[in] worldVel  ignition Vector3d of world linear velocity. 
+          /// \param[in] worldVel  ignition Vector3d of world linear velocity.
           /// \return N/A
-          /// 
+          ///
           void calculateBeta(ignition::math::Pose3d wingPose, ignition::math::Vector3d worldVel, double * const beta_p = NULL);
 
-          // Function to set value of beta.   
+          // Function to set value of beta.
           ///
-          /// \brief      Sets value of beta. 
+          /// \brief      Sets value of beta.
           ///
           /// \details    It is presumed that the value of _beta is in degrees. Method will convert value to degrees otherwise.
           /// \param[in]  _alphaRad    value for alpha
           /// \return      N/A
-          /// 
+          ///
           void setBeta(double _beta, bool isInRadians=false);
 
-          /// 
-          /// /brief Returns value of beta (side slip angle) from wing pose and world velocity. 
-          /// 
-          /// \param[in] N/A 
+          ///
+          /// /brief Returns value of beta (side slip angle) from wing pose and world velocity.
+          ///
+          /// \param[in] N/A
           /// \param[out] Value for beta (side slip angle) in degrees
-          /// 
+          ///
           double getBeta();
+
+          // Function to set value of lateral velocity.
+          ///
+          /// \brief      Sets value of lateral velocity.
+          ///
+          /// \details    Takes in world velocity, uses project_vector_global to get body frame, then takes value from projection. In future refactor, this method should be called in calculateAlpha to streamline.
+          /// \param[in] wingPose  ignition Pose3d of wing coorinate system.
+          /// \param[in] worldVel  ignition Vector3d of world linear velocity.
+          /// \return      N/A
+          ///
+          void setLateralVelocity(ignition::math::Pose3d wingPose, ignition::math::Vector3d worldVel);
 
         private:
 
-          // Function to clear the LUT, CL, and CD vectors.   
+          // Function to clear the LUT, CL, and CD vectors.
           ///
-          /// \brief      Make empty the the LUT, CL, and CD vectors. 
+          /// \brief      Make empty the the LUT, CL, and CD vectors.
           ///
           /// \details     N/A
           /// \param[in]   N/A
           /// \return      N/A
-          /// 
+          ///
           void emptyLUTAndCoefficientVectors();
 
           /// \Value of alpha
@@ -486,7 +497,10 @@ namespace avionics_sim
           /// \brief Lateral area of aircraft (in ft squared)
           double lateralArea;
 
-          // Function to condition any angle outside of [-lowerBound, upperBound] to be within that range.   
+          /// \brief Y component of wingframe (body) velocity. Used in calculating lateral force.
+          double lateral_velocity;
+
+          // Function to condition any angle outside of [-lowerBound, upperBound] to be within that range.
           ///
           /// \brief      Conditions any angle outside of [-lowerBound, upperBound] to be within that range. Presumes that angle is in degrees.
           ///
@@ -495,12 +509,11 @@ namespace avionics_sim
           /// \param[in]  lowerLimit  Lower limit for condition range.
           /// \param[in]  upperLimit  Upper limit for condition range.
           /// \param[in]  increment   Increment amount to get into range.
-
           /// \return      Conditioned angle.
           ///
           double conditionAngle(double angle_in, double lowerLimit=lowestLUTAngle, double upperLimit=highestLUTAngle, int increment=5);
 
-          // Function to check if a given value is within a given bound.   
+          // Function to check if a given value is within a given bound.
           ///
           /// \brief      Function to check if a given value is within a given bound.
           ///
@@ -511,7 +524,7 @@ namespace avionics_sim
           /// \param[in]  upperBound Upper bound
           /// \param[in]  itemName Type of value being examined (speed, air density, etc.)
           /// \param[inout]  errMsg   Error message to be populated iff value is not within bounds.
-          /// \param[in]  capToBound  If true, set value to upper or lower bound depending on condition specified in details above. 
+          /// \param[in]  capToBound  If true, set value to upper or lower bound depending on condition specified in details above.
 
           /// \return      Whether or not value is within bounds
           ///
