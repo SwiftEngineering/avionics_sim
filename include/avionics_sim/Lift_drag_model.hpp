@@ -496,8 +496,25 @@ namespace avionics_sim
           /// \param[in]  upperLimit  Upper limit for condition range.
           /// \param[in]  increment   Increment amount to get into range.
 
-          /// \return      N/A
+          /// \return      Conditioned angle.
           ///
           double conditionAngle(double angle_in, double lowerLimit=lowestLUTAngle, double upperLimit=highestLUTAngle, int increment=5);
+
+          // Function to check if a given value is within a given bound.   
+          ///
+          /// \brief      Function to check if a given value is within a given bound.
+          ///
+          /// \details     If capToBound and value is less than lower bound, value is set to that. Conversely, if capToBound higher, set to upper bound. If either case true,
+          ///              error message will also be populated.
+          /// \param[inout]  value    Value to check is within bounds
+          /// \param[in]  lowerBound  Lower bound
+          /// \param[in]  upperBound Upper bound
+          /// \param[in]  itemName Type of value being examined (speed, air density, etc.)
+          /// \param[inout]  errMsg   Error message to be populated iff value is not within bounds.
+          /// \param[in]  capToBound  If true, set value to upper or lower bound depending on condition specified in details above. 
+
+          /// \return      Whether or not value is within bounds
+          ///
+          bool valueIsWithinBounds(double &value, double lowerBound, double upperBound, std::string itemName, std::string &errMsg, bool capToBound=false);
     };
 }
