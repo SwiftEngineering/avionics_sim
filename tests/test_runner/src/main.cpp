@@ -266,6 +266,10 @@ static void setupLiftDragSetAlphaTestData()
 		LiftDragSetAlphaParams alphaBelowNeg180Radians;
 		LiftDragSetAlphaParams alphaAbove180Degrees;
 		LiftDragSetAlphaParams alphaAbove180Radians;
+		LiftDragSetAlphaParams alphaAt180Degrees;
+		LiftDragSetAlphaParams alphaAt180Radians;
+		LiftDragSetAlphaParams alphaAtNeg180Degrees;
+		LiftDragSetAlphaParams alphaAtNeg180Radians;
 
 		double minRadians=avionics_sim::Lift_drag_model::MIN_AOA/57.2958;
 		double maxRadians=avionics_sim::Lift_drag_model::MAX_AOA/57.2958;
@@ -273,6 +277,10 @@ static void setupLiftDragSetAlphaTestData()
 		double maxRadiansBound=(avionics_sim::Lift_drag_model::MAX_AOA-1)/57.2958;
 		double minDegreesBound=(avionics_sim::Lift_drag_model::MIN_AOA+1);
 		double maxDegreesBound=(avionics_sim::Lift_drag_model::MAX_AOA-1);
+		double oneEightyDegreesBound=180.0;
+		double oneEightyRadiansBound=180.0/57.2958;
+		double negOneEightyDegreesBound=-180.0;
+		double negOneEightyRadiansBound=-180.0/57.2958;
 		randLowerBoundAlphaRadians.isRadians=true;
 		randLowerBoundAlphaRadians.vInf=avionics_sim::Lift_drag_model::MIN_VINF_ALPHA;
 		randLowerBoundAlphaRadians.value=getRandomDouble(minRadiansBound, -1/57.2958);
@@ -376,6 +384,22 @@ static void setupLiftDragSetAlphaTestData()
 		setAlphaValues.push_back(alphaBelowNeg180Radians);
 		setAlphaValues.push_back(alphaAbove180Degrees);
 		setAlphaValues.push_back(alphaAbove180Radians);
+
+		alphaAt180Degrees.isRadians=false;
+		alphaAt180Degrees.value=oneEightyDegreesBound;
+		alphaAt180Radians.isRadians=true;
+		alphaAt180Radians.value=oneEightyRadiansBound;
+
+		setAlphaValues.push_back(alphaAt180Degrees);
+		setAlphaValues.push_back(alphaAt180Radians);
+
+		alphaAtNeg180Degrees.isRadians=false;
+		alphaAtNeg180Degrees.value=negOneEightyDegreesBound;
+		alphaAtNeg180Radians.isRadians=true;
+		alphaAtNeg180Radians.value=negOneEightyRadiansBound;
+
+		setAlphaValues.push_back(alphaAtNeg180Degrees);
+		setAlphaValues.push_back(alphaAtNeg180Radians);
 }
 
 static void setupLiftDragSetSpeedTestData()
@@ -848,6 +872,11 @@ static void setupLiftDragSetBetaTestData()
 		LiftDragSetBetaParams betaBelowNeg180Radians;
 		LiftDragSetBetaParams betaAbove180Degrees;
 		LiftDragSetBetaParams betaAbove180Radians;
+		LiftDragSetBetaParams betaAt180Degrees;
+		LiftDragSetBetaParams betaAt180Radians;
+		LiftDragSetBetaParams betaAtNeg180Degrees;
+		LiftDragSetBetaParams betaAtNeg180Radians;
+		
 
 		double minRadians=avionics_sim::Lift_drag_model::MIN_AOA/57.2958;
 		double maxRadians=avionics_sim::Lift_drag_model::MAX_AOA/57.2958;
@@ -855,6 +884,16 @@ static void setupLiftDragSetBetaTestData()
 		double maxRadiansBound=(avionics_sim::Lift_drag_model::MAX_AOA-1)/57.2958;
 		double minDegreesBound=(avionics_sim::Lift_drag_model::MIN_AOA+1);
 		double maxDegreesBound=(avionics_sim::Lift_drag_model::MAX_AOA-1);
+		double oneEightyDegreesBound=180.0;
+		double oneEightyRadiansBound=180.0/57.2958;
+		double negOneEightyDegreesBound=-180.0;
+		double negOneEightyRadiansBound=-180.0/57.2958;
+
+		betaAt180Degrees.isRadians=false;
+		betaAt180Degrees.value=oneEightyDegreesBound;
+		betaAt180Radians.isRadians=true;
+		betaAt180Radians.value=oneEightyRadiansBound;
+
 		randLowerBoundBetaRadians.isRadians=true;
 		randLowerBoundBetaRadians.value=getRandomDouble(minRadiansBound, -1/57.2958);
 
@@ -943,6 +982,16 @@ static void setupLiftDragSetBetaTestData()
 		setBetaValues.push_back(betaBelowNeg180Radians);
 		setBetaValues.push_back(betaAbove180Degrees);
 		setBetaValues.push_back(betaAbove180Radians);
+		setBetaValues.push_back(betaAt180Degrees);
+		setBetaValues.push_back(betaAt180Radians);
+
+		betaAtNeg180Degrees.isRadians=false;
+		betaAtNeg180Degrees.value=negOneEightyDegreesBound;
+		betaAtNeg180Radians.isRadians=true;
+		betaAtNeg180Radians.value=negOneEightyRadiansBound;
+
+		setBetaValues.push_back(betaAtNeg180Degrees);
+		setBetaValues.push_back(betaAtNeg180Radians);
 }
 
 static void setupAtan2TestData()
