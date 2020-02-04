@@ -426,7 +426,7 @@ namespace avionics_sim
         */
         //if ( mu.rough_lt(cl, MIN_CL, floatTolerance) || mu.rough_gt(cl, MAX_CL, floatTolerance) )
         std::string errMsg;
-        if (!valueIsWithinBounds(rho, MIN_CL, MAX_CL, "CL (Coefficient of Lift)", errMsg))
+        if (!valueIsWithinBounds(cl, MIN_CL, MAX_CL, "CL (Coefficient of Lift)", errMsg))
         {
             Lift_drag_model_exception e(errMsg);
             throw e;
@@ -616,7 +616,7 @@ namespace avionics_sim
         catch(const std::exception& e)
         {
             //Set angle to zero.
-            beta=0;
+            alpha=0;
 
             //Package up again as a lift drag exception and throw again.
             std::string errMsg="Lift_drag_model::setAlpha: domain error for atan";
