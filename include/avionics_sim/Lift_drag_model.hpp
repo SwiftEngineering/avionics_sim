@@ -313,7 +313,7 @@ namespace avionics_sim
           constexpr static double MIN_VINF=0.0;
 
           /// \brief maximum acceptable vInf (speed).
-          constexpr static double MAX_VINF=30.0;
+          constexpr static double MAX_VINF=100.0;
 
           /// \brief minimum acceptable vInf (speed) for checking value of alpha.
           constexpr static double MIN_VINF_ALPHA=2.5;
