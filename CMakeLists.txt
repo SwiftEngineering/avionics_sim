@@ -11,6 +11,7 @@ add_library(avionics_sim
 	src/Differential_pressure_sensor_model.cpp
 	src/Exponential_smoothing_filter.cpp
 	src/GaussianMarkov_noise.cpp
+	src/Motor_current_consumption_model.cpp
 	src/NPolynomial_Eval.cpp
 	src/US_1976_atmosphere.cpp
 	src/Bilinear_interp.cpp
