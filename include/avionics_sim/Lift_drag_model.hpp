@@ -255,7 +255,7 @@ namespace avionics_sim
           ///
           /// /brief Calculates alpha from wing pose and world velocity.
           ///
-          /// \param[in] wingPose  ignition Pose3d of wing coorinate system.
+          /// \param[in] wingPose  ignition Pose3d of wing coordinate system.
           /// \param[in] worldVel  ignition Vector3d of world linear velocity.
           /// \param[out] alpha pointer to the resulting alpha calculated.
           ///
@@ -392,7 +392,7 @@ namespace avionics_sim
           ///
           /// /brief Calculates beta (side slip angle) from wing pose and world velocity.
           ///
-          /// \param[in] wingPose  ignition Pose3d of wing coorinate system.
+          /// \param[in] wingPose  ignition Pose3d of wing coordinate system.
           /// \param[in] worldVel  ignition Vector3d of world linear velocity.
           /// \return N/A
           ///
@@ -421,11 +421,31 @@ namespace avionics_sim
           /// \brief      Sets value of lateral velocity.
           ///
           /// \details    Takes in world velocity, uses project_vector_global to get body frame, then takes value from projection. In future refactor, this method should be called in calculateAlpha to streamline.
-          /// \param[in] wingPose  ignition Pose3d of wing coorinate system.
+          /// \param[in] wingPose  ignition Pose3d of wing coordinate system.
           /// \param[in] worldVel  ignition Vector3d of world linear velocity.
           /// \return      N/A
           ///
           void setLateralVelocity(ignition::math::Pose3d wingPose, ignition::math::Vector3d worldVel);
+
+          // Function to set value of lateral velocity.
+          ///
+          /// \brief      Sets value of lateral velocity to a specified value.
+          ///
+          /// \details    Takes in given velocity as lateral velocity.
+          /// \param[in]  vel  A chosen lateral velocity
+          /// \return      N/A
+          ///
+          void setLateralVelocity(double vel) {lateral_velocity=vel;};
+
+          // Function to get value of lateral velocity.
+          ///
+          /// \brief      Returns value of current lateral velocity.
+          ///
+          /// \details    Takes in given velocity as lateral velocity.
+          /// \param[in]  N/A
+          /// \return     Double
+          ///
+          double getLateralVelocity() {return lateral_velocity;};
 
         private:
 

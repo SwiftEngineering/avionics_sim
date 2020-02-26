@@ -485,7 +485,7 @@ namespace avionics_sim
         /*
         Need to convert beta to radians because domain of atan2 is [-pi,pi]and radians are inherently dimensionless (they are the ratio of two lengths).
         */
-        double q_lat=q=0.5*rho*lateral_velocity*lateral_velocity;
+        double q_lat=0.5*rho*lateral_velocity*lateral_velocity;
         lateral_force=q_lat*coefficientLateralForce*convertDegreesToRadians(getBeta())*getLateralArea();
 
         std::string errMsg;
