@@ -315,11 +315,11 @@ namespace avionics_sim
           /// \brief maximum acceptable vInf (speed).
           constexpr static double MAX_VINF=100.0;
 
-          /// \brief maximum acceptable vInf (speed).
+          /// \brief maximum acceptable lateral velocity.
           constexpr static double MAX_LATERAL_VELOCITY=50.0;
 
-          /// \brief minimum acceptable vInf (speed).
-          constexpr static double MIN_LATERAL_VELOCITY=0;
+          /// \brief minimum acceptable lateral velocity.
+          constexpr static double MIN_LATERAL_VELOCITY=-MAX_LATERAL_VELOCITY;
 
           /// \brief minimum acceptable vInf (speed) for checking value of alpha.
           constexpr static double MIN_VINF_ALPHA=2.5;
