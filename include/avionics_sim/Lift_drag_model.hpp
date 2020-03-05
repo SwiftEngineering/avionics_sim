@@ -315,6 +315,12 @@ namespace avionics_sim
           /// \brief maximum acceptable vInf (speed).
           constexpr static double MAX_VINF=100.0;
 
+          /// \brief maximum acceptable vInf (speed).
+          constexpr static double MAX_LATERAL_VELOCITY=50.0;
+
+          /// \brief minimum acceptable vInf (speed).
+          constexpr static double MIN_LATERAL_VELOCITY=0;
+
           /// \brief minimum acceptable vInf (speed) for checking value of alpha.
           constexpr static double MIN_VINF_ALPHA=2.5;
 
@@ -373,8 +379,8 @@ namespace avionics_sim
           /// \brief maximum acceptable surface area
           constexpr static double MAX_AREA=1.5;
 
-          /// \brief Minimum lateral force (where minimum lateral velocity is -50)
-          constexpr static double MIN_LATERAL_FORCE=0;
+          /// \brief Minimum lateral force (where minimum lateral velocity is -50 and rho is 1.225)
+          constexpr static double MIN_LATERAL_FORCE=-796.25;
 
           /// \brief Maximum lateral force (where minimum lateral velocity is 50 and rho is 1.225)
           constexpr static double MAX_LATERAL_FORCE=796.25;
@@ -435,13 +441,13 @@ namespace avionics_sim
           /// \param[in]  vel  A chosen lateral velocity
           /// \return      N/A
           ///
-          void setLateralVelocity(double vel) {lateral_velocity=vel;};
+          void setLateralVelocity(double vel);
 
           // Function to get value of lateral velocity.
           ///
           /// \brief      Returns value of current lateral velocity.
           ///
-          /// \details    Takes in given velocity as lateral velocity.
+          /// \details    Returns lateral velocity.
           /// \param[in]  N/A
           /// \return     Double
           ///

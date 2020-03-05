@@ -137,11 +137,13 @@ namespace avionics_sim
         // Calculate world linear velocity in wing coordinate frame.
         avionics_sim::Coordinate_Utils::project_vector_global(wingPose, vInfbar, &wingFrameVelocity);
 
-        // Calculate beta (formula for angle beta derived from excerpt of Flight Dynamics Principles (Third Edition), 2013)
+        double y=wingFrameVelocity.Y();
+
+        //Corrected to be Z() component. Only difference is in value for y.
+        double x=wingFrameVelocity.Z();
         try
         {
-            double y=wingFrameVelocity.Y();
-            double x=vInfbar.Length();
+        
             beta = atan2(y,x);
             //std::cout<<"wingFrameVelocity.Y()="<<wingFrameVelocity.Y()<<", vinfbar="<<vInfbar.Length()<<", beta in degrees="<<convertRadiansToDegrees(beta)<<std::endl;
         }
@@ -216,27 +218,9 @@ namespace avionics_sim
 
             /*Check if beta is in [-180, 180]. If not, condition it to be so, then throw an exception. While this should not happen (atan2 guarantees that resulting value is in the range of [-pi, pi]), this check is put into place in case a function that does not use atan2 sets the value of the angle).*/
 
-            //Use floating point comparison in DE260
-            /*if ((beta<-180)||(beta>180))
-            {
-                double conditionedAngle=conditionAngle(beta);
-
-                std::string errMsg="Lift_drag_model::setBeta: Beta of "+mu.to_string_with_precision(beta,2)+" is not within bounds of ["+mu.to_string_with_precision(-180,2)+", "+mu.to_string_with_precision(180, 2)+"]. Angle will be conditioned to a value of "+mu.to_string_with_precision(conditionedAngle, 2)+".";
-
-                beta=conditionedAngle;
-
-                Lift_drag_model_exception e(errMsg);
-                throw e;
-            }*/
-
             if (!valueIsWithinBounds(beta, LOWER_BETA_BOUND, UPPER_BETA_BOUND, "Beta", errMsg))
             {
-                double conditionedAngle=conditionAngle(beta);
                 errMsg="Lift_drag_model::setBeta: "+errMsg;
-
-                beta=conditionedAngle;
-
-                errMsg=errMsg+". Angle will be conditioned to a value of "+mu.to_string_with_precision(conditionedAngle, 2)+".";
 
                 Lift_drag_model_exception e(errMsg);
                 throw e;
@@ -288,14 +272,6 @@ namespace avionics_sim
         if (isnan(_area))
         {
             errMsg="Lift_drag_model::setArea: area is NaN";
-            Lift_drag_model_exception e(errMsg, true);
-            throw e;
-        }
-
-        //Check if the area is less than zero. If it is, throw a critical exception.
-        else if (_area<0)
-        {
-            errMsg="Lift_drag_model::setArea: area is less than zero";
             Lift_drag_model_exception e(errMsg, true);
             throw e;
         }
@@ -454,7 +430,6 @@ namespace avionics_sim
     {
         lift=cl*q*getArea();
 
-        //if ( (mu.rough_lt(lift, MIN_LIFT, tolerance)) || (mu.rough_gt(lift, MAX_LIFT, tolerance)) )
         std::string errMsg;
         if (!valueIsWithinBounds(lift, MIN_LIFT, MAX_LIFT, "Lift", errMsg))
         {
@@ -462,7 +437,6 @@ namespace avionics_sim
             Lift_drag_model_exception e(errMsg);
             throw e;
         }
-
     }
 
     void Lift_drag_model::calculateDrag()
@@ -471,10 +445,9 @@ namespace avionics_sim
 
         //Check if the drag force is within bounds. Throw an exception if it is not.
         std::string errMsg;
-        //if ( mu.rough_lt(drag, MIN_DRAG, tolerance) || mu.rough_gt(drag, MAX_DRAG, tolerance) )
         if (!valueIsWithinBounds(drag, MIN_DRAG, MAX_DRAG, "Drag", errMsg))
         {
-            errMsg=errMsg+"Cd="+mu.to_string_with_precision(cd,16)+", q="+mu.to_string_with_precision(q,16)+", area="+mu.to_string_with_precision(getArea(),16);;
+            errMsg=errMsg+"Cd="+mu.to_string_with_precision(cd,16)+", q="+mu.to_string_with_precision(q,16)+", area="+mu.to_string_with_precision(getArea(),16);
             Lift_drag_model_exception e(errMsg);
             throw e;
         }
@@ -482,12 +455,8 @@ namespace avionics_sim
 
     void Lift_drag_model::calculateLateralForce()
     {
-        /*
-        Need to convert beta to radians because domain of atan2 is [-pi,pi]and radians are inherently dimensionless (they are the ratio of two lengths).
-        */
         double q_lat=0.5*rho*lateral_velocity*lateral_velocity;
         lateral_force=q_lat*coefficientLateralForce*convertDegreesToRadians(getBeta())*getLateralArea();
-
         std::string errMsg;
         if (!valueIsWithinBounds(lateral_force, MIN_LATERAL_FORCE, MAX_LATERAL_FORCE, "Lateral force", errMsg))
         {
@@ -725,7 +694,7 @@ namespace avionics_sim
         return withinBounds;
     }
 
-        void Lift_drag_model::setLateralVelocity(ignition::math::Pose3d wingPose, ignition::math::Vector3d worldVel)
+    void Lift_drag_model::setLateralVelocity(ignition::math::Pose3d wingPose, ignition::math::Vector3d worldVel)
     {
         ignition::math::Vector3d vInfbar; // vInf = -world velocity
         ignition::math::Vector3d wingFrameVelocity; // Vector 3 of world linear velocity in wing frame.
@@ -733,7 +702,7 @@ namespace avionics_sim
 
         double vInLDPlane_s; // Scalar magnitude of speed in LD plane.
 
-        std::string exceptions="Lift_drag_model::calculateAlpha:\n";
+        std::string exceptions="Lift_drag_model::setLateralVelocity:\n";
 
         bool exceptionOccurred=false;
         bool criticalExceptionOccurred=false;
@@ -744,7 +713,49 @@ namespace avionics_sim
         // Calculate world linear velocity in wing coordinate frame.
         avionics_sim::Coordinate_Utils::project_vector_global(wingPose, vInfbar, &wingFrameVelocity);
 
-        //Set lateral velocity for lateral force calculation (will move code for beta angle in here, hence placed here and not in calculateBeta)
-        lateral_velocity = wingFrameVelocity.Y();
+        try
+        {
+             //Set lateral velocity for lateral force calculation (will move code for beta angle in here, hence placed here and not in calculateBeta)
+            setLateralVelocity(wingFrameVelocity.Y());
+        }
+        catch(Lift_drag_model_exception& e)
+        {
+            exceptionOccurred=true;
+
+            if (e.isCritical())
+            {
+                criticalExceptionOccurred=true;
+            }
+
+            exceptions=exceptions+e.what()+"\n";
+        }
     }
+
+    void Lift_drag_model::setLateralVelocity(double vel)
+    {
+        //Check if the drag force is within bounds. Throw an exception if it is not.
+        std::string errMsg;
+
+        //Check if incoming lateral velocity is NaN. Throw a critical exception if it is.
+        if (isnan(vel))
+        {
+            errMsg="Lift_drag_model::setLateralVelocity: lateral velocity is NaN";
+            Lift_drag_model_exception e(errMsg, true);
+            throw e;
+        }
+
+        else
+        {
+            lateral_velocity=vel;
+
+            //Check if vInf is within bounds. If not, store vInf as either MIN_VINF or MAX_VINF if bounds exceeded, then throw an exception.
+            if (!valueIsWithinBounds(lateral_velocity, MIN_LATERAL_VELOCITY, MAX_LATERAL_VELOCITY, "Lateral velocity", errMsg, true))
+            {
+                Lift_drag_model_exception e(errMsg);
+                throw e;
+            }
+        }
+    }
+
+	
 }
