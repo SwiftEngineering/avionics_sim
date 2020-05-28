@@ -1,6 +1,6 @@
 /**
- * @brief       LiftDrag::SetSpeed Parameterized Unit Test Class
- * @file        LiftDragSetSpeedParameterized.h
+ * @brief       LiftDrag::SetVelocity Parameterized Unit Test Class
+ * @file        LiftDragSetVelocityParameterized.h
  * @author      Ihimu Ukpo <iukpo@swiftengineering.com>
  * @copyright   Copyright (c) 2019, Swift Engineering Inc.
  * @license     Licensed under the MIT license. See LICENSE for details.
@@ -10,30 +10,30 @@
 #include <boost/array.hpp>
 #include <stdio.h>
 
-// LiftDragSetSpeedParameterized class  
+// LiftDragSetVelocityParameterized class  
 ///
-/// \brief      Subclass of testing::TestWithParam that accepts setSpeed related parameters as input for test.
+/// \brief      Subclass of testing::TestWithParam that accepts setVelocity related parameters as input for test.
 ///
 /// \details    N/A
 ///
 
-typedef struct LiftDragSetSpeedParams {
+typedef struct LiftDragSetVelocityParams {
 	double value;
-}LiftDragSetSpeedParams;
+}LiftDragSetVelocityParams;
 
 //Type definition for LiftDragParameterCollections.
-typedef std::vector<LiftDragSetSpeedParams> LiftDragSetSpeedParameterCollections;
+typedef std::vector<LiftDragSetVelocityParams> LiftDragSetVelocityParameterCollections;
 
-class LiftDragSetSpeedParameterized :
-    public ::testing::TestWithParam<LiftDragSetSpeedParams> {
+class LiftDragSetVelocityParameterized :
+    public ::testing::TestWithParam<LiftDragSetVelocityParams> {
 
 		protected:
 
 			///Default constructor
-			LiftDragSetSpeedParameterized() {};
+			LiftDragSetVelocityParameterized() {};
 
 			///Destructor
-			virtual ~LiftDragSetSpeedParameterized() {};
+			virtual ~LiftDragSetVelocityParameterized() {};
 
 			// Function to prepare the objects for each test.   
 			///

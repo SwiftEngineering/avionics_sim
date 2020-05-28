@@ -9,8 +9,12 @@ SET(AVIONICS_SIM_UNIT_TEST_SRC
 	${CMAKE_CURRENT_SOURCE_DIR}/Test_Bilinear_interp.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Calculate_Dynamic_Pressure.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Test_Coordinate_Utils.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Calculate_Wind_Angles.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Calculate_Local_Velocities.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Set_Get_Lateral_Velocity.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Set_Get_Freestream_Velocity.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Set_Get_Planar_Velocity.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Set_Get_Alpha.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Set_Get_Speed.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Set_Get_Air_Density.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Lookup_CL.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Test_Lift_Drag_Lookup_CD.cpp

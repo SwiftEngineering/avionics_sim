@@ -21,7 +21,7 @@
 #include "CombinatoricalLiftDragTest.h"
 #include "CoordUtilsTest.h"
 #include "LiftDragSetAlphaParameterized.h"
-#include "LiftDragSetSpeedParameterized.h"
+#include "LiftDragSetVelocityParameterized.h"
 #include "LiftDragSetAirDensityParameterized.h"
 #include "LiftDragLookupCLParameterized.h"
 #include "LiftDragLookupCDParameterized.h"
@@ -35,6 +35,8 @@
 #include "LiftDragSetBetaParameterized.h"
 #include "Atan2Parameterized.h"
 #include "LiftDragSetLateralAreaParameterized.h"
+#include "LiftDragCalculateLocalVelocitiesParameterized.h"
+#include "LiftDragCalculateWindAnglesParameterized.h"
 
 //Uncomment this to use the smaller hand calc tests.
 //#define HANDTEST 1
@@ -52,7 +54,11 @@ const int lastNegativeAlphaIdx=58;
 
 LiftDragSetAlphaParameterCollections setAlphaValues;
 
-LiftDragSetSpeedParameterCollections setSpeedValues;
+LiftDragSetVelocityParameterCollections setFreestreamVelocityValues;
+
+LiftDragSetVelocityParameterCollections setPlanarVelocityValues;
+
+LiftDragSetVelocityParameterCollections setLateralVelocityValues;
 
 LiftDragSetAirDensityParameterCollections setAirDensityValues;
 
@@ -88,6 +94,10 @@ LiftDragSetBetaParameterCollections setBetaValues;
 
 Atan2ParameterCollections setAtan2Values;
 
+LiftDragCalculateLocalVelocitiesParameterCollections setCalculateLocalVelocitiesValues;
+
+LiftDragCalculateWindAnglesParameterCollections setCalculateWindAnglesValues;
+
 //NB: Disable test by prefacing first parameter with "DISABLED_"
 //Instantiation of parameterized integration test for non prop wash, non control surface.
 INSTANTIATE_TEST_CASE_P(NoPropWashNoControlSurface,
@@ -119,10 +129,15 @@ INSTANTIATE_TEST_CASE_P(LiftDragUnitTestSetGetAlpha,
                         LiftDragSetAlphaParameterized,
                         ::testing::ValuesIn(setAlphaValues));
 
-//Instantiation of LiftDrag::setAlpha method test
-INSTANTIATE_TEST_CASE_P(LiftDragUnitTestSetGetSpeed,
-                        LiftDragSetSpeedParameterized,
-                        ::testing::ValuesIn(setSpeedValues));
+//Instantiation of LiftDrag::setFreestreamVelocity method test
+INSTANTIATE_TEST_CASE_P(LiftDragUnitTestSetGetFreestreamVelocity,
+                        LiftDragSetVelocityParameterized,
+                        ::testing::ValuesIn(setFreestreamVelocityValues));
+
+//Instantiation of LiftDrag::setPlanarVelocity method test
+INSTANTIATE_TEST_CASE_P(LiftDragUnitTestSetGetPlanarVelocity,
+                        LiftDragSetVelocityParameterized,
+                        ::testing::ValuesIn(setPlanarVelocityValues));
 
 //Instantiation of LiftDrag::setAirDensity method test
 INSTANTIATE_TEST_CASE_P(LiftDragUnitTestSetGetAirDensity,
@@ -189,6 +204,17 @@ INSTANTIATE_TEST_CASE_P(Atan2Test,
                         Atan2Parameterized,
                         ::testing::ValuesIn(setAtan2Values));
 
+//Instantiation of LiftDrag::calculateLocalVelocities test
+INSTANTIATE_TEST_CASE_P(LiftDragCalculateLocalVelocities,
+                        LiftDragCalculateLocalVelocitiesParameterized,
+                        ::testing::ValuesIn(setCalculateLocalVelocitiesValues));
+
+//Instantiation of LiftDrag::calculateWindAngles test
+INSTANTIATE_TEST_CASE_P(LiftDragCalculateWindAngles,
+                        LiftDragCalculateWindAnglesParameterized,
+                        ::testing::ValuesIn(setCalculateWindAnglesValues));
+
+
 bool runUnitTests=false;
 bool runIntegrationTests=false;
 bool runSystemTests=false;
@@ -238,6 +264,10 @@ static void setupCoordUtilsTestData()
 		getDataVector(j, worldLinearVelocitiesData, params.worldLinearVelocities);
 		getDataVector(j, worldOrientationsData, params.worldOrientations);
 		getDataVector(j, canonicalLinearVels, params.globalVelocities);
+
+		//Until test data is updated to have forward and upward vectors, used a fixed set.
+		params.vecFwd=ignition::math::Vector3d(1.0,0.0,0.0);
+		params.vecUpward=ignition::math::Vector3d(0.0,0.0,1.0);
 		coordUtilData.push_back(params);
 	}
 }
@@ -282,25 +312,18 @@ static void setupLiftDragSetAlphaTestData()
 		double negOneEightyDegreesBound=-180.0;
 		double negOneEightyRadiansBound=-180.0/57.2958;
 		randLowerBoundAlphaRadians.isRadians=true;
-		randLowerBoundAlphaRadians.vInf=avionics_sim::Lift_drag_model::MIN_VINF_ALPHA;
 		randLowerBoundAlphaRadians.value=getRandomDouble(minRadiansBound, -1/57.2958);
 		randUpperBoundAlphaRadians.isRadians=true;
-		randUpperBoundAlphaRadians.vInf=avionics_sim::Lift_drag_model::MIN_VINF_ALPHA;
 		randUpperBoundAlphaRadians.value=getRandomDouble(1/57.2958, maxRadiansBound);
 		zeroAlphaRadians.isRadians=true;
-		zeroAlphaRadians.vInf=avionics_sim::Lift_drag_model::MIN_VINF_ALPHA;
 		zeroAlphaRadians.value=0/57.2958;
 		lowestBoundAlphaRadians.isRadians=true;
-		lowestBoundAlphaRadians.vInf=avionics_sim::Lift_drag_model::MIN_VINF_ALPHA;
 		lowestBoundAlphaRadians.value=minRadians;
 		highestBoundAlphaRadians.isRadians=true;
-		highestBoundAlphaRadians.vInf=avionics_sim::Lift_drag_model::MIN_VINF_ALPHA;
 		highestBoundAlphaRadians.value=maxRadians;
 		lowerBoundAlphaRadians.isRadians=true;
-		lowerBoundAlphaRadians.vInf=avionics_sim::Lift_drag_model::MIN_VINF_ALPHA;
 		lowerBoundAlphaRadians.value=minRadians;
 		upperBoundAlphaRadians.isRadians=true;
-		upperBoundAlphaRadians.vInf=avionics_sim::Lift_drag_model::MIN_VINF_ALPHA;
 		upperBoundAlphaRadians.value=maxRadians;
 		
 		setAlphaValues.push_back(randLowerBoundAlphaRadians);
@@ -312,19 +335,14 @@ static void setupLiftDragSetAlphaTestData()
 		setAlphaValues.push_back(upperBoundAlphaRadians);
 
 		randLowerBoundAlphaDegrees.isRadians=false;
-		randLowerBoundAlphaDegrees.vInf=avionics_sim::Lift_drag_model::MIN_VINF_ALPHA;
 		randLowerBoundAlphaDegrees.value=getRandomDouble(minDegreesBound, -1);
 		randUpperBoundAlphaDegrees.isRadians=false;
-		randUpperBoundAlphaDegrees.vInf=avionics_sim::Lift_drag_model::MIN_VINF_ALPHA;
 		randUpperBoundAlphaDegrees.value=getRandomDouble(1, maxDegreesBound);
 		zeroAlphaDegrees.isRadians=false;
-		zeroAlphaDegrees.vInf=avionics_sim::Lift_drag_model::MIN_VINF_ALPHA;
 		zeroAlphaDegrees.value=0;
 		lowestBoundAlphaDegrees.isRadians=false;
-		lowestBoundAlphaDegrees.vInf=avionics_sim::Lift_drag_model::MIN_VINF_ALPHA;
 		lowestBoundAlphaDegrees.value=avionics_sim::Lift_drag_model::MIN_AOA;
 		highestBoundAlphaDegrees.isRadians=false;
-		highestBoundAlphaDegrees.vInf=avionics_sim::Lift_drag_model::MIN_VINF_ALPHA;
 		highestBoundAlphaDegrees.value=avionics_sim::Lift_drag_model::MAX_AOA;
 
 		setAlphaValues.push_back(randLowerBoundAlphaDegrees);
@@ -334,28 +352,22 @@ static void setupLiftDragSetAlphaTestData()
 		setAlphaValues.push_back(highestBoundAlphaDegrees);
 
 		randExceptionLowerBoundAlpha.isRadians=false;
-		randExceptionLowerBoundAlpha.vInf=avionics_sim::Lift_drag_model::MIN_VINF_ALPHA;
 		randExceptionLowerBoundAlpha.value=getRandomDouble(-180, avionics_sim::Lift_drag_model::MIN_AOA-1);
 
 		randExceptionUpperBoundAlpha.isRadians=false;
-		randExceptionUpperBoundAlpha.vInf=avionics_sim::Lift_drag_model::MIN_VINF_ALPHA;
 		randExceptionUpperBoundAlpha.value=getRandomDouble(avionics_sim::Lift_drag_model::MAX_AOA+1, 180);
 
 		exceptionLowestBoundAlpha.isRadians=false;
-		exceptionLowestBoundAlpha.vInf=avionics_sim::Lift_drag_model::MIN_VINF_ALPHA;
 		exceptionLowestBoundAlpha.value=-180;
 
 		exceptionHighestBoundAlpha.isRadians=false;
-		exceptionHighestBoundAlpha.vInf=avionics_sim::Lift_drag_model::MIN_VINF_ALPHA;
 		exceptionHighestBoundAlpha.value=180;
 		
 		nanAlpha.isRadians=false;
-		nanAlpha.vInf=avionics_sim::Lift_drag_model::MIN_VINF_ALPHA;
 		nanAlpha.value=std::numeric_limits<double>::quiet_NaN();
 
 		vInfLessThanMin.isRadians=false;
 		vInfLessThanMin.value=0;
-		vInfLessThanMin.vInf=0.0;
 
 		setAlphaValues.push_back(randExceptionLowerBoundAlpha);
 		setAlphaValues.push_back(randExceptionUpperBoundAlpha);
@@ -366,19 +378,15 @@ static void setupLiftDragSetAlphaTestData()
 
 		alphaBelowNeg180Degrees.isRadians=false;
 		alphaBelowNeg180Degrees.value=getRandomDouble(-1080, -180);
-		alphaBelowNeg180Degrees.vInf=0.0;
 
 		alphaBelowNeg180Radians.isRadians=true;
 		alphaBelowNeg180Radians.value=getRandomDouble(-18.84956, -3.14159);
-		alphaBelowNeg180Radians.vInf=0.0;
 
 		alphaAbove180Degrees.isRadians=false;
 		alphaAbove180Degrees.value=getRandomDouble(180, 1080);
-		alphaAbove180Degrees.vInf=0.0;
 
 		alphaAbove180Radians.isRadians=true;
 		alphaAbove180Radians.value=getRandomDouble(3.14159, 18.84956);
-		alphaAbove180Radians.vInf=0.0;
 
 		setAlphaValues.push_back(alphaBelowNeg180Degrees);
 		setAlphaValues.push_back(alphaBelowNeg180Radians);
@@ -402,42 +410,127 @@ static void setupLiftDragSetAlphaTestData()
 		setAlphaValues.push_back(alphaAtNeg180Radians);
 }
 
-static void setupLiftDragSetSpeedTestData()
+static void setupLiftDragSetFreestreamVelocityTestData()
 {
-	LiftDragSetSpeedParams exceptionLowestBoundSpeed;
-	LiftDragSetSpeedParams randExceptionLowerBoundSpeed;
-	LiftDragSetSpeedParams zeroSpeed;
-	LiftDragSetSpeedParams minSpeed;
-	LiftDragSetSpeedParams maxSpeed;
-	LiftDragSetSpeedParams randExceptionUpperBoundSpeed;
-	LiftDragSetSpeedParams exceptionHighestBoundSpeed;
-	LiftDragSetSpeedParams nanSpeed;
+	LiftDragSetVelocityParams exceptionLowestBoundVelocity;
+	LiftDragSetVelocityParams randExceptionLowerBoundVelocity;
+	LiftDragSetVelocityParams zeroVelocity;
+	LiftDragSetVelocityParams minVelocity;
+	LiftDragSetVelocityParams maxVelocity;
+	LiftDragSetVelocityParams randExceptionUpperBoundVelocity;
+	LiftDragSetVelocityParams exceptionHighestBoundVelocity;
+	LiftDragSetVelocityParams nanVelocity;
+	LiftDragSetVelocityParams randomRealisticVelocity;
 
-	exceptionLowestBoundSpeed.value=-180;
+	exceptionLowestBoundVelocity.value=std::numeric_limits<double>::lowest();
 
-	randExceptionLowerBoundSpeed.value=getRandomDouble(std::numeric_limits<double>::lowest()+1, avionics_sim::Lift_drag_model::MIN_VINF-1);
+	randExceptionLowerBoundVelocity.value=getRandomDouble(std::numeric_limits<double>::lowest()+1, avionics_sim::Lift_drag_model::MIN_VINF-1);
 
-	zeroSpeed.value=0;
+	zeroVelocity.value=0;
 
-	minSpeed.value=avionics_sim::Lift_drag_model::MIN_VINF;
+	minVelocity.value=avionics_sim::Lift_drag_model::MIN_VINF;
 
-	maxSpeed.value=avionics_sim::Lift_drag_model::MAX_VINF;
+	maxVelocity.value=avionics_sim::Lift_drag_model::MAX_VINF;
 
-	randExceptionUpperBoundSpeed.value=getRandomDouble(avionics_sim::Lift_drag_model::MAX_VINF+1, std::numeric_limits<double>::max()-1);
+	randExceptionUpperBoundVelocity.value=getRandomDouble(avionics_sim::Lift_drag_model::MAX_VINF+1, std::numeric_limits<double>::max()-1);
 
-	exceptionHighestBoundSpeed.value=std::numeric_limits<double>::max();
+	exceptionHighestBoundVelocity.value=std::numeric_limits<double>::max();
 
-	nanSpeed.value=std::numeric_limits<double>::quiet_NaN();
+	nanVelocity.value=std::numeric_limits<double>::quiet_NaN();
 
-	setSpeedValues.push_back(exceptionLowestBoundSpeed);
-	setSpeedValues.push_back(randExceptionLowerBoundSpeed);
-	setSpeedValues.push_back(zeroSpeed);
-	setSpeedValues.push_back(minSpeed);
-	setSpeedValues.push_back(maxSpeed);
-	setSpeedValues.push_back(randExceptionUpperBoundSpeed);
-	setSpeedValues.push_back(exceptionHighestBoundSpeed);
-	setSpeedValues.push_back(nanSpeed);
+	randomRealisticVelocity.value=getRandomDouble(avionics_sim::Lift_drag_model::MIN_VINF, avionics_sim::Lift_drag_model::MAX_VINF);
 
+	setFreestreamVelocityValues.push_back(exceptionLowestBoundVelocity);
+	setFreestreamVelocityValues.push_back(randExceptionLowerBoundVelocity);
+	setFreestreamVelocityValues.push_back(zeroVelocity);
+	setFreestreamVelocityValues.push_back(minVelocity);
+	setFreestreamVelocityValues.push_back(maxVelocity);
+	setFreestreamVelocityValues.push_back(randExceptionUpperBoundVelocity);
+	setFreestreamVelocityValues.push_back(exceptionHighestBoundVelocity);
+	setFreestreamVelocityValues.push_back(nanVelocity);
+	setFreestreamVelocityValues.push_back(randomRealisticVelocity);
+}
+
+static void setupLiftDragSetPlanarVelocityTestData()
+{
+	LiftDragSetVelocityParams exceptionLowestBoundVelocity;
+	LiftDragSetVelocityParams randExceptionLowerBoundVelocity;
+	LiftDragSetVelocityParams zeroVelocity;
+	LiftDragSetVelocityParams minVelocity;
+	LiftDragSetVelocityParams maxVelocity;
+	LiftDragSetVelocityParams randExceptionUpperBoundVelocity;
+	LiftDragSetVelocityParams exceptionHighestBoundVelocity;
+	LiftDragSetVelocityParams nanVelocity;
+	LiftDragSetVelocityParams randomRealisticVelocity;
+
+	exceptionLowestBoundVelocity.value=std::numeric_limits<double>::lowest();
+
+	randExceptionLowerBoundVelocity.value=getRandomDouble(std::numeric_limits<double>::lowest()+1, avionics_sim::Lift_drag_model::MIN_VINF-1);
+
+	zeroVelocity.value=0;
+
+	minVelocity.value=avionics_sim::Lift_drag_model::MIN_VINF;
+
+	maxVelocity.value=avionics_sim::Lift_drag_model::MAX_VINF;
+
+	randExceptionUpperBoundVelocity.value=getRandomDouble(avionics_sim::Lift_drag_model::MAX_VINF+1, std::numeric_limits<double>::max()-1);
+
+	exceptionHighestBoundVelocity.value=std::numeric_limits<double>::max();
+
+	nanVelocity.value=std::numeric_limits<double>::quiet_NaN();
+
+	randomRealisticVelocity.value=getRandomDouble(avionics_sim::Lift_drag_model::MIN_VINF-1, avionics_sim::Lift_drag_model::MAX_VINF+1);
+
+	setPlanarVelocityValues.push_back(exceptionLowestBoundVelocity);
+	setPlanarVelocityValues.push_back(randExceptionLowerBoundVelocity);
+	setPlanarVelocityValues.push_back(zeroVelocity);
+	setPlanarVelocityValues.push_back(minVelocity);
+	setPlanarVelocityValues.push_back(maxVelocity);
+	setPlanarVelocityValues.push_back(randExceptionUpperBoundVelocity);
+	setPlanarVelocityValues.push_back(exceptionHighestBoundVelocity);
+	setPlanarVelocityValues.push_back(nanVelocity);
+	setPlanarVelocityValues.push_back(randomRealisticVelocity);
+}
+
+static void setupLiftDragSetLateralVelocityTestData()
+{
+	LiftDragSetVelocityParams exceptionLowestBoundVelocity;
+	LiftDragSetVelocityParams randExceptionLowerBoundVelocity;
+	LiftDragSetVelocityParams zeroVelocity;
+	LiftDragSetVelocityParams minVelocity;
+	LiftDragSetVelocityParams maxVelocity;
+	LiftDragSetVelocityParams randExceptionUpperBoundVelocity;
+	LiftDragSetVelocityParams exceptionHighestBoundVelocity;
+	LiftDragSetVelocityParams nanVelocity;
+	LiftDragSetVelocityParams randomRealisticVelocity;
+
+	exceptionLowestBoundVelocity.value=std::numeric_limits<double>::lowest();
+
+	randExceptionLowerBoundVelocity.value=getRandomDouble(std::numeric_limits<double>::lowest()+1, avionics_sim::Lift_drag_model::MIN_LATERAL_VELOCITY-1);
+
+	zeroVelocity.value=0;
+
+	minVelocity.value=avionics_sim::Lift_drag_model::MIN_LATERAL_VELOCITY;
+
+	maxVelocity.value=avionics_sim::Lift_drag_model::MAX_LATERAL_VELOCITY;
+
+	randExceptionUpperBoundVelocity.value=getRandomDouble(avionics_sim::Lift_drag_model::MAX_LATERAL_VELOCITY+1, std::numeric_limits<double>::max()-1);
+
+	exceptionHighestBoundVelocity.value=std::numeric_limits<double>::max();
+
+	nanVelocity.value=std::numeric_limits<double>::quiet_NaN();
+
+	randomRealisticVelocity.value=getRandomDouble(avionics_sim::Lift_drag_model::MIN_LATERAL_VELOCITY+1, avionics_sim::Lift_drag_model::MAX_LATERAL_VELOCITY-1);
+
+	setLateralVelocityValues.push_back(exceptionLowestBoundVelocity);
+	setLateralVelocityValues.push_back(randExceptionLowerBoundVelocity);
+	setLateralVelocityValues.push_back(zeroVelocity);
+	setLateralVelocityValues.push_back(minVelocity);
+	setLateralVelocityValues.push_back(maxVelocity);
+	setLateralVelocityValues.push_back(randExceptionUpperBoundVelocity);
+	setLateralVelocityValues.push_back(exceptionHighestBoundVelocity);
+	setLateralVelocityValues.push_back(nanVelocity);
+	setLateralVelocityValues.push_back(randomRealisticVelocity);
 }
 
 static void setupLiftDragSetAirDensityTestData()
@@ -1014,6 +1107,32 @@ static void setupAtan2TestData()
 		setAtan2Values.push_back(yZero);
 }
 
+static void setupCalculateLocalVelocitiesData()
+{
+	LiftDragCalculateLocalVelocitiesParams markdownInput;
+	markdownInput.inputWorldVel=ignition::math::Vector3d(10.0,1.0,0.1);
+	markdownInput.inputPose=ignition::math::Pose3d(0.0,0.0,0.0,-0.09,1.48,0.1);
+	markdownInput.correctVPlanar=10;
+	markdownInput.correctVBody=ignition::math::Vector3d(0.9,-0.9,9.9);
+	markdownInput.correctVLateral=markdownInput.correctVBody.Y();
+	markdownInput.correctVinf=markdownInput.correctVBody.Length();
+	setCalculateLocalVelocitiesValues.push_back(markdownInput);
+}
+
+static void setupCalculateWindAnglesData()
+{
+	LiftDragCalculateWindAnglesParams markdownInput;
+	markdownInput.inputWorldVel=ignition::math::Vector3d(10.0,1.0,0.1);
+	markdownInput.inputPose=ignition::math::Pose3d(0.0,0.0,0.0,-0.09,1.48,0.1);
+	markdownInput.vFwd=ignition::math::Vector3d(0.0,0.0,1.0);
+	markdownInput.vUpwd=ignition::math::Vector3d(-1.0,0.0,0.0);
+
+	//Lift drag model stores degrees in angles, as lookup table requires input in degrees. Doing conversion to radians in test.
+	markdownInput.correctAlpha= 0.0812;
+	markdownInput.correctBeta=0.0900;
+	setCalculateWindAnglesValues.push_back(markdownInput);
+}
+
 int main(int argc, char **argv)
 {
 	std::string envFilters="";
@@ -1073,7 +1192,11 @@ int main(int argc, char **argv)
 
 		setupLiftDragSetAlphaTestData();
 
-		setupLiftDragSetSpeedTestData();
+		setupLiftDragSetFreestreamVelocityTestData();
+
+		setupLiftDragSetPlanarVelocityTestData();
+
+		setupLiftDragSetLateralVelocityTestData();
 
 		setupLiftDragSetAirDensityTestData();
 
@@ -1100,6 +1223,10 @@ int main(int argc, char **argv)
 		setupLiftDragSetBetaTestData();
 
 		setupAtan2TestData();
+
+		setupCalculateLocalVelocitiesData();
+
+		setupCalculateWindAnglesData();
 	}
 
 	if (runIntegrationTests)

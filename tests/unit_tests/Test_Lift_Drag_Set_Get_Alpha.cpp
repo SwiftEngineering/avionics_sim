@@ -15,8 +15,6 @@ TEST_P(LiftDragSetAlphaParameterized, LiftDragUnitTestSetGetAlpha_UnitTest) {
 	LiftDragSetAlphaParams param=GetParam();
 	double inputAngle=param.value;
 
-	//Set vInf to minimum for consideration of alpha.
-	ldm.setSpeed(param.vInf);
 	if (param.isRadians)
 	{
 		valueToTestAgainst=inputAngle*57.2958;
