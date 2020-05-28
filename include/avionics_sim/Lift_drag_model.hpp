@@ -52,21 +52,39 @@ namespace avionics_sim
 
           // Function to set value of speed (v infinity).
           ///
-          /// \brief      Sets value of speed.
+          /// \brief      Sets value of freestream velocity.
           ///
           /// \details    N/A
-          /// \param[in]  _speed    value for speed
+          /// \param[in]  _speed    value for freestream velocity.
           /// \return      N/A
-          void setSpeed(double _speed);
+          void setFreeStreamVelocity(double _fsVel);
 
-          // Function to get value of speed.
+          // Function to get value of freestream velocity.
           ///
-          /// \brief      Returns value of speed.
+          /// \brief      Returns value of freestream velocity.
           ///
           /// \details    N/A
           /// \param[in]  N/A
-          /// \return     Value for speed.
-          double getSpeed();
+          /// \return     Value for freestream velocity.
+          double getFreeStreamVelocity();
+
+          // Function to set value of speed (v planar).
+          ///
+          /// \brief      Sets value of planar velocity.
+          ///
+          /// \details    N/A
+          /// \param[in]  _speed    value for planar velocity.
+          /// \return      N/A
+          void setPlanarVelocity(double _planarVel);
+
+          // Function to get value of planar velocity.
+          ///
+          /// \brief      Returns value of planar velocity.
+          ///
+          /// \details    N/A
+          /// \param[in]  N/A
+          /// \return     Value for planar velocity.
+          double getPlanarVelocity();
 
           // Function to set value of air density (rho).
           ///
@@ -252,15 +270,6 @@ namespace avionics_sim
           /// \return     N/A.
           void calculateLiftDragModelValues();
 
-          ///
-          /// /brief Calculates alpha from wing pose and world velocity.
-          ///
-          /// \param[in] wingPose  ignition Pose3d of wing coordinate system.
-          /// \param[in] worldVel  ignition Vector3d of world linear velocity.
-          /// \param[out] alpha pointer to the resulting alpha calculated.
-          ///
-          void calculateAlpha(ignition::math::Pose3d wingPose, ignition::math::Vector3d worldVel, double * const alpha = NULL, ignition::math::Vector3d * const vInf_p = NULL);
-
           // Function to convert degrees to radians.
           ///
           /// \brief      Returns value of angle in degrees.
@@ -395,15 +404,6 @@ namespace avionics_sim
           /// \brief Highest possible value for LUT angle.
           constexpr static int highestLUTAngle=180;
 
-          ///
-          /// /brief Calculates beta (side slip angle) from wing pose and world velocity.
-          ///
-          /// \param[in] wingPose  ignition Pose3d of wing coordinate system.
-          /// \param[in] worldVel  ignition Vector3d of world linear velocity.
-          /// \return N/A
-          ///
-          void calculateBeta(ignition::math::Pose3d wingPose, ignition::math::Vector3d worldVel, double * const beta_p = NULL);
-
           // Function to set value of beta.
           ///
           /// \brief      Sets value of beta.
@@ -421,17 +421,6 @@ namespace avionics_sim
           /// \param[out] Value for beta (side slip angle) in degrees
           ///
           double getBeta();
-
-          // Function to set value of lateral velocity.
-          ///
-          /// \brief      Sets value of lateral velocity.
-          ///
-          /// \details    Takes in world velocity, uses project_vector_global to get body frame, then takes value from projection. In future refactor, this method should be called in calculateAlpha to streamline.
-          /// \param[in] wingPose  ignition Pose3d of wing coordinate system.
-          /// \param[in] worldVel  ignition Vector3d of world linear velocity.
-          /// \return      N/A
-          ///
-          void setLateralVelocity(ignition::math::Pose3d wingPose, ignition::math::Vector3d worldVel);
 
           // Function to set value of lateral velocity.
           ///
@@ -453,6 +442,141 @@ namespace avionics_sim
           ///
           double getLateralVelocity() {return lateral_velocity;};
 
+          // Function to get local aircraft velocity.
+          ///
+          /// \brief      Returns value of local aircraft velocity.
+          ///
+          /// \details    Returns local aircraft velocity.
+          /// \param[in]  N/A
+          /// \return     ignition::math::Vector3d
+          ///
+          ignition::math::Vector3d getLocalAircraftVelocity() {return vLocalAircraftVelocity;};
+
+          // Function to get resultant force.
+          ///
+          /// \brief      Returns value of resultant force.
+          ///
+          /// \details    Returns resultant force.
+          /// \param[in]  N/A
+          /// \return     ignition::math::Vector3d
+          ///
+          ignition::math::Vector3d getForceVector() {return force;};
+
+          // Function to set world pose.
+          ///
+          /// \brief      Sets world pose.
+          ///
+          /// \details    Takes in given pose as world pose.
+          /// \param[in]  pose  A chosen pose
+          /// \return      N/A
+          ///
+          void setWorldPose(ignition::math::Pose3d pose);
+
+          // Function to get value of world pose.
+          ///
+          /// \brief      Returns value of world pose.
+          ///
+          /// \details    Returns world pose.
+          /// \param[in]  N/A
+          /// \return     ignition::math::Pose3d
+          ///
+          ignition::math::Pose3d getWorldPose() {return worldPose;};
+
+          // Function to set world velocity.
+          ///
+          /// \brief      Sets world velocity.
+          ///
+          /// \details    Takes in given pose as world velocity.
+          /// \param[in]  pose  A chosen pose
+          /// \return      N/A
+          ///
+          void setWorldVelocity(ignition::math::Vector3d vel);
+
+          // Function to get value of world pose.
+          ///
+          /// \brief      Returns value of world pose.
+          ///
+          /// \details    Returns world pose.
+          /// \param[in]  N/A
+          /// \return     ignition::math::Vector3d
+          ///
+          ignition::math::Vector3d getWorldVelocity() {return worldVel;};
+
+           ///
+          /// /brief Calculates wind angles and local velocities
+          ///
+          /// \details    Calls both calculateLocalVelocities and calculateWindAngles as one wrapper function.
+          /// \param[in]  N/A
+          /// \return     N/A
+          ///
+          void calculateWindAnglesAndLocalVelocities();
+
+          ///
+          /// /brief Calculates alpha and beta angles from wing pose and world velocity.
+          ///
+          /// \details    N/A
+          /// \param[in]  N/A
+          /// \return     N/A
+          ///
+          void calculateWindAngles();
+
+          // Function to calculate local velocities.
+          ///
+          /// \brief      Calculates local velocities. Must be called before calculateWindAngles.
+          ///
+          /// \details     N/A
+          /// \param[in]   N/A
+          /// \return      N/A
+          ///
+          void calculateLocalVelocities();
+
+          ///
+          /// /brief Set forward vector
+          ///
+          /// \details    N/A
+          /// \param[in]  fwd Vector3d representing forward vector
+          /// \return     N/A
+          ///
+          void setForwardVector(ignition::math::Vector3d fwd);
+
+          ///
+          ///
+          /// \brief      Get forward vector
+          ///
+          /// \details     N/A
+          /// \param[in]   N/A
+          /// \return      N/A
+          ///
+          ignition::math::Vector3d getForwardVector() {return vecFwd;};
+
+          ///
+          /// /brief Set forward vector
+          ///
+          /// \details    N/A
+          /// \param[in]  fwd Vector3d representing upward vector
+          /// \return     N/A
+          ///
+          void setUpwardVector(ignition::math::Vector3d upward);
+
+          ///
+          ///
+          /// \brief      Get forward vector
+          ///
+          /// \details     N/A
+          /// \param[in]   N/A
+          /// \return      N/A
+          ///
+          ignition::math::Vector3d getUpwardVector() {return vecUpwd;};
+
+
+          /*
+           /// \brief Forward vector
+          ignition::math::Vector3d vecFwd;
+
+          /// \brief Upward vector
+          ignition::math::Vector3d vecUpwd;
+          */
+
         private:
 
           // Function to clear the LUT, CL, and CD vectors.
@@ -465,11 +589,14 @@ namespace avionics_sim
           ///
           void emptyLUTAndCoefficientVectors();
 
-          /// \Value of alpha
+          /// \Value of alpha (angle of attack)
           double alpha;
 
-          /// \Value of speed (v infinity)
+          /// \Aircraft freestream velocity (v infinity)
           double vInf;
+
+          /// \Planar body velocity (v infinity)
+          double vPlanar;
 
           /// \Value of rho
           double rho;
@@ -555,5 +682,26 @@ namespace avionics_sim
           /// \return      Whether or not value is within bounds
           ///
           bool valueIsWithinBounds(double &value, double lowerBound, double upperBound, std::string itemName, std::string &errMsg, bool capToBound=false);
+
+          /// \brief Local aircraftVelocity (aka vInfBar)
+          ignition::math::Vector3d vLocalAircraftVelocity;
+
+          /// \brief Resultant force calculated by model.
+          ignition::math::Vector3d force;
+
+          /// \brief Wing frame velocity
+          ignition::math::Vector3d wingFrameVelocity;
+
+          /// \brief World Pose
+          ignition::math::Pose3d worldPose;
+
+          /// \brief World Velocity
+          ignition::math::Vector3d worldVel;
+
+          /// \brief Forward vector
+          ignition::math::Vector3d vecFwd;
+
+          /// \brief Upward vector
+          ignition::math::Vector3d vecUpwd;
     };
 }
