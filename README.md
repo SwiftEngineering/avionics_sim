@@ -38,7 +38,7 @@ Copyright (c) Swift Engineering Inc. 2018
 
 Licensed by Swift Engineering Inc. under the MIT license. See LICENSE file for details.
 
-## Biliner Interpolation
+## Bilinear Interpolation
 
 The bilinear interpolation library is a convenience library containing a single class called `Bilinear_interp` which can be used to automate linear (1D) and bilinear (2D) interpolation from lookup tables. The class also contains helper functions which can load comma separated values into one or two dimensional `std::vector<float>`. This library is used extensively in both the `avionics_sim` LiftDragPlugin, and the `gazebo_motor_model`. 
 
@@ -101,3 +101,8 @@ The coordinate utilities library is used to change vectors from one coordinate f
 
 The function takes three arguments two of which are inputs and one of which is an output. The target coordinate frame is passed to the function as a ignition math `Pose3d` which represents a position and an orientation. Since this function simply projects vectors, the position of the target coordinate frame does not matter and is ignored. It was chosen to use the input as a `Pose3d` however because that is the standard format readily available within `sitl_gazebo` and therefore would not require conversion. The second input is a `Vector3d` of the three dimensional vector to be projected. The function projects this vector into the target coordinate frame and stores the resulting vector in another three dimensional vector called `res`.  Currently the return value is always 0. 
 
+## Lift Drag Aerodynamic Model 
+
+This aerodynamic model replaces a single $\frac{C_L}{\alpha}$ slope coefficient and associated ${C_L}_{max}$ with an aerodynamic lookup table where, for each $\alpha$ there exists an associated $C_L$ and $C_D$.  The main benefit of this method is that it allows reasonable estimates of aerodynamic parameters up to and past stall, i.e. ${C_L}_{max}$. This is particularly important for tailsitting transition vehicles that operate in the range $0 < \alpha < 90$ and beyond. 
+
+The documentation for this aerodynamic model is located [here](documentation/liftdrag_model/README.md).

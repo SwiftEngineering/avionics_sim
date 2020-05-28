@@ -20,7 +20,6 @@
 typedef struct LiftDragSetAlphaParams {
 	double value;
 	bool isRadians;
-	double vInf;
 }LiftDragSetAlphaParams;
 
 //Type definition for LiftDragParameterCollections.

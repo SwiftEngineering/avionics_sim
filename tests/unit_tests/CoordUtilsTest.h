@@ -22,6 +22,8 @@ typedef struct CoordUtilsParams {
 	std::vector<std::string> worldLinearVelocities;
 	std::vector<std::string> worldOrientations; 
 	std::vector<std::string> globalVelocities;
+	ignition::math::Vector3d vecFwd;
+	ignition::math::Vector3d vecUpward;
 }CoordUtilsParams;
 
 //Type definition for LiftDragParameterCollections.
