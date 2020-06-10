@@ -393,7 +393,7 @@ For the general case, the velocity of the vehicle, and hence the oncoming air, i
 $$
 V_{\infty} = \sqrt{{{V_{body}}_x}^2+{{V_{body}}_y}^2 + {{V_{body}}_z}^2}
 $$
-For the sake of conservativism, we neglect taking credit for the aircraft span wise velocity for the purposes of lift calculation.  In the case of calculating drag, the lateral velocity is treated separately. Thus 
+For the sake of conservatism, we neglect taking credit for the aircraft span wise velocity for the purposes of lift calculation.  In the case of calculating drag, the lateral velocity is treated separately. Thus 
 $$
 V_{planar} = \sqrt{{{V_{body}}_x}^2+{{V_{body}}_z}^2}
 $$
@@ -597,7 +597,7 @@ $$
 
 If you keep your angles within these ranges, then you will get the same angles on decomposition.  Conversely, if your angles are outside these ranges, you will still get the correct rotation matrix, but the decomposed values will be different to your original values.
 
-Convert *pose* and *world linear velocity* into *body velocity* by multiplying R with V_{world}.
+Convert *pose* and *world linear velocity* into *body velocity* by multiplying R with $$V_{world}$$.
 
 $$
 \tag{20g}
