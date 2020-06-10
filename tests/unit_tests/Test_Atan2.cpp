@@ -10,6 +10,7 @@
 #include "Atan2Parameterized.h"
 #include "avionics_sim/Lift_drag_model.hpp"
 #include "avionics_sim/Lift_drag_model_exception.hpp"
+#include <errno.h>
 
 TEST_P(Atan2Parameterized, Atan2_UnitTest) {
 	avionics_sim::Lift_drag_model ldm;
@@ -20,14 +21,18 @@ TEST_P(Atan2Parameterized, Atan2_UnitTest) {
 	x=param.x;
 	y=param.y;
 
-	try
+	double arctan=atan2(y,x);
+
+	if (math_errhandling & MATH_ERRNO) 
 	{
-		double arctan=atan2(y,x);
-		ASSERT_FLOAT_EQ(arctan, arctan);
+		if (errno==EDOM)
+		{
+			std::cerr<<"Exception successfully caught for atan2."<<std::endl;
+
+			ASSERT_EQ(1,1);
+		}
+		
 	}
-	catch(const std::exception& e)
-	{
-		std::cerr<<"Exception successfully caught for atan2."<<std::endl;
-		std::cerr << e.what() <<std::endl;
-	}
+
+	ASSERT_FLOAT_EQ(arctan, arctan);
 }
