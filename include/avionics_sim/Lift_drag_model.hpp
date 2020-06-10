@@ -56,8 +56,10 @@ namespace avionics_sim
           ///
           /// \details    N/A
           /// \param[in]  _speed    value for freestream velocity.
+          /// \param[in]  overridePlanarAndFreestream    flag indicating whether or not to also override planar velocity
+          /// (this flag should only be set to true when motor exit velocity exceeds freestream)
           /// \return      N/A
-          void setFreeStreamVelocity(double _fsVel);
+          void setFreeStreamVelocity(double _fsVel, bool overridePlanarAndFreestream=false);
 
           // Function to get value of freestream velocity.
           ///
@@ -67,6 +69,15 @@ namespace avionics_sim
           /// \param[in]  N/A
           /// \return     Value for freestream velocity.
           double getFreeStreamVelocity();
+
+          // Function to get value of freestream velocity vector.
+          ///
+          /// \brief      Returns value of freestream velocity.
+          ///
+          /// \details    N/A
+          /// \param[in]  N/A
+          /// \return     Value for freestream velocity.
+          ignition::math::Vector3d getFreeStreamVelocityVec();
 
           // Function to set value of speed (v planar).
           ///
@@ -85,6 +96,15 @@ namespace avionics_sim
           /// \param[in]  N/A
           /// \return     Value for planar velocity.
           double getPlanarVelocity();
+
+          // Function to get value of planar velocity.
+          ///
+          /// \brief      Returns value of planar velocity.
+          ///
+          /// \details    N/A
+          /// \param[in]  N/A
+          /// \return     Value for planar velocity.
+          ignition::math::Vector3d getPlanarVelocityVec();
 
           // Function to set value of air density (rho).
           ///
@@ -266,9 +286,9 @@ namespace avionics_sim
           /// \brief      Calculates cl, cd, lift, and drag.
           ///
           /// \details    N/A
-          /// \param[in]  N/A
+          /// \param[in]  calculateRotatedForces flag determining whether or not to calculate rotated forces
           /// \return     N/A.
-          void calculateLiftDragModelValues();
+          void calculateLiftDragModelValues(bool calculateRotatedForces=true);
 
           // Function to convert degrees to radians.
           ///
@@ -404,6 +424,15 @@ namespace avionics_sim
           /// \brief Highest possible value for LUT angle.
           constexpr static int highestLUTAngle=180;
 
+          ///
+          /// /brief Calculates beta (side slip angle) from wing pose and world velocity.
+          ///
+          /// \param[in] wingPose  ignition Pose3d of wing coordinate system.
+          /// \param[in] worldVel  ignition Vector3d of world linear velocity.
+          /// \return N/A
+          ///
+          void calculateBeta(ignition::math::Pose3d wingPose, ignition::math::Vector3d worldVel, double * const beta_p = NULL);
+
           // Function to set value of beta.
           ///
           /// \brief      Sets value of beta.
@@ -421,6 +450,17 @@ namespace avionics_sim
           /// \param[out] Value for beta (side slip angle) in degrees
           ///
           double getBeta();
+
+          // Function to set value of lateral velocity.
+          ///
+          /// \brief      Sets value of lateral velocity.
+          ///
+          /// \details    Takes in world velocity, uses project_vector_global to get body frame, then takes value from projection. In future refactor, this method should be called in calculateAlpha to streamline.
+          /// \param[in] wingPose  ignition Pose3d of wing coordinate system.
+          /// \param[in] worldVel  ignition Vector3d of world linear velocity.
+          /// \return      N/A
+          ///
+          void setLateralVelocity(ignition::math::Pose3d wingPose, ignition::math::Vector3d worldVel);
 
           // Function to set value of lateral velocity.
           ///
@@ -568,14 +608,61 @@ namespace avionics_sim
           ///
           ignition::math::Vector3d getUpwardVector() {return vecUpwd;};
 
+          ///
+          /// /brief Calculate port vector as cross product of forward and upward
+          ///
+          /// \details    N/A
+          /// \param[in]  fwd Vector3d representing port vector
+          /// \return     N/A
+          ///
+          void calculatePortVector();
 
-          /*
-           /// \brief Forward vector
-          ignition::math::Vector3d vecFwd;
+          ///
+          /// /brief Set port vector
+          ///
+          /// \details    N/A
+          /// \param[in]  fwd Vector3d representing port vector
+          /// \return     N/A
+          ///
+          void setPortVector(ignition::math::Vector3d port);
 
-          /// \brief Upward vector
-          ignition::math::Vector3d vecUpwd;
-          */
+          ///
+          ///
+          /// \brief      Get port vector
+          ///
+          /// \details     N/A
+          /// \param[in]   N/A
+          /// \return      N/A
+          ///
+          ignition::math::Vector3d getPortVector() {return vecPort;};
+
+
+          // Function to return LUT alpha array
+          ///
+          /// \brief      Function to return LUT alpha array
+          ///
+          /// \details     N/A
+          /// \return      std::vector containing values for LUT alpha.
+          ///
+          std::vector<double> getLUTAlpha() { return Aero_LUT_alpha; };
+
+          // Function to return LUT CD array
+          ///
+          /// \brief      Function to return LUT CD array
+          ///
+          /// \details     N/A
+          /// \return      std::vector containing values for LUT alpha.
+          ///
+          std::vector<double> getLUTCD() { return Aero_LUT_CD; };
+
+          // Function to return LUT CL array
+          ///
+          /// \brief      Function to return LUT CL array
+          ///
+          /// \details     N/A
+          /// \return      std::vector containing values for LUT alpha.
+          ///
+          std::vector<double> getLUTCL() { return Aero_LUT_CL; };
 
         private:
 
@@ -703,5 +790,44 @@ namespace avionics_sim
 
           /// \brief Upward vector
           ignition::math::Vector3d vecUpwd;
+
+          /// \brief Port vector
+          ignition::math::Vector3d vecPort;
+
+          /// \brief Flag indicating whether or not link has radial symmetry. Not yet used.
+          bool radialSymmetry;
+
+          /// \brief Vector of velocity in LD plane.
+          ignition::math::Vector3d vInLDPlane_v;
+        
+          /// \brief Vector of freestream.
+          ignition::math::Vector3d vInFreestreamPlane_v;
+
+          /// \brief lift force vector
+          ignition::math::Vector3d liftVec;
+
+          /// \brief drag force vector
+          ignition::math::Vector3d dragVec;
+
+          /// \brief lateral force vector
+          ignition::math::Vector3d lateralForceVec;
+
+          ///
+          /// \brief      Function to calculate rotated force magnitudes.
+          ///
+          /// \details     N/A
+          /// \param[in]   N/A
+          /// \return      N/A
+          ///
+          void calculateRotatedLiftAndDrag();
+
+          ///
+          /// \brief      Function to calculate force vector with direction.
+          ///
+          /// \details     N/A
+          /// \param[in]  calculateRotatedForces flag determining whether or not to negate drag through multiplying by -vecFwd (do not want to do this if rotated drag has been calculated)
+          /// \return      N/A
+          ///
+          void calculateForceWithDirection(bool calculatedRotatedForces);
     };
 }

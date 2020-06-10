@@ -37,18 +37,38 @@
 #include "LiftDragSetLateralAreaParameterized.h"
 #include "LiftDragCalculateLocalVelocitiesParameterized.h"
 #include "LiftDragCalculateWindAnglesParameterized.h"
+#include "LiftDragCalculateForcesParamsStruct.h"
+#include "LiftDragCalculateForcesParameterized.h"
+#include "LiftDragCalculateForcesMultiElementParameterized.h"
+
 
 //Uncomment this to use the smaller hand calc tests.
 //#define HANDTEST 1
 #define NO_TESTS_EXECUTED 0
 
-const std::vector<float> LUT_alpha{-180.0000,-175.0000,-170.0000,-165.0000,-160.0000,-155.0000,-150.0000,-145.0000,-140.0000,-135.0000,-130.0000,-125.0000,-120.0000,-115.0000,-110.0000,-105.0000,-100.0000,-95.0000,-90.0000,-85.0000,-80.0000,-75.0000,-70.0000,-65.0000,-60.0000,-55.0000,-50.0000,-45.0000,-40.0000,-35.0000,-30.0000,-27.0000,-26.0000,-25.0000,-24.0000,-23.0000,-22.0000,-21.0000,-20.0000,-19.0000,-18.0000,-17.0000,-16.0000,-15.0000,-14.0000,-13.0000,-12.0000,-11.0000,-10.0000,-9.0000,-8.0000,-7.0000,-6.0000,-5.0000,-4.0000,-3.0000,-2.0000,-1.0000,-0.0000,0.0000,1.0000,2.0000,3.0000,4.0000,5.0000,6.0000,7.0000,8.0000,9.0000,10.0000,11.0000,12.0000,13.0000,14.0000,15.0000,16.0000,17.0000,18.0000,19.0000,20.0000,21.0000,22.0000,23.0000,24.0000,25.0000,26.0000,27.0000,30.0000,35.0000,40.0000,45.0000,50.0000,55.0000,60.0000,65.0000,70.0000,75.0000,80.0000,85.0000,90.0000,95.0000,100.0000,105.0000,110.0000,115.0000,120.0000,125.0000,130.0000,135.0000,140.0000,145.0000,150.0000,155.0000,160.0000,165.0000,170.0000,175.0000,180.0000 }; 
+std::string alphaLUTcontrolSurfaceDeflectionsString="-180.0000,-175.0000,-170.0000,-165.0000,-160.0000,-155.0000,-150.0000,-145.0000,-140.0000,-135.0000,-130.0000,-125.0000,-120.0000,-115.0000,-110.0000,-105.0000,-100.0000,-95.0000,-90.0000,-85.0000,-80.0000,-75.0000,-70.0000,-65.0000,-60.0000,-55.0000,-50.0000,-45.0000,-40.0000,-35.0000,-30.0000,-27.0000,-26.0000,-25.0000,-24.0000,-23.0000,-22.0000,-21.0000,-20.0000,-19.0000,-18.0000,-17.0000,-16.0000,-15.0000,-14.0000,-13.0000,-12.0000,-11.0000,-10.0000,-9.0000,-8.0000,-7.0000,-6.0000,-5.0000,-4.0000,-3.0000,-2.0000,-1.0000,-0.0000,0.0000,1.0000,2.0000,3.0000,4.0000,5.0000,6.0000,7.0000,8.0000,9.0000,10.0000,11.0000,12.0000,13.0000,14.0000,15.0000,16.0000,17.0000,18.0000,19.0000,20.0000,21.0000,22.0000,23.0000,24.0000,25.0000,26.0000,27.0000,30.0000,35.0000,40.0000,45.0000,50.0000,55.0000,60.0000,65.0000,70.0000,75.0000,80.0000,85.0000,90.0000,95.0000,100.0000,105.0000,110.0000,115.0000,120.0000,125.0000,130.0000,135.0000,140.0000,145.0000,150.0000,155.0000,160.0000,165.0000,170.0000,175.0000,180.0000";
 
-const std::vector<float> LUT_CL{ -0.0000,0.6900,0.8500,0.6750,0.6600,0.7400,0.8500,0.9100,0.9450,0.9450,0.9100,0.8400,0.7350,0.6250,0.5100,0.3700,0.2200,0.0700,-0.0700,-0.2200,-0.3700,-0.5150,-0.6500,-0.7650,-0.8750,-0.9650,-1.0400,-1.0850,-1.0750,-1.0200,-0.9150,-0.9646,-0.9109,-0.8572,-0.8034,-0.7497,-0.6956,-0.6414,-0.5870,-0.5322,-0.4768,-0.4200,-0.3620,-0.3082,-0.2546,-0.2030,-0.1533,-0.1095,-0.1325,-0.8527,-0.8274,-0.7460,-0.6600,-0.5500,-0.4400,-0.3300,-0.2200,-0.1100,-0.0000,0.0000,0.1100,0.2200,0.3300,0.4400,0.5500,0.6600,0.7460,0.8274,0.8527,0.1325,0.1095,0.1533,0.2030,0.2546,0.3082,0.3620,0.4200,0.4768,0.5322,0.5870,0.6414,0.6956,0.7497,0.8034,0.8572,0.9109,0.9646,0.9150,1.0200,1.0750,1.0850,1.0400,0.9650,0.8750,0.7650,0.6500,0.5150,0.3700,0.2200,0.0700,-0.0700,-0.2200,-0.3700,-0.5100,-0.6250,-0.7350,-0.8400,-0.9100,-0.9450,-0.9450,-0.9100,-0.8500,-0.7400,-0.6600,-0.6750,-0.8500,-0.6900,0.0000 }; 
+std::string alphaLUTcontrolSurfaceDeflectionsCL="0.0000,0.6900,0.8500,0.6750,0.6600,0.7400,0.8500,0.9100,0.9450,0.9450,0.9100,0.8400,0.7350,0.6250,0.5100,0.3700,0.2200,0.0700,-0.0700,-0.2200,-0.3700,-0.5150,-0.6500,-0.7650,-0.8750,-0.9650,-1.0400,-1.0850,-1.0750,-1.0200,-0.9150,-0.9646,-0.9109,-0.8572,-0.8034,-0.7497,-0.6956,-0.6414,-0.5870,-0.5322,-0.4768,-0.4200,-0.3620,-0.3082,-0.2546,-0.2030,-0.1533,-0.1095,-0.1325,-0.8527,-0.8274,-0.7460,-0.6600,-0.5500,-0.4400,-0.3300,-0.2200,-0.1100,-0.0000,0.0000,0.1100,0.2200,0.3300,0.4400,0.5500,0.6600,0.7460,0.8274,0.8527,0.1325,0.1095,0.1533,0.2030,0.2546,0.3082,0.3620,0.4200,0.4768,0.5322,0.5870,0.6414,0.6956,0.7497,0.8034,0.8572,0.9109,0.9646,0.9150,1.0200,1.0750,1.0850,1.0400,0.9650,0.8750,0.7650,0.6500,0.5150,0.3700,0.2200,0.0700,-0.0700,-0.2200,-0.3700,-0.5100,-0.6250,-0.7350,-0.8400,-0.9100,-0.9450,-0.9450,-0.9100,-0.8500,-0.7400,-0.6600,-0.6750,-0.8500,-0.6900,0.0000";
 
-const std::vector<float> LUT_CD{ 0.0250,0.0550,0.1400,0.2300,0.3200,0.4200,0.5700,0.7550,0.9250,1.0850,1.2250,1.3500,1.4650,1.5550,1.6350,1.7000,1.7500,1.7800,1.8000,1.8000,1.7800,1.7350,1.6650,1.5750,1.4700,1.3450,1.2150,1.0750,0.9200,0.7450,0.5700,0.4730,0.4460,0.4200,0.3940,0.3690,0.3440,0.3200,0.2970,0.2740,0.2520,0.2310,0.2100,0.1900,0.1710,0.1520,0.1340,0.0760,0.0188,0.0203,0.0185,0.0170,0.0152,0.0140,0.0124,0.0114,0.0108,0.0104,0.0103,0.0103,0.0104,0.0108,0.0114,0.0124,0.0140,0.0152,0.0170,0.0185,0.0203,0.0188,0.0760,0.1340,0.1520,0.1710,0.1900,0.2100,0.2310,0.2520,0.2740,0.2970,0.3200,0.3440,0.3690,0.3940,0.4200,0.4460,0.4730,0.5700,0.7450,0.9200,1.0750,1.2150,1.3450,1.4700,1.5750,1.6650,1.7350,1.7800,1.8000,1.8000,1.7800,1.7500,1.7000,1.6350,1.5550,1.4650,1.3500,1.2250,1.0850,0.9250,0.7550,0.5700,0.4200,0.3200,0.2300,0.1400,0.0550,0.0250 };
+std::string alphaLUTcontrolSurfaceDeflectionsCD="0.0250,0.0550,0.1400,0.2300,0.3200,0.4200,0.5700,0.7550,0.9250,1.0850,1.2250,1.3500,1.4650,1.5550,1.6350,1.7000,1.7500,1.7800,1.8000,1.8000,1.7800,1.7350,1.6650,1.5750,1.4700,1.3450,1.2150,1.0750,0.9200,0.7450,0.5700,0.4730,0.4460,0.4200,0.3940,0.3690,0.3440,0.3200,0.2970,0.2740,0.2520,0.2310,0.2100,0.1900,0.1710,0.1520,0.1340,0.0760,0.0188,0.0203,0.0185,0.0170,0.0152,0.0140,0.0124,0.0114,0.0108,0.0104,0.0103,0.0103,0.0104,0.0108,0.0114,0.0124,0.0140,0.0152,0.0170,0.0185,0.0203,0.0188,0.0760,0.1340,0.1520,0.1710,0.1900,0.2100,0.2310,0.2520,0.2740,0.2970,0.3200,0.3440,0.3690,0.3940,0.4200,0.4460,0.4730,0.5700,0.7450,0.9200,1.0750,1.2150,1.3450,1.4700,1.5750,1.6650,1.7350,1.7800,1.8000,1.8000,1.7800,1.7500,1.7000,1.6350,1.5550,1.4650,1.3500,1.2250,1.0850,0.9250,0.7550,0.5700,0.4200,0.3200,0.2300,0.1400,0.0550,0.0250";
 
-const std::vector<double> alphaAngles{-180.0000,-175.0000,-170.0000,-165.0000,-160.0000,-155.0000,-150.0000,-145.0000,-140.0000,-135.0000,-130.0000,-125.0000,-120.0000,-115.0000,-110.0000,-105.0000,-100.0000,-95.0000,-90.0000,-85.0000,-80.0000,-75.0000,-70.0000,-65.0000,-60.0000,-55.0000,-50.0000,-45.0000,-40.0000,-35.0000,-30.0000,-27.0000,-26.0000,-25.0000,-24.0000,-23.0000,-22.0000,-21.0000,-20.0000,-19.0000,-18.0000,-17.0000,-16.0000,-15.0000,-14.0000,-13.0000,-12.0000,-11.0000,-10.0000,-9.0000,-8.0000,-7.0000,-6.0000,-5.0000,-4.0000,-3.0000,-2.0000,-1.0000,-0.0000,0.0000,1.0000,2.0000,3.0000,4.0000,5.0000,6.0000,7.0000,8.0000,9.0000,10.0000,11.0000,12.0000,13.0000,14.0000,15.0000,16.0000,17.0000,18.0000,19.0000,20.0000,21.0000,22.0000,23.0000,24.0000,25.0000,26.0000,27.0000,30.0000,35.0000,40.0000,45.0000,50.0000,55.0000,60.0000,65.0000,70.0000,75.0000,80.0000,85.0000,90.0000,95.0000,100.0000,105.0000,110.0000,115.0000,120.0000,125.0000,130.0000,135.0000,140.0000,145.0000,150.0000,155.0000,160.0000,165.0000,170.0000,175.0000,180.0000};
+std::string alphaLUTString="-187.0000,-182.0000,-177.0000,-172.0000,-167.0000,-162.0000,-157.0000,-152.0000,-147.0000,-142.0000,-137.0000,-132.0000,-127.0000,-122.0000,-117.0000,-112.0000,-107.0000,-102.0000,-97.0000,-92.0000,-87.0000,-82.0000,-77.0000,-72.0000,-67.0000,-62.0000,-57.0000,-52.0000,-47.0000,-42.0000,-37.0000,-34.0000,-33.0000,-32.0000,-31.0000,-30.0000,-29.0000,-28.0000,-27.0000,-26.0000,-25.0000,-24.0000,-23.0000,-22.0000,-21.0000,-20.0000,-19.0000,-18.0000,-17.0000,-16.0000,-15.0000,-14.0000,-13.0000,-12.0000,-11.0000,-10.0000,-9.0000,-8.0000,-7.0000,0.0000,1.5000,3.0000,4.0000,5.0000,6.0000,7.0000,8.0000,9.0000,10.0000,11.0000,12.0000,16.0000,20.0000,30.0000,45.0000,60.0000,90.0000,95.0000,98.0000,103.0000,108.0000,113.0000,118.0000,123.0000,128.0000,133.0000,138.0000,143.0000,148.0000,153.0000,158.0000,163.0000,168.0000,173.0000,188.0000";
+
+std::string alphaLUTCL="0.0000,0.6900,0.8500,0.6750,0.6600,0.7400,0.8500,0.9100,0.9450,0.9450,0.9100,0.8400,0.7350,0.6250,0.5100,0.3700,0.2200,0.0700,-0.0700,-0.2200,-0.3700,-0.5150,-0.6500,-0.7650,-0.8750,-0.9650,-1.0400,-1.0850,-1.0750,-1.0200,-0.9150,-0.9646,-0.9109,-0.8572,-0.8034,-0.7497,-0.6956,-0.6414,-0.5870,-0.5322,-0.4768,-0.4200,-0.3620,-0.3082,-0.2546,-0.2030,-0.1533,-0.1095,-0.1325,-0.8527,-0.8274,-0.7460,-0.6600,-0.5500,-0.4400,-0.3300,-0.2200,-0.1100,0.0620,0.7542,0.8987,1.0497,1.1363,1.1897,1.2348,1.2626,1.2554,1.2238,1.1889,1.1587,1.1214,0.9689,0.9104,0.9300,0.8654,0.9227,-0.1147,-0.2602,-0.3700,-0.5100,-0.6250,-0.7350,-0.8400,-0.9100,-0.9450,-0.9450,-0.9100,-0.8500,-0.7400,-0.6600,-0.6750,-0.8500,-0.6900,0.0000,0.6600";
+
+std::string alphaLUTCD="0.0250,0.0550,0.1400,0.2300,0.3200,0.4200,0.5700,0.7550,0.9250,1.0850,1.2250,1.3500,1.4650,1.5550,1.6350,1.7000,1.7500,1.7800,1.8000,1.8000,1.7800,1.7350,1.6650,1.5750,1.4700,1.3450,1.2150,1.0750,0.9200,0.7450,0.5700,0.4730,0.4460,0.4200,0.3940,0.3690,0.3440,0.3200,0.2970,0.2740,0.2520,0.2310,0.2100,0.1900,0.1710,0.1520,0.1340,0.0760,0.0188,0.0203,0.0185,0.0170,0.0152,0.0140,0.0124,0.0114,0.0108,0.0104,0.0456,0.0598,0.0682,0.0794,0.0877,0.1010,0.1161,0.1336,0.1540,0.1814,0.2084,0.2313,0.2578,0.3645,0.4681,0.7118,1.0732,0.7157,1.6811,1.6610,1.7000,1.6350,1.5550,1.4650,1.3500,1.2250,1.0850,0.9250,0.7550,0.5700,0.4200,0.3200,0.2300,0.1400,0.0550,0.0250,0.3200";
+
+std::vector<double> LUT_Alpha_Control_Surface; 
+
+std::vector<double> LUT_CL_Control_Surface; 
+
+std::vector<double> LUT_CD_Control_Surface;
+
+std::vector<double> LUT_Alpha; 
+
+std::vector<double> LUT_CL; 
+
+std::vector<double> LUT_CD;
 
 const int lastNegativeAlphaIdx=58;
 
@@ -69,10 +89,6 @@ LiftDragLookupCDParameterCollections lookupCDValues;
 LiftDragSetAreaParameterCollections setAreaValues;
 
 LiftDragSetLateralAreaParameterCollections setLateralAreaValues;
-
-LiftDragCalculateLiftParameterCollections calculateLiftValues;
-
-LiftDragCalculateDragParameterCollections calculateDragValues;
 
 LiftDragCalculateDynamicPressureParameterCollections calculateDynamicPressureValues;
 
@@ -97,6 +113,10 @@ Atan2ParameterCollections setAtan2Values;
 LiftDragCalculateLocalVelocitiesParameterCollections setCalculateLocalVelocitiesValues;
 
 LiftDragCalculateWindAnglesParameterCollections setCalculateWindAnglesValues;
+
+LiftDragCalculateForcesParameterCollections setCalculateForcesValues;
+
+LiftDragCalculateMultiElementForcesParameterCollections threeElementTwoCSValues;
 
 //NB: Disable test by prefacing first parameter with "DISABLED_"
 //Instantiation of parameterized integration test for non prop wash, non control surface.
@@ -164,16 +184,6 @@ INSTANTIATE_TEST_CASE_P(LiftDragUnitTestSetGetLateralArea,
                         LiftDragSetLateralAreaParameterized,
                         ::testing::ValuesIn(setLateralAreaValues));
 
-//Instantiation of LiftDrag::calculateLift method test
-INSTANTIATE_TEST_CASE_P(LiftDragUnitTestCalculateLift,
-                        LiftDragCalculateLiftParameterized,
-                        ::testing::ValuesIn(calculateLiftValues));
-
-//Instantiation of LiftDrag::calculateDrag method test
-INSTANTIATE_TEST_CASE_P(LiftDragUnitTestCalculateDrag,
-                        LiftDragCalculateDragParameterized,
-                        ::testing::ValuesIn(calculateDragValues));
-
 //Instantiation of LiftDrag::calculateDynamicPressure method test
 INSTANTIATE_TEST_CASE_P(LiftDragUnitTestCalculateDynamicPressure,
                         LiftDragCalculateDynamicPressureParameterized,
@@ -214,12 +224,31 @@ INSTANTIATE_TEST_CASE_P(LiftDragCalculateWindAngles,
                         LiftDragCalculateWindAnglesParameterized,
                         ::testing::ValuesIn(setCalculateWindAnglesValues));
 
+//Instantiation of LiftDrag::calculateLiftDragModelValues test
+INSTANTIATE_TEST_CASE_P(LiftDragCalculateForces,
+                        LiftDragCalculateForcesParameterized,
+                        ::testing::ValuesIn(setCalculateForcesValues));
+
+//Instantiation of LiftDrag::calculateLiftDragModelValues test
+INSTANTIATE_TEST_CASE_P(LiftDragCalculateMultiElementForces,
+                        LiftDragCalculateMultiElementForcesParameterized,
+                        ::testing::ValuesIn(threeElementTwoCSValues));
 
 bool runUnitTests=false;
 bool runIntegrationTests=false;
 bool runSystemTests=false;
 const int minNumArguments=2;
 const int maxNumArguments=3;
+
+static void initLUTTables()
+{
+	avionics_sim::Bilinear_interp::get1DLUTelementsFromString(alphaLUTString, &LUT_Alpha);
+	avionics_sim::Bilinear_interp::get1DLUTelementsFromString(alphaLUTCL, &LUT_CL);
+	avionics_sim::Bilinear_interp::get1DLUTelementsFromString(alphaLUTCD, &LUT_CD);
+	avionics_sim::Bilinear_interp::get1DLUTelementsFromString(alphaLUTcontrolSurfaceDeflectionsString, &LUT_Alpha_Control_Surface);
+	avionics_sim::Bilinear_interp::get1DLUTelementsFromString(alphaLUTcontrolSurfaceDeflectionsCL, &LUT_CL_Control_Surface);
+	avionics_sim::Bilinear_interp::get1DLUTelementsFromString(alphaLUTcontrolSurfaceDeflectionsCD, &LUT_CD_Control_Surface);
+}
 
 //Function to generate random numbers of type double.
 static double getRandomDouble(double lowerBound, double upperBound)
@@ -580,36 +609,36 @@ static void setupLiftDragLookupCLTestData()
 	LiftDragLookupCLParams randAlphaBtwMinAndMax;
 
 	zeroAlpha.value=0;
-    copy(LUT_alpha.begin(), LUT_alpha.end(), back_inserter(zeroAlpha.LUT_alpha)); 
-    copy(LUT_CL.begin(), LUT_CL.end(), back_inserter(zeroAlpha.LUT_CL)); 
-    copy(LUT_CD.begin(), LUT_CD.end(), back_inserter(zeroAlpha.LUT_CD)); 
+    copy(LUT_Alpha_Control_Surface.begin(), LUT_Alpha_Control_Surface.end(), back_inserter(zeroAlpha.LUT_alpha)); 
+    copy(LUT_CL_Control_Surface.begin(), LUT_CL_Control_Surface.end(), back_inserter(zeroAlpha.LUT_CL)); 
+    copy(LUT_CD_Control_Surface.begin(), LUT_CD_Control_Surface.end(), back_inserter(zeroAlpha.LUT_CD)); 
 
 	minAlpha.value=avionics_sim::Lift_drag_model::MIN_AOA;
-	copy(LUT_alpha.begin(), LUT_alpha.end(), back_inserter(minAlpha.LUT_alpha)); 
+	copy(LUT_Alpha_Control_Surface.begin(), LUT_Alpha_Control_Surface.end(), back_inserter(minAlpha.LUT_alpha)); 
 	// Copying vector by copy function 
-    copy(LUT_CL.begin(), LUT_CL.end(), back_inserter(minAlpha.LUT_CL)); 
+    copy(LUT_CL_Control_Surface.begin(), LUT_CL_Control_Surface.end(), back_inserter(minAlpha.LUT_CL)); 
 	// Copying vector by copy function 
-    copy(LUT_CD.begin(), LUT_CD.end(), back_inserter(minAlpha.LUT_CD)); 
+    copy(LUT_CD_Control_Surface.begin(), LUT_CD_Control_Surface.end(), back_inserter(minAlpha.LUT_CD)); 
 
 	maxAlpha.value=avionics_sim::Lift_drag_model::MAX_AOA;
-	copy(LUT_alpha.begin(), LUT_alpha.end(), back_inserter(maxAlpha.LUT_alpha)); 
+	copy(LUT_Alpha_Control_Surface.begin(), LUT_Alpha_Control_Surface.end(), back_inserter(maxAlpha.LUT_alpha)); 
 	// Copying vector by copy function 
-    copy(LUT_CL.begin(), LUT_CL.end(), back_inserter(maxAlpha.LUT_CL)); 
+    copy(LUT_CL_Control_Surface.begin(), LUT_CL_Control_Surface.end(), back_inserter(maxAlpha.LUT_CL)); 
 	// Copying vector by copy function 
-    copy(LUT_CD.begin(), LUT_CD.end(), back_inserter(maxAlpha.LUT_CD));
+    copy(LUT_CD_Control_Surface.begin(), LUT_CD_Control_Surface.end(), back_inserter(maxAlpha.LUT_CD));
 
 	//Choose a non-zero random number between MIN_AOA and MAX_AOA
 	double randAlpha=0;
 	while (randAlpha==0)
 	{
-		randAlpha=alphaAngles.at(getRandomInt(0, alphaAngles.size()-1));
+		randAlpha=LUT_Alpha_Control_Surface.at(getRandomInt(0, LUT_Alpha_Control_Surface.size()-1));
 	}
 	randAlphaBtwMinAndMax.value=randAlpha;
-	copy(LUT_alpha.begin(), LUT_alpha.end(), back_inserter(randAlphaBtwMinAndMax.LUT_alpha)); 
+	copy(LUT_Alpha_Control_Surface.begin(), LUT_Alpha_Control_Surface.end(), back_inserter(randAlphaBtwMinAndMax.LUT_alpha)); 
 	// Copying vector by copy function 
-    copy(LUT_CL.begin(), LUT_CL.end(), back_inserter(randAlphaBtwMinAndMax.LUT_CL)); 
+    copy(LUT_CL_Control_Surface.begin(), LUT_CL_Control_Surface.end(), back_inserter(randAlphaBtwMinAndMax.LUT_CL)); 
 	// Copying vector by copy function 
-    copy(LUT_CD.begin(), LUT_CD.end(), back_inserter(randAlphaBtwMinAndMax.LUT_CD));
+    copy(LUT_CD_Control_Surface.begin(), LUT_CD_Control_Surface.end(), back_inserter(randAlphaBtwMinAndMax.LUT_CD));
 
 	lookupCLValues.push_back(zeroAlpha);
 	lookupCLValues.push_back(minAlpha);
@@ -627,31 +656,31 @@ static void setupLiftDragLookupCDTestData()
 	LiftDragLookupCDParams randAlphaBtwMinAndMax;
 	
 	zeroAlpha.value=0;
-	copy(LUT_alpha.begin(), LUT_alpha.end(), back_inserter(zeroAlpha.LUT_alpha)); 
-    copy(LUT_CL.begin(), LUT_CL.end(), back_inserter(zeroAlpha.LUT_CL)); 
-    copy(LUT_CD.begin(), LUT_CD.end(), back_inserter(zeroAlpha.LUT_CD)); 
+	copy(LUT_Alpha_Control_Surface.begin(), LUT_Alpha_Control_Surface.end(), back_inserter(zeroAlpha.LUT_alpha)); 
+    copy(LUT_CL_Control_Surface.begin(), LUT_CL_Control_Surface.end(), back_inserter(zeroAlpha.LUT_CL)); 
+    copy(LUT_CD_Control_Surface.begin(), LUT_CD_Control_Surface.end(), back_inserter(zeroAlpha.LUT_CD)); 
 
 	minAlpha.value=avionics_sim::Lift_drag_model::MIN_AOA;
-	copy(LUT_alpha.begin(), LUT_alpha.end(), back_inserter(minAlpha.LUT_alpha)); 
-    copy(LUT_CL.begin(), LUT_CL.end(), back_inserter(minAlpha.LUT_CL)); 
-    copy(LUT_CD.begin(), LUT_CD.end(), back_inserter(minAlpha.LUT_CD)); 
+	copy(LUT_Alpha_Control_Surface.begin(), LUT_Alpha_Control_Surface.end(), back_inserter(minAlpha.LUT_alpha)); 
+    copy(LUT_CL_Control_Surface.begin(), LUT_CL_Control_Surface.end(), back_inserter(minAlpha.LUT_CL)); 
+    copy(LUT_CD_Control_Surface.begin(), LUT_CD_Control_Surface.end(), back_inserter(minAlpha.LUT_CD)); 
 
 	maxAlpha.value=avionics_sim::Lift_drag_model::MAX_AOA;
-	copy(LUT_alpha.begin(), LUT_alpha.end(), back_inserter(maxAlpha.LUT_alpha)); 
-    copy(LUT_CL.begin(), LUT_CL.end(), back_inserter(maxAlpha.LUT_CL)); 
-    copy(LUT_CD.begin(), LUT_CD.end(), back_inserter(maxAlpha.LUT_CD)); 
+	copy(LUT_Alpha_Control_Surface.begin(), LUT_Alpha_Control_Surface.end(), back_inserter(maxAlpha.LUT_alpha)); 
+    copy(LUT_CL_Control_Surface.begin(), LUT_CL_Control_Surface.end(), back_inserter(maxAlpha.LUT_CL)); 
+    copy(LUT_CD_Control_Surface.begin(), LUT_CD_Control_Surface.end(), back_inserter(maxAlpha.LUT_CD)); 
 
 	//Choose a random, non-zero angle from the LUT.
 	double randAlpha=0;
 	while (randAlpha==0)
 	{
-		randAlpha=alphaAngles.at(getRandomInt(0, alphaAngles.size()-1));
+		randAlpha=LUT_Alpha_Control_Surface.at(getRandomInt(0, LUT_Alpha_Control_Surface.size()-1));
 	}
 	
 	randAlphaBtwMinAndMax.value=randAlpha;
-	copy(LUT_alpha.begin(), LUT_alpha.end(), back_inserter(randAlphaBtwMinAndMax.LUT_alpha)); 
-    copy(LUT_CL.begin(), LUT_CL.end(), back_inserter(randAlphaBtwMinAndMax.LUT_CL)); 
-    copy(LUT_CD.begin(), LUT_CD.end(), back_inserter(randAlphaBtwMinAndMax.LUT_CD)); 
+	copy(LUT_Alpha_Control_Surface.begin(), LUT_Alpha_Control_Surface.end(), back_inserter(randAlphaBtwMinAndMax.LUT_alpha)); 
+    copy(LUT_CL_Control_Surface.begin(), LUT_CL_Control_Surface.end(), back_inserter(randAlphaBtwMinAndMax.LUT_CL)); 
+    copy(LUT_CD_Control_Surface.begin(), LUT_CD_Control_Surface.end(), back_inserter(randAlphaBtwMinAndMax.LUT_CD)); 
 
 	lookupCDValues.push_back(zeroAlpha);
 	lookupCDValues.push_back(minAlpha);
@@ -731,36 +760,6 @@ static void setupLiftDragLateralAreaTestData()
 	setLateralAreaValues.push_back(randExceptionUpperBoundArea);
 	setLateralAreaValues.push_back(exceptionHighestBoundArea);
 	setLateralAreaValues.push_back(nanArea);
-}
-
-static void setupLiftDragCalculateLiftTestData()
-{
-	LiftDragCalculateLiftParams randomBoundedSet;
-	
-	randomBoundedSet.angle=alphaAngles.at(getRandomInt(0, alphaAngles.size()-1));
-	randomBoundedSet.rho=getRandomDouble(avionics_sim::Lift_drag_model::MIN_AIR_DENSITY,avionics_sim::Lift_drag_model::MAX_AIR_DENSITY);
-	randomBoundedSet.vInf=getRandomDouble(avionics_sim::Lift_drag_model::MIN_VINF,avionics_sim::Lift_drag_model::MAX_VINF);
-
-	copy(LUT_alpha.begin(), LUT_alpha.end(), back_inserter(randomBoundedSet.LUT_alpha)); 
-    copy(LUT_CL.begin(), LUT_CL.end(), back_inserter(randomBoundedSet.LUT_CL)); 
-    copy(LUT_CD.begin(), LUT_CD.end(), back_inserter(randomBoundedSet.LUT_CD));
-
-	calculateLiftValues.push_back(randomBoundedSet);
-}
-
-static void setupLiftDragCalculateDragTestData()
-{
-	LiftDragCalculateDragParams randomBoundedSet;
-	
-	randomBoundedSet.angle=alphaAngles.at(getRandomInt(0, alphaAngles.size()-1));
-	randomBoundedSet.rho=getRandomDouble(avionics_sim::Lift_drag_model::MIN_AIR_DENSITY,avionics_sim::Lift_drag_model::MAX_AIR_DENSITY);
-	randomBoundedSet.vInf=getRandomDouble(avionics_sim::Lift_drag_model::MIN_VINF,avionics_sim::Lift_drag_model::MAX_VINF);
-
-	copy(LUT_alpha.begin(), LUT_alpha.end(), back_inserter(randomBoundedSet.LUT_alpha)); 
-    copy(LUT_CL.begin(), LUT_CL.end(), back_inserter(randomBoundedSet.LUT_CL)); 
-    copy(LUT_CD.begin(), LUT_CD.end(), back_inserter(randomBoundedSet.LUT_CD));
-
-	calculateDragValues.push_back(randomBoundedSet);
 }
 
 static void setupLiftDragCalculateDynamicPressureData()
@@ -886,57 +885,6 @@ static void setupMotorModelSetExitVelocityData()
 	setExitVelocityValues.push_back(randExceptionUpperBoundExitVelocity);
 	setExitVelocityValues.push_back(exceptionHighestBoundExitVelocity);
 	setExitVelocityValues.push_back(nanExitVelocity);
-}
-
-static void setupLiftDragCalculateLateralForceData()
-{
-	LiftDragCalculateLateralForceParams minVelSet;
-	LiftDragCalculateLateralForceParams randVelSet;
-	LiftDragCalculateLateralForceParams maxVelSet;
-	LiftDragCalculateLateralForceParams positiveBetaSet;
-	LiftDragCalculateLateralForceParams negativeBetaSet;
-
-	minVelSet.angle=alphaAngles.at(getRandomInt(0, alphaAngles.size()-1));
-	minVelSet.rho=getRandomDouble(avionics_sim::Lift_drag_model::MIN_AIR_DENSITY,avionics_sim::Lift_drag_model::MAX_AIR_DENSITY);
-	minVelSet.vInf=avionics_sim::Lift_drag_model::MIN_VINF;
-	lateralForceParamCollections.push_back(minVelSet);
-	copy(LUT_alpha.begin(), LUT_alpha.end(), back_inserter(minVelSet.LUT_alpha)); 
-    copy(LUT_CL.begin(), LUT_CL.end(), back_inserter(minVelSet.LUT_CL)); 
-    copy(LUT_CD.begin(), LUT_CD.end(), back_inserter(minVelSet.LUT_CD));
-	lateralForceParamCollections.push_back(minVelSet);
-
-	randVelSet.angle=alphaAngles.at(getRandomInt(0, alphaAngles.size()-1));
-	randVelSet.rho=getRandomDouble(avionics_sim::Lift_drag_model::MIN_AIR_DENSITY,avionics_sim::Lift_drag_model::MAX_AIR_DENSITY);
-	randVelSet.vInf=getRandomDouble(avionics_sim::Lift_drag_model::MIN_VINF,avionics_sim::Lift_drag_model::MAX_VINF);
-	lateralForceParamCollections.push_back(randVelSet);
-	copy(LUT_alpha.begin(), LUT_alpha.end(), back_inserter(randVelSet.LUT_alpha)); 
-    copy(LUT_CL.begin(), LUT_CL.end(), back_inserter(randVelSet.LUT_CL)); 
-    copy(LUT_CD.begin(), LUT_CD.end(), back_inserter(randVelSet.LUT_CD));
-	lateralForceParamCollections.push_back(randVelSet);
-
-	maxVelSet.angle=alphaAngles.at(getRandomInt(0, alphaAngles.size()-1));
-	maxVelSet.rho=getRandomDouble(avionics_sim::Lift_drag_model::MIN_AIR_DENSITY,avionics_sim::Lift_drag_model::MAX_AIR_DENSITY);
-	maxVelSet.vInf=avionics_sim::Lift_drag_model::MAX_VINF;
-	copy(LUT_alpha.begin(), LUT_alpha.end(), back_inserter(maxVelSet.LUT_alpha)); 
-    copy(LUT_CL.begin(), LUT_CL.end(), back_inserter(maxVelSet.LUT_CL)); 
-    copy(LUT_CD.begin(), LUT_CD.end(), back_inserter(maxVelSet.LUT_CD));
-	lateralForceParamCollections.push_back(maxVelSet);
-
-	positiveBetaSet.angle=alphaAngles.at(getRandomInt(lastNegativeAlphaIdx+1, alphaAngles.size()-1));
-	positiveBetaSet.rho=getRandomDouble(avionics_sim::Lift_drag_model::MIN_AIR_DENSITY,avionics_sim::Lift_drag_model::MAX_AIR_DENSITY);
-	positiveBetaSet.vInf=getRandomDouble(avionics_sim::Lift_drag_model::MIN_VINF,avionics_sim::Lift_drag_model::MAX_VINF);
-	copy(LUT_alpha.begin(), LUT_alpha.end(), back_inserter(positiveBetaSet.LUT_alpha)); 
-    copy(LUT_CL.begin(), LUT_CL.end(), back_inserter(positiveBetaSet.LUT_CL)); 
-    copy(LUT_CD.begin(), LUT_CD.end(), back_inserter(positiveBetaSet.LUT_CD));
-	lateralForceParamCollections.push_back(positiveBetaSet);
-
-	negativeBetaSet.angle=alphaAngles.at(getRandomInt(0, lastNegativeAlphaIdx));
-	negativeBetaSet.rho=getRandomDouble(avionics_sim::Lift_drag_model::MIN_AIR_DENSITY,avionics_sim::Lift_drag_model::MAX_AIR_DENSITY);
-	negativeBetaSet.vInf=getRandomDouble(avionics_sim::Lift_drag_model::MIN_VINF,avionics_sim::Lift_drag_model::MAX_VINF);
-	copy(LUT_alpha.begin(), LUT_alpha.end(), back_inserter(negativeBetaSet.LUT_alpha)); 
-    copy(LUT_CL.begin(), LUT_CL.end(), back_inserter(negativeBetaSet.LUT_CL)); 
-    copy(LUT_CD.begin(), LUT_CD.end(), back_inserter(negativeBetaSet.LUT_CD));
-	lateralForceParamCollections.push_back(negativeBetaSet);
 }
 
 static void setupLiftDragSetBetaTestData()
@@ -1133,6 +1081,109 @@ static void setupCalculateWindAnglesData()
 	setCalculateWindAnglesValues.push_back(markdownInput);
 }
 
+static void setupCalculateForcesData()
+{
+	LiftDragCalculateForcesParams unspecificCase;
+	unspecificCase.inputWorldVel=ignition::math::Vector3d(10.0,1.0,0.1);
+	unspecificCase.inputPose=ignition::math::Pose3d(0.0,0.0,0.0,-0.09,1.48,0.1);
+	unspecificCase.vFwd=ignition::math::Vector3d(0.0,0.0,1.0);
+	unspecificCase.vUpwd=ignition::math::Vector3d(-1.0,0.0,0.0);
+	unspecificCase.area=1.0;
+	unspecificCase.rho=1.225;
+	unspecificCase.motorExitVelocity=0.0;
+	unspecificCase.controlAlpha=0.0;
+	
+	copy(LUT_Alpha_Control_Surface.begin(), LUT_Alpha_Control_Surface.end(), back_inserter(unspecificCase.LUT_alpha)); 
+    copy(LUT_CL_Control_Surface.begin(), LUT_CL_Control_Surface.end(), back_inserter(unspecificCase.LUT_CL)); 
+    copy(LUT_CD_Control_Surface.begin(), LUT_CD_Control_Surface.end(), back_inserter(unspecificCase.LUT_CD));
+	
+	unspecificCase.trueLift=ignition::math::Vector3d(-31.3604,0.0,0.0);
+	unspecificCase.trueDrag=ignition::math::Vector3d(0.0,0.0,1.7237);
+	unspecificCase.trueLateralForce=ignition::math::Vector3d(0.0,0.0,0.0);
+	
+    unspecificCase.hasMotorExitVelocity=false;
+    unspecificCase.isControlSurface=false;
+	unspecificCase.isNonSpecific=true;
+	setCalculateForcesValues.push_back(unspecificCase);
+}
+
+static void setupCalculateMultiElementForcesDataTwoCSPlusMainWing()
+{
+	LiftDragCalculateMultiElementForcesParams threeElemTwoCS;
+
+	LiftDragCalculateForcesParams mainWing;
+	mainWing.inputWorldVel=ignition::math::Vector3d(10.0,1.0,0.1);
+	mainWing.inputPose=ignition::math::Pose3d(0.0,0.0,0.0,-0.09,1.48,0.1);
+	mainWing.vFwd=ignition::math::Vector3d(0.0,0.0,1.0);
+	mainWing.vUpwd=ignition::math::Vector3d(-1.0,0.0,0.0);
+	mainWing.area=1.3290;
+	mainWing.rho=1.225;
+	mainWing.motorExitVelocity=0.0;
+	mainWing.controlAlpha=4.6510;
+	copy(LUT_Alpha.begin(), LUT_Alpha.end(), back_inserter(mainWing.LUT_alpha)); 
+    copy(LUT_CL.begin(), LUT_CL.end(), back_inserter(mainWing.LUT_CL)); 
+    copy(LUT_CD.begin(), LUT_CD.end(), back_inserter(mainWing.LUT_CD));
+	mainWing.trueLift=ignition::math::Vector3d(95.5105,0.0,0.0);
+	mainWing.trueDrag=ignition::math::Vector3d(0.0,0.0,7.8589);
+	mainWing.trueLateralForce=ignition::math::Vector3d(0.0,0.0,0.0);
+    mainWing.hasMotorExitVelocity=false;
+	mainWing.motorExitVelocity=0;
+    mainWing.isControlSurface=false;
+	mainWing.isNonSpecific=false;
+	mainWing.linkName="Main Wing";
+	mainWing.vInf=10.0097;
+
+	LiftDragCalculateForcesParams firstCSWing;
+	firstCSWing.inputWorldVel=ignition::math::Vector3d(10.0,1.0,0.1);
+	firstCSWing.inputPose=ignition::math::Pose3d(0.0,0.0,0.0,-0.09,1.48,0.1);
+	firstCSWing.vFwd=ignition::math::Vector3d(0.0,0.0,1.0);
+	firstCSWing.vUpwd=ignition::math::Vector3d(-1.0,0.0,0.0);
+	firstCSWing.area=0.0492;
+	firstCSWing.rho=1.225;
+	firstCSWing.motorExitVelocity=0.0;
+	firstCSWing.controlAlpha=11.25;
+	copy(LUT_Alpha_Control_Surface.begin(), LUT_Alpha_Control_Surface.end(), back_inserter(firstCSWing.LUT_alpha)); 
+    copy(LUT_CL_Control_Surface.begin(), LUT_CL_Control_Surface.end(), back_inserter(firstCSWing.LUT_CL)); 
+    copy(LUT_CD_Control_Surface.begin(), LUT_CD_Control_Surface.end(), back_inserter(firstCSWing.LUT_CD));
+	firstCSWing.trueLift=ignition::math::Vector3d(1.4554,0.0,0.0);
+	firstCSWing.trueDrag=ignition::math::Vector3d(0.0,0.0,1.0935);
+	firstCSWing.trueLateralForce=ignition::math::Vector3d(0.0,0.0,0.0);
+    firstCSWing.hasMotorExitVelocity=true;
+	firstCSWing.motorExitVelocity=0;
+    firstCSWing.isControlSurface=true;
+	firstCSWing.isNonSpecific=false;
+	firstCSWing.linkName="Port CS";
+	firstCSWing.vInf=20.0242;
+
+	LiftDragCalculateForcesParams secondCSWing;
+	secondCSWing.inputWorldVel=ignition::math::Vector3d(10.0,1.0,0.1);
+	secondCSWing.inputPose=ignition::math::Pose3d(0.0,0.0,0.0,-0.09,1.48,0.1);
+	secondCSWing.vFwd=ignition::math::Vector3d(0.0,0.0,1.0);
+	secondCSWing.vUpwd=ignition::math::Vector3d(-1.0,0.0,0.0);
+	secondCSWing.area=0.0492;
+	secondCSWing.rho=1.225;
+	secondCSWing.motorExitVelocity=0.0;
+	secondCSWing.controlAlpha=11.25;
+	copy(LUT_Alpha_Control_Surface.begin(), LUT_Alpha_Control_Surface.end(), back_inserter(secondCSWing.LUT_alpha)); 
+    copy(LUT_CL_Control_Surface.begin(), LUT_CL_Control_Surface.end(), back_inserter(secondCSWing.LUT_CL)); 
+    copy(LUT_CD_Control_Surface.begin(), LUT_CD_Control_Surface.end(), back_inserter(secondCSWing.LUT_CD));
+	secondCSWing.trueLift=ignition::math::Vector3d(1.4554,0.0,0.0);
+	secondCSWing.trueDrag=ignition::math::Vector3d(0.0,0.0,1.0935);
+	secondCSWing.trueLateralForce=ignition::math::Vector3d(0.0,0.0,0.0);
+    secondCSWing.hasMotorExitVelocity=true;
+	secondCSWing.motorExitVelocity=0;
+    secondCSWing.isControlSurface=true;
+	secondCSWing.isNonSpecific=false;
+	secondCSWing.linkName="Starboard CS";
+	secondCSWing.vInf=20.0242;
+
+	threeElemTwoCS.elementData.push_back(mainWing);
+	threeElemTwoCS.elementData.push_back(firstCSWing);
+	threeElemTwoCS.elementData.push_back(secondCSWing);
+	threeElemTwoCS.summedTrueForce=ignition::math::Vector3d(-98.7441,0.0,-2.2754);
+	threeElementTwoCSValues.push_back(threeElemTwoCS);
+}
+
 int main(int argc, char **argv)
 {
 	std::string envFilters="";
@@ -1188,6 +1239,8 @@ int main(int argc, char **argv)
 			envFilters=unitTestFilter;
 		}
 
+		initLUTTables();
+
 		setupCoordUtilsTestData();
 
 		setupLiftDragSetAlphaTestData();
@@ -1208,17 +1261,11 @@ int main(int argc, char **argv)
 
 		setupLiftDragLateralAreaTestData();
 
-		setupLiftDragCalculateLiftTestData();
-
-		setupLiftDragCalculateDragTestData();
-
 		setupLiftDragCalculateDynamicPressureData();
 
 		setupMotorModelSetThrustData();
 
 		setupMotorModelSetExitVelocityData();
-
-		setupLiftDragCalculateLateralForceData();
 
 		setupLiftDragSetBetaTestData();
 
@@ -1227,6 +1274,10 @@ int main(int argc, char **argv)
 		setupCalculateLocalVelocitiesData();
 
 		setupCalculateWindAnglesData();
+
+		setupCalculateForcesData();
+
+		setupCalculateMultiElementForcesDataTwoCSPlusMainWing();
 	}
 
 	if (runIntegrationTests)

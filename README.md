@@ -38,6 +38,10 @@ Copyright (c) Swift Engineering Inc. 2018
 
 Licensed by Swift Engineering Inc. under the MIT license. See LICENSE file for details.
 
+## How to Read This Documentation
+
+If reading this document on a local machine, please ensure that the complete contents of the `documentation` folder have been pulled and to use a markdown reader such as Typora.
+
 ## Bilinear Interpolation
 
 The bilinear interpolation library is a convenience library containing a single class called `Bilinear_interp` which can be used to automate linear (1D) and bilinear (2D) interpolation from lookup tables. The class also contains helper functions which can load comma separated values into one or two dimensional `std::vector<float>`. This library is used extensively in both the `avionics_sim` LiftDragPlugin, and the `gazebo_motor_model`. 
