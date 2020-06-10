@@ -204,11 +204,11 @@ namespace avionics_sim
             }
 
             //Check if vInf is within bounds. If not, store vInf as either MIN_VINF or MAX_VINF if bounds exceeded, then throw an exception.
-            if (!valueIsWithinBounds(vInf, MIN_VINF, MAX_VINF, "VInf (speed)", errMsg))
+            if (!valueIsWithinBounds(vInf, MIN_VINF, MAX_VINF, "VInf", errMsg))
             {
                 Lift_drag_model_exception e(errMsg);
                 throw e;
-                
+
             }
         }
     }
@@ -244,7 +244,7 @@ namespace avionics_sim
             {
                 Lift_drag_model_exception e(errMsg);
                 throw e;
-                
+
             }
         }
     }
@@ -483,7 +483,7 @@ namespace avionics_sim
         alpha = atan2(y,x);
 
         //If a domain error has occurred, set alpha to zero, then record exception data.
-        if (math_errhandling & MATH_ERRNO) 
+        if (math_errhandling & MATH_ERRNO)
         {
             if (errno==EDOM)
             {
@@ -522,11 +522,11 @@ namespace avionics_sim
         beta = asin(y/vInf);
 
         //If a domain error has occurred, set beta to zero, then throw an exception.
-        if (math_errhandling & MATH_ERRNO) 
+        if (math_errhandling & MATH_ERRNO)
         {
             if (errno==EDOM)
             {
-                /*Set angle to zero. Because simulation will have an initial vInf of zero, don't 
+                /*Set angle to zero. Because simulation will have an initial vInf of zero, don't
                 contribute to exceptions.*/
                 beta=0;
             }
@@ -672,7 +672,7 @@ namespace avionics_sim
         // Set freestream velocity.
         try
         {
-            setFreeStreamVelocity(vInFreestream_s); 
+            setFreeStreamVelocity(vInFreestream_s);
         }
         catch(Lift_drag_model_exception& e)
         {
@@ -689,7 +689,7 @@ namespace avionics_sim
         // Set planar velocity.
         try
         {
-            setPlanarVelocity(vInLDPlane_s); 
+            setPlanarVelocity(vInLDPlane_s);
         }
         catch(Lift_drag_model_exception& e)
         {
@@ -743,7 +743,7 @@ namespace avionics_sim
         cldmvBlock.tryCatch(this,&avionics_sim::Lift_drag_model::calculateDrag);
 
         cldmvBlock.tryCatch(this,&avionics_sim::Lift_drag_model::calculateLateralForce);
-        
+
         //If rotation is required, calculate rotated forces.
         // TODO: Check Rotations and Directions
         if (calculateRotatedForces)
@@ -788,7 +788,7 @@ namespace avionics_sim
         }
     }
 
-    void Lift_drag_model::setWorldPose(ignition::math::Pose3d pose) 
+    void Lift_drag_model::setWorldPose(ignition::math::Pose3d pose)
     {
         worldPose = pose;
 
@@ -836,10 +836,10 @@ namespace avionics_sim
 
     void Lift_drag_model::calculateForceWithDirection(bool calculatedRotatedForces)
     {
-        // Get direction of lift by multiplying lift by upward vector. 
+        // Get direction of lift by multiplying lift by upward vector.
         liftVec = lift * vecUpwd;
 
-        /* Get direction of drag. This should be in the opposite direction of velocity. 
+        /* Get direction of drag. This should be in the opposite direction of velocity.
         If the drag has been calculated as rotated, do not take -vecFwd as direction of drag, as this has been factored in by the rotation. Otherwise, use -vecFwd to get direction of drag.
         */
         if (!calculatedRotatedForces)
@@ -850,7 +850,7 @@ namespace avionics_sim
         {
             dragVec = drag * vecFwd;
         }
-        
+
         //Get direction of lateral force.
         lateralForceVec = lateral_force * vecPort;
 
