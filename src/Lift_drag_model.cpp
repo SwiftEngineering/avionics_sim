@@ -44,13 +44,19 @@ namespace avionics_sim
         beta(0.0),
         lateralArea(0.0),
         lateral_velocity(0.0),
-        vLocalAircraftVelocity(ignition::math::Vector3d(0, 0, 0)),
-        force(ignition::math::Vector3d(0, 0, 0)),
-        wingFrameVelocity(ignition::math::Vector3d(0, 0, 0)),
-        worldPose(ignition::math::Pose3d(0,0,0,0,0,0)),
-        worldVel(ignition::math::Vector3d(0, 0, 0)),
-        vecFwd(ignition::math::Vector3d(1.0, 0.0, 0.0)),
-        vecUpwd(ignition::math::Vector3d(0.0, 0.0, 1.0)){}
+        force(ignition::math::Vector3d(0.0, 0.0, 0.0)),
+        wingFrameVelocity(ignition::math::Vector3d(0.0, 0.0, 0.0)),
+        worldPose(ignition::math::Pose3d(0.0,0.0,0.0,0.0,0.0,0.0)),
+        worldVel(ignition::math::Vector3d(0.0, 0.0, 0.0)),
+        vecFwd(ignition::math::Vector3d(0.0, 0.0, 0.0)),
+        vecUpwd(ignition::math::Vector3d(0.0, 0.0, 0.0)),
+        vecPort(ignition::math::Vector3d(0.0, 0.0, 0.0)),
+        radialSymmetry(false),
+        vInLDPlane_v(ignition::math::Vector3d(0.0, 0.0, 0.0)),
+        vInFreestreamPlane_v(ignition::math::Vector3d(0.0, 0.0, 0.0)),
+        liftVec(ignition::math::Vector3d(0.0, 0.0, 0.0)),
+        dragVec(ignition::math::Vector3d(0.0, 0.0, 0.0)),
+        lateralForceVec(ignition::math::Vector3d(0.0, 0.0, 0.0)){}
 
     void Lift_drag_model::emptyLUTAndCoefficientVectors()
     {
@@ -174,7 +180,7 @@ namespace avionics_sim
         return beta;
     }
 
-    void Lift_drag_model::setFreeStreamVelocity(double _fsVel)
+    void Lift_drag_model::setFreeStreamVelocity(double _fsVel, bool overridePlanarAndFreestream)
     {
         std::string errMsg;
 
@@ -189,6 +195,12 @@ namespace avionics_sim
         else
         {
             vInf=_fsVel;
+
+            if (overridePlanarAndFreestream)
+            {
+                //Because the model uses vPlanar in calculating pressure only, update the calculated vPlanar velocity as well.
+                setPlanarVelocity(vInf);
+            }
 
             //Check if vInf is within bounds. If not, store vInf as either MIN_VINF or MAX_VINF if bounds exceeded, then throw an exception.
             /*if (!valueIsWithinBounds(vInf, MIN_VINF, MAX_VINF, "VInf (speed)", errMsg, true))
@@ -207,6 +219,11 @@ namespace avionics_sim
     double Lift_drag_model::getFreeStreamVelocity()
     {
         return vInf;
+    }
+
+    ignition::math::Vector3d Lift_drag_model::getFreeStreamVelocityVec()
+    {
+        return vInFreestreamPlane_v;
     }
 
     void Lift_drag_model::setPlanarVelocity(double _planarVel)
@@ -230,6 +247,11 @@ namespace avionics_sim
     double Lift_drag_model::getPlanarVelocity()
     {
         return vPlanar;
+    }
+
+    ignition::math::Vector3d Lift_drag_model::getPlanarVelocityVec()
+    {
+        return vInLDPlane_v;
     }
 
     void Lift_drag_model::setArea(double _area)
@@ -364,21 +386,6 @@ namespace avionics_sim
     void Lift_drag_model::lookupCL()
     {
         AeroInterp.interpolate(Aero_LUT_alpha,Aero_LUT_CL, alpha, &cl);
-
-        /*
-        Check if the lift coefficient is within bounds. Throw an exception if it is not.
-        NB: There is no need to test for NaN in the lookup tables, as those values must be of type double for the vector that holds those values.
-        */
-        std::string errMsg;
-        if (!valueIsWithinBounds(cl, MIN_CL, MAX_CL, "CL (Coefficient of Lift)", errMsg))
-        {
-            /*
-            Until try catches are restored in lift drag plugin, stop throwing exceptions.
-            Failure to catch leads to crash.
-            Lift_drag_model_exception e(errMsg);
-            throw e;
-            */
-        }
     }
 
     void Lift_drag_model::lookupCD()
@@ -401,54 +408,17 @@ namespace avionics_sim
     void Lift_drag_model::calculateLift()
     {
         lift=cl*q*getArea();
-
-        std::string errMsg;
-        if (!valueIsWithinBounds(lift, MIN_LIFT, MAX_LIFT, "Lift", errMsg))
-        {
-            errMsg=errMsg+"Cl="+mu.to_string_with_precision(cl,16)+", q="+mu.to_string_with_precision(q,16)+", area="+mu.to_string_with_precision(getArea(),16);
-
-            /*
-            Until try catches are restored in lift drag plugin, stop throwing exceptions.
-            Failure to catch leads to crash.
-            Lift_drag_model_exception e(errMsg);
-            throw e;
-            */
-        }
     }
 
     void Lift_drag_model::calculateDrag()
     {
         drag=cd*q*getArea();
-
-        //Check if the drag force is within bounds. Throw an exception if it is not.
-        std::string errMsg;
-        if (!valueIsWithinBounds(drag, MIN_DRAG, MAX_DRAG, "Drag", errMsg))
-        {
-            errMsg=errMsg+"Cd="+mu.to_string_with_precision(cd,16)+", q="+mu.to_string_with_precision(q,16)+", area="+mu.to_string_with_precision(getArea(),16);
-
-            /*
-            Until try catches are restored in lift drag plugin, stop throwing exceptions.
-            Failure to catch leads to crash.
-            Lift_drag_model_exception e(errMsg);
-            throw e;
-            */
-        }
     }
 
     void Lift_drag_model::calculateLateralForce()
     {
         double q_lat=0.5*rho*lateral_velocity*lateral_velocity;
-        lateral_force=q_lat*coefficientLateralForce*convertDegreesToRadians(getBeta())*getLateralArea();
-        std::string errMsg;
-        if (!valueIsWithinBounds(lateral_force, MIN_LATERAL_FORCE, MAX_LATERAL_FORCE, "Lateral force", errMsg))
-        {
-            /*
-            Until try catches are restored in lift drag plugin, stop throwing exceptions.
-            Failure to catch leads to crash.
-            Lift_drag_model_exception e(errMsg);
-            throw e;
-            */
-        }
+        lateral_force=q_lat*coefficientLateralForce*getLateralArea();
     }
 
     double Lift_drag_model::getLift()
@@ -478,7 +448,7 @@ namespace avionics_sim
 
     void Lift_drag_model::calculateDynamicPressure()
     {
-        q=0.5*rho*vInf*vInf;
+        q=0.5*rho*vPlanar*vPlanar;
     }
 
     double Lift_drag_model::getDynamicPressure()
@@ -492,12 +462,9 @@ namespace avionics_sim
         bool criticalExceptionOccurred=false;
         std::string exceptions="Lift_drag_model::calculateWindAngles:\n";
 
-        //Calculate port vector.
-        ignition::math::Vector3d port = vecUpwd.Cross(vecFwd);
-
         //Calculate velocity in each direction.
         double u = vecUpwd.Dot(wingFrameVelocity);
-        double v = port.Dot(wingFrameVelocity);
+        double v = vecPort.Dot(wingFrameVelocity);
         double w = vecFwd.Dot(wingFrameVelocity);
 
         // Calculate alpha
@@ -671,10 +638,6 @@ namespace avionics_sim
 
     void Lift_drag_model::calculateLocalVelocities()
     {
-        ignition::math::Vector3d vInLDPlane_v; // Vector of velocity in LD plane.
-
-        ignition::math::Vector3d vInFreestream_v; // Vector of freestream
-
         double vInLDPlane_s; // Scalar magnitude of speed in LD plane.
 
         std::string exceptions="Lift_drag_model::calculateLocalVelocities:\n";
@@ -687,9 +650,9 @@ namespace avionics_sim
         // Calculate world linear velocity in wing coordinate frame.
         avionics_sim::Coordinate_Utils::project_vector_global(worldPose, vWorldAircraftVelocity, &wingFrameVelocity);
 
-        vInFreestream_v = ignition::math::Vector3d(wingFrameVelocity.X(), wingFrameVelocity.Y(), wingFrameVelocity.Z());
+        vInFreestreamPlane_v = ignition::math::Vector3d(wingFrameVelocity.X(), wingFrameVelocity.Y(), wingFrameVelocity.Z());
 
-        double vInFreestream_s = vInFreestream_v.Length();
+        double vInFreestream_s = vInFreestreamPlane_v.Length();
 
         // Remove spanwise and vertical component
         vInLDPlane_v = ignition::math::Vector3d(wingFrameVelocity.X(), 0, wingFrameVelocity.Z());
@@ -753,7 +716,7 @@ namespace avionics_sim
         }
     }
 
-    void Lift_drag_model::calculateLiftDragModelValues()
+    void Lift_drag_model::calculateLiftDragModelValues(bool calculateRotatedForces)
     {
         calculateDynamicPressure();
 
@@ -770,6 +733,17 @@ namespace avionics_sim
         cldmvBlock.tryCatch(this,&avionics_sim::Lift_drag_model::calculateDrag);
 
         cldmvBlock.tryCatch(this,&avionics_sim::Lift_drag_model::calculateLateralForce);
+        
+        //If rotation is required, calculate rotated forces.
+        // TODO: Check Rotations and Directions
+        if (calculateRotatedForces)
+        {
+            calculateRotatedLiftAndDrag();
+            lateral_force=0;
+        }
+
+         //Calculate force vector with appropriate direction.
+        calculateForceWithDirection(calculateRotatedForces);
 
         //If any exceptions occurred along the way, throw a new exception that has the combined exception history of all the prior exceptions.
         if (cldmvBlock.exceptionHasOccurred())
@@ -777,6 +751,15 @@ namespace avionics_sim
             Lift_drag_model_exception e(cldmvBlock.getExceptionMessage(), cldmvBlock.exceptionIsCritical());
             throw e;
         }
+    }
+
+    void Lift_drag_model::calculateRotatedLiftAndDrag()
+    {
+        double alphaInRadians=convertDegreesToRadians(alpha);
+        double rotated_lift = (lift*cos(alphaInRadians))+(drag*sin(alphaInRadians));
+        double rotated_drag = (lift*sin(alphaInRadians))-(drag*cos(alphaInRadians));
+        lift=rotated_lift;
+        drag=rotated_drag;
     }
 
     void Lift_drag_model::calculateWindAnglesAndLocalVelocities()
@@ -816,6 +799,47 @@ namespace avionics_sim
 
         //Eliminate any NaN values.
         vecUpwd.Correct();
+    }
+
+    void Lift_drag_model::calculatePortVector()
+    {
+        vecPort =  vecUpwd.Cross(vecFwd);
+    }
+
+    void Lift_drag_model::setPortVector(ignition::math::Vector3d port)
+    {
+        vecPort=port;
+        vecPort.Correct();
+
+        //Normalize to get a proper unit vector.
+        vecPort.Normalize();
+    }
+
+    void Lift_drag_model::calculateForceWithDirection(bool calculatedRotatedForces)
+    {
+        // Get direction of lift by multiplying lift by upward vector. 
+        liftVec = lift * vecUpwd;
+
+        /* Get direction of drag. This should be in the opposite direction of velocity. 
+        If the drag has been calculated as rotated, do not take -vecFwd as direction of drag, as this has been factored in by the rotation. Otherwise, use -vecFwd to get direction of drag.
+        */
+        if (!calculatedRotatedForces)
+        {
+            dragVec = drag * -vecFwd;
+        }
+        else
+        {
+            dragVec = drag * vecFwd;
+        }
+        
+        //Get direction of lateral force.
+        lateralForceVec = lateral_force * vecPort;
+
+        //Add the forces together.
+        force = liftVec + lateralForceVec + dragVec;
+
+        //Correct any NaN values.
+        force.Correct();
     }
 
 }

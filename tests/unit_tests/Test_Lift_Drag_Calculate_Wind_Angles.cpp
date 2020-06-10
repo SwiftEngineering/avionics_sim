@@ -32,8 +32,8 @@ TEST_P(LiftDragCalculateWindAnglesParameterized, LiftDragCalculateWindAngles_Uni
 		ldm.setWorldVelocity(worldVel);
 		ldm.setForwardVector(forward);
 		ldm.setUpwardVector(upward);
-		ldm.calculateLocalVelocities();
-		ldm.calculateWindAngles();
+		ldm.calculatePortVector();
+		ldm.calculateWindAnglesAndLocalVelocities();
 
 		//std::cout<<"Alpha="<<ldm.convertDegreesToRadians(ldm.getAlpha())<<", beta="<<ldm.convertDegreesToRadians(ldm.getBeta())<<std::endl;
 		

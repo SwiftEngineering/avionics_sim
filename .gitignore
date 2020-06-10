@@ -15,3 +15,5 @@ googletest-src/
 *_test_*.html
 avionics_sim_test_runner
 tests/test_runner/lib/
+*.orig
+*.a
