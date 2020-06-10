@@ -110,7 +110,7 @@ $q_{yaw}$ = Quaternion representation of $yaw$
 
 *link* =a rigid body entity, defined in Gazebo, that contains information on inertia, visual and collision properties of a rigid body.
 
-*LiftDrag Model* = C++ class in *avionics_sim* library responsible for calculation of forces and related values. Each instance of the LiftDrag plugin has an instance of the LiftDrag Model.
+*LiftDrag Model* = C++ class in *avionics_sim* library responsible for calculation of forces and related values. Each instance of the LiftDrag plugin has an instance of the *LiftDrag Model*.
 
 
 
@@ -375,15 +375,15 @@ $$
 \begin{equation}V_{body}=(\mathbf F_w \cdot \mathbf V_{world}, \mathbf R_w \cdot \mathbf V_{world}, \mathbf U_w \cdot \mathbf V_{world}) \end{equation}
 $$
 
-This is accomplished in the LiftDrag by calling the C++ method *project_vector_global* and passing into it the wing pose and world velocity.
+This is accomplished in the *LiftDrag Model* by calling the C++ method *project_vector_global* and passing into it the wing pose and world velocity. The implementation for this method is defined in the *CoordUtils* class of avionics_sim.
+
+![project_vector_global](images/project_vector_global_logic.png)
 
 
 
 <u>*Verification*</u>
 
 $V_{body}$ can be compared against a $V_{body}$ calculated by rotation matrices for correctness. 
-
-![project_vector_global](images/project_vector_global_logic.png)
 
 
 
@@ -398,7 +398,7 @@ $$
 V_{planar} = \sqrt{{{V_{body}}_x}^2+{{V_{body}}_z}^2}
 $$
 
-Velocities are calculated in the method calculateLocalVelocities, while the angles  $\alpha$ and  $\beta$ are calculated in the method calculateWindAngles(). Both functions are called in the wrapper function calculateWindAnglesAndLocalVelocities(). This function in turn is called by the lift drag Gazebo plugin after pose and velocity have been set.
+Velocities are calculated in the  *LiftDrag Model* method *calculateLocalVelocities*, while the angles  $\alpha$ and  $\beta$ are calculated in the method *calculateWindAngles*. Both functions are called in the wrapper function *calculateWindAnglesAndLocalVelocities* within the *LiftDrag Model*. This function in turn is called by the lift drag Gazebo plugin after pose and velocity have been set.
 
 To take into account direction for each component of the body velocity, each component is updated by taking a dot product of the component with its associated unit vector:
 $$
@@ -461,12 +461,22 @@ Planar dynamic pressure then is defined as
 $$
 q_{planar} = \frac{1}{2}\rho V_{planar}^2
 $$
+Planar dynamic pressure is calculated in the *LiftDrag Model* method *calculateDynamicPressure*.
+
+*<u>calculateDynamicPressure logic diagram</u>*
+
+![calculateDynamicPressure logic diagram](images/calculateDynamicPressure_logic.png)
+
 For the purposes of calculate drag due to side slip, we use sideslip dynamic pressure.
 $$
 q_{ss} = \frac{1}{2} \rho {{V_{body}}_y}^2
 $$
 
+Side slip dynamic pressure is calculated in the *LiftDrag Model* method *calculateLateralForces*.
 
+*<u>calculateLateralForce logic diagram</u>*
+
+![calculateLateralForce logic diagram](images/calculateLateralForce_logic.png)
 
 ###### Aerodynamic Coefficient Lookup from table
 
@@ -478,7 +488,23 @@ LUT = [{\alpha_{LUT}}, C_{L_{LUT}}, C_{D_{LUT}}]
 $$
 where ${\alpha_{LUT}}, C_{L_{LUT}}, C_{D_{LUT}}$ are all column vectors of the same length.
 
+In the *LiftDrag Model*, the column vectors  ${\alpha_{LUT}}, C_{L_{LUT}}, C_{D_{LUT}}$ for $$LUT$$ are stored as objects of type std::vector<double>. On load, the lift drag plugin will read in the values for the lookup tables from XML files, then store the values in the model's column vectors using the class method *setLUT*s. There are two sets of values for the vectors: One set is for control surfaces, while the other is for the main wing.
 
+*<u>Coefficient table setup sequence diagram</u>*
+
+![calculateLateralForce logic diagram](images/UML_sequence_diagram_set_LUTs.png)
+
+Once the values of the column vectors have been stored in the model and the value of $$\alpha$$ has been determined in the *LiftDrag Model*, the *LiftDrag Model* methods *lookupCL* and *lookupCD* can be used to obtain respectively the lift and drag coefficients. Linear interpolation is done within these methods using avionics_sim class *Bilinear_interp*.
+
+*<u>lookupCL logic diagram</u>*
+
+![lookupCL logic diagram](images/lookupCL_logic_diagram.png)
+
+
+
+*<u>lookupCD logic diagram</u>*
+
+![lookupCD logic diagram](images/lookupCD_logic_diagram.png)
 
 ###### Calculate lift and drag force scalar quantities
 
@@ -491,7 +517,15 @@ $$
 D = C_Dq_{planar}A
 $$
 
+Lift and drag force scalar quantities are calculated in the lift drag model implementation by the calling respectively the *LiftDrag Model* methods *calculateLift* and *calculateDrag*.
 
+*<u>calculateLift logic diagram</u>*
+
+![calculateLift logic diagram](images/calculateLift_logic_diagram.png)
+
+*<u>calculateDrag logic diagram</u>*
+
+![calculateDrag logic diagram](images/calculateDrag_logic_diagram.png)
 
 ###### Calculate sideslip drag
 
@@ -500,6 +534,7 @@ $$
 D_{ss} = C_{D_{ss}}q_{ss}A_{lat}
 $$
 
+Sideslip drag is calculated in the lift drag model by calling the method *calculateLateralForce*. Please see the logic diagram for this method in the section above entitled "Calculate dynamic pressure".
 
 ###### Conversion from scalar forces to 3 element vector in body frame
 
@@ -516,6 +551,73 @@ $$
 \vec{u}_{lat} = {\vec{u}_{up}}\times{\vec{u}_{fwd}}
 $$
 
+In the lift drag plugin, the unit vectors are read in from the SDF file and stored in the model as objects of type *ignition::math::Vector3d* using the methods *setForwardVector* and *setUpwardVector*. The lateral unit vector is calculated as a cross product of the forward and upward vectors using the method *calculatePortVector*; Alternatively, the port vector may be set using the method *setPortVector*. All of this occurs in the Load method of the plugin.
+
+Conversion from scalar forces to three element vectors is then done during the call to the class method *calculateLiftDragModelValues*, which is called in the *OnUpdate* method of the lift drag plugin. Within this method, several steps occur. First, the coefficients for lift and drag are obtained by calling methods *lookupCL* and *lookupCD*. Next, the scalar values for lift and drag are calculated using *calculateLift* and *calculateDrag*. Sideslip drag is then calculated by calling *calculateLateralForce*. If rotating vectors from wind frame back into body frame is necessary,  $$F_{up}$$ and $$F_{fwd}$$ are calculated by calling the class method *calculateRotatedLiftAndDrag*; the scalar values for lift and drag are then replaced by $F_{up}$and $F_{fwd}$. The final resultant force is then calculated by calling the class method *calculateForceWithDirection*. 
+
+*<u>calculateLiftDragModelValues logic diagram</u>*
+
+![calculateLiftDragModelValues logic diagram](images/calculateLiftDragModelValues_logic.png)
+
+*<u>calculateRotatedLiftAndDrag logic diagram</u>*
+
+![calculateRotatedLiftAndDrag logic diagram](images/calculateRotatedLiftAndDrag_logic.png)
+
+*<u>calculateForceWithDirection logic diagram</u>*
+
+![Force calculation UML logic diagram](images/calculateForceWithDirection_logic.png)
+
+
+
+*<u>Liftdrag plugin calculate forces UML sequence diagram</u>*
+
+![calculateForceWithDirection logic diagram](images/UML_sequence_diagram_force_calculation.png)
+
+*<u>Verification of resultant force calculation</u>*
+
+Two different unit tests were used to verify resultant force calculation. The first unit test used data for an arbitrary element. The second test was for a three element aircraft with two control surfaces and a main wing.
+
+*<u>Arbitrary element truth values</u>*
+
+With an input world pose having an orientation in radians of (0.0,0.0,0.0,-0.09,1.48.0.1), a world velocity in meters per second of (0.9, 0.9, 9.9), a forward unit vector (0.0,0.0,1.0), an upward unit vector (-1.0,0.0,0.0), an area of 1.0 $m/s^2$, an air density of 1.225, and control surface lookup table values, the following values of lift, drag, and side slip drag were calculated using rotation matrices:
+$$
+Lift = -31.3604\\Drag = 1.7237\\Side\ slip\ drag=0\\Resultant\ Force=(-31.3604,0,1.7237)\\
+$$
+*<u>Arbitrary element unit test inputs</u>*
+
+![arbitraryUnitTestInput](images/arbitrary_element_unit_test_inputs.png)
+
+
+
+*<u>Arbitrary element unit test results</u>*
+
+<img src="images/arbitrary_element_unit_test_result.png" alt="arbitraryUnitTestResult" style="zoom:200%;" />
+
+
+
+*<u>Three element aircraft truth values</u>*
+
+Each element has an input world pose having an orientation in radians of (0.0,0.0,0.0,-0.09,1.48.0.1), a world velocity in meters per second of (0.9, 0.9, 9.9), a forward unit vector (0.0,0.0,1.0), an upward unit vector (-1.0,0.0,0.0), and an air density of 1.225. The main wing has an area of a surface area of 1.329 $m/s^2$, an alpha of 4.6510 degrees, and uses main wing lookup table values. The two other elements, both control surfaces, have a surface area of 0.0492 $m/s^2$, an alpha 11.25 degrees, and use control surface lookup table values. 
+
+The following values of lift, drag, and side slip drag were calculated using rotation matrices for the main wing:
+$$
+Lift = 95.5105\\Drag = 7.8589\\Side\ slip\ drag=0\\Resultant\ Force=(95.5105,0,7.8589)\\
+$$
+The following values of lift, drag, and side slip drag were calculated using rotation matrices for each of the control surfaces:
+$$
+Lift = 1.4554\\Drag = 1.0935\\Side\ slip\ drag=0\\Resultant\ Force=(1.4554,0,1.0935)\\
+$$
+The sum total for the lift, drag, and side slip drag across all three elements is:
+$$
+Lift = -98.7441\\Drag = -2.2754\\Side\ slip\ drag=0\\Resultant\ Force=(-98.7441,0,-2.2754)\\
+$$
+*<u>Arbitrary element unit test inputs</u>*
+
+![arbitraryUnitTestResult](images/three_element_unit_test_input.png)
+
+*<u>Arbitrary element unit test results</u>*
+
+<img src="images/three_element_unit_test_result.png" alt="arbitraryUnitTestResult" style="zoom:200%;" />
 
 ### Control joints and propwash
 
