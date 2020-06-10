@@ -9,6 +9,7 @@
 #include "avionics_sim/Lift_drag_model.hpp"
 #include "avionics_sim/Coordinate_Utils.hpp"
 #include <functional>
+#include <errno.h>
 
 /*
 Added so can now throw exceptions. Plugin should do a try/catch. Depending on exception message,
@@ -141,12 +142,12 @@ namespace avionics_sim
         //Check if incoming alpha is NaN. Throw an exception if it is.
         if (isnan(_beta))
         {
-            errMsg="Lift_drag_model::setBeta: Side slip angle is NaN";
+            errMsg="Lift_drag_model::setBeta: Beta angle is NaN";
             Lift_drag_model_exception e(errMsg, true);
             throw e;
         }
 
-        //Else, set new value, but check if alpha is within bounds when vInf is greater than a certain minimum. Throw an exception if it is not.
+        //Else, set new value, but check if beta is within bounds when vInf is greater than a certain minimum. Throw an exception if it is not.
         else
         {
             if (isInRadians)
@@ -203,16 +204,12 @@ namespace avionics_sim
             }
 
             //Check if vInf is within bounds. If not, store vInf as either MIN_VINF or MAX_VINF if bounds exceeded, then throw an exception.
-            /*if (!valueIsWithinBounds(vInf, MIN_VINF, MAX_VINF, "VInf (speed)", errMsg, true))
+            if (!valueIsWithinBounds(vInf, MIN_VINF, MAX_VINF, "VInf (speed)", errMsg))
             {
-                
-                Until try catches are restored in lift drag plugin, stop throwing exceptions.
-                Failure to catch leads to crash.
                 Lift_drag_model_exception e(errMsg);
                 throw e;
                 
             }
-            */
         }
     }
 
@@ -241,6 +238,14 @@ namespace avionics_sim
         else
         {
             vPlanar=_planarVel;
+
+            //Check if vInf is within bounds. If not, store vInf as either MIN_VINF or MAX_VINF if bounds exceeded, then throw an exception.
+            if (!valueIsWithinBounds(vPlanar, MIN_VINF, MAX_VINF, "vPlanar", errMsg))
+            {
+                Lift_drag_model_exception e(errMsg);
+                throw e;
+                
+            }
         }
     }
 
@@ -257,6 +262,7 @@ namespace avionics_sim
     void Lift_drag_model::setArea(double _area)
     {
         std::string errMsg;
+
         //Check if incoming area is NaN. Throw a critical exception if it is.
         if (isnan(_area))
         {
@@ -270,7 +276,7 @@ namespace avionics_sim
             area=_area;
 
             //Check if area is within bounds. If not, store area as either MIN_AREA or MAX_AREA if bounds exceeded, then throw an exception.
-            if (!valueIsWithinBounds(area, MIN_AREA, MAX_AREA, "Area", errMsg, true))
+            if (!valueIsWithinBounds(area, MIN_AREA, MAX_AREA, "Area", errMsg))
             {
                 Lift_drag_model_exception e(errMsg);
                 throw e;
@@ -359,7 +365,7 @@ namespace avionics_sim
             rho=_rho;
 
             //Check if air density is within bounds. Throw an exception if it is not.
-            if (!valueIsWithinBounds(rho, MIN_AIR_DENSITY, MAX_AIR_DENSITY, "Air density", errMsg, true))
+            if (!valueIsWithinBounds(rho, MIN_AIR_DENSITY, MAX_AIR_DENSITY, "Air density", errMsg))
             {
                 Lift_drag_model_exception e(errMsg);
                 throw e;
@@ -472,24 +478,25 @@ namespace avionics_sim
 
         double x=w;
 
-        try
-        {
-            alpha = atan2(y,x);
-        }
-        catch(const std::exception& e)
-        {
-            //Set angle to zero.
-            alpha=0;
+        errno = 0;
 
-            //Package up again as a lift drag exception and throw again.
-            std::string errMsg="Lift_drag_model::calculateWindAngles: domain error for atan";
+        alpha = atan2(y,x);
 
-            /*
-            Until try catches are restored in lift drag plugin, stop throwing exceptions.
-            Failure to catch leads to crash.
-            Lift_drag_model_exception lde(errMsg, true);
-            throw lde;
-            */
+        //If a domain error has occurred, set alpha to zero, then record exception data.
+        if (math_errhandling & MATH_ERRNO) 
+        {
+            if (errno==EDOM)
+            {
+                //Set angle to zero.
+                alpha=0;
+
+                //Package up again as a lift drag exception and throw again.
+                std::string errMsg="Lift_drag_model::calculateWindAngles: domain error for atan in calculating alpha";
+
+                criticalExceptionOccurred=true;
+
+                exceptions=errMsg+"\n";
+            }
         }
 
         //Set alpha
@@ -512,10 +519,17 @@ namespace avionics_sim
         //Calculate beta
         y=-v;
 
-        //Calculate asin for beta iff vInf is not zero.
-        if (vInf!=0)
+        beta = asin(y/vInf);
+
+        //If a domain error has occurred, set beta to zero, then throw an exception.
+        if (math_errhandling & MATH_ERRNO) 
         {
-            beta = asin(y/vInf);
+            if (errno==EDOM)
+            {
+                /*Set angle to zero. Because simulation will have an initial vInf of zero, don't 
+                contribute to exceptions.*/
+                beta=0;
+            }
         }
 
         //Set beta
@@ -538,12 +552,8 @@ namespace avionics_sim
         //If any exceptions occurred along the way, throw a new exception that has the combined exception history of all the prior exceptions.
         if (exceptionOccurred)
         {
-            /*
-            Until try catches are restored in lift drag plugin, stop throwing exceptions.
-            Failure to catch leads to crash.
             Lift_drag_model_exception e(exceptions, criticalExceptionOccurred);
             throw e;
-            */
         }
     }
 
@@ -627,8 +637,8 @@ namespace avionics_sim
         {
             lateral_velocity=vel;
 
-            //Check if vInf is within bounds. If not, store vInf as either MIN_VINF or MAX_VINF if bounds exceeded, then throw an exception.
-            if (!valueIsWithinBounds(lateral_velocity, MIN_LATERAL_VELOCITY, MAX_LATERAL_VELOCITY, "Lateral velocity", errMsg, true))
+            //Check if lateral velocity is within bounds. If not, throw an exception.
+            if (!valueIsWithinBounds(lateral_velocity, MIN_LATERAL_VELOCITY, MAX_LATERAL_VELOCITY, "Lateral velocity", errMsg))
             {
                 Lift_drag_model_exception e(errMsg);
                 throw e;
@@ -764,9 +774,18 @@ namespace avionics_sim
 
     void Lift_drag_model::calculateWindAnglesAndLocalVelocities()
     {
-        calculateLocalVelocities();
+        AvionicsSimTryCatchBlock cldmvBlock;
 
-        calculateWindAngles();
+        cldmvBlock.tryCatch(this,&avionics_sim::Lift_drag_model::calculateLocalVelocities);
+
+        cldmvBlock.tryCatch(this,&avionics_sim::Lift_drag_model::calculateWindAngles);
+
+        //If any exceptions occurred along the way, throw a new exception that has the combined exception history of all the prior exceptions.
+        if (cldmvBlock.exceptionHasOccurred())
+        {
+            Lift_drag_model_exception e(cldmvBlock.getExceptionMessage(), cldmvBlock.exceptionIsCritical());
+            throw e;
+        }
     }
 
     void Lift_drag_model::setWorldPose(ignition::math::Pose3d pose) 
