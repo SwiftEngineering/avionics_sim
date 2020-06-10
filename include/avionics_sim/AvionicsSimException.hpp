@@ -122,12 +122,14 @@ class AvionicsSimTryCatchBlock
                 strStream << ex.what();
                 exceptionMsg=exceptionMsg+strStream.str();
                 isCritical=isCritical|ex.isCritical();
+                exceptionOccurred=true;
             }
             catch (...) {
                 strStream << "Unknown exception occurred.";
                 exceptionMsg=strStream.str();
                 exceptionMsg=exceptionMsg+strStream.str();
                 isCritical=isCritical|true;
+                exceptionOccurred=true;
             }
             return ReturnT();
         }

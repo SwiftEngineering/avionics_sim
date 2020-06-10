@@ -107,7 +107,7 @@ TEST_P(LiftDragCalculateMultiElementForcesParameterized, LiftDragCalculateForces
                 {
                     std::cout<<"Element has motor exit velocity. Motor exit velocity: "<<motorExitVelocity<<", freestream velocity: "<<ldm.getFreeStreamVelocity()<<std::endl;
                 }
-                
+
                 if (motorExitVelocity > ldm.getFreeStreamVelocity())
                 {
                     ldm.setFreeStreamVelocity(motorExitVelocity);
@@ -121,7 +121,7 @@ TEST_P(LiftDragCalculateMultiElementForcesParameterized, LiftDragCalculateForces
                 {
                     std::cout<<"Overriding alpha with value of zero because there is a motor exit velocity."<<std::endl;
                 }
-                
+
             }
 
             // If this is a control surface, set alpha from control surface deflection angle
@@ -133,13 +133,13 @@ TEST_P(LiftDragCalculateMultiElementForcesParameterized, LiftDragCalculateForces
                 {
                     std::cout<<"Element is a control surface. Overriding calculated alpha with provided value of "<<controlAlpha<<std::endl;
                 }
-                
+
             }
 
             bool calculateRotatedForces=!isControlSurface;
 
             ldm.calculateLiftDragModelValues(calculateRotatedForces);
-            
+
             elementForce=ldm.getForceVector();
 
             if (debug)
@@ -160,7 +160,7 @@ TEST_P(LiftDragCalculateMultiElementForcesParameterized, LiftDragCalculateForces
 
                 std::cout<<"Element force calculated: "<<elementForce<<std::endl;
             }
-            
+
 
             //Add the element force to the running tally.
             force = force + elementForce;
@@ -170,12 +170,12 @@ TEST_P(LiftDragCalculateMultiElementForcesParameterized, LiftDragCalculateForces
             std::cerr<<"Exception successfully caught for calculateLiftDragModelValues in test. A function within has caused an exception."<<std::endl;
             std::cerr << e.what() <<std::endl;
         }
-        
+
     }
 
-    std::cout<<"Final calculated force: "<<force<<std::endl;
-    std::cout<<"Summed true force: "<<param.summedTrueForce<<std::endl;
-    
+    /*std::cout<<"Final calculated force: "<<force<<std::endl;
+    std::cout<<"Summed true force: "<<param.summedTrueForce<<std::endl;*/
+
     ASSERT_NEAR(force.X(),param.summedTrueForce.X(),tolerance);
     ASSERT_NEAR(force.Y(),param.summedTrueForce.Y(),tolerance);
     ASSERT_NEAR(force.Z(),param.summedTrueForce.Z(),tolerance);
