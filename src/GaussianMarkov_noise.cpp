@@ -6,7 +6,7 @@
  * @license     Licensed under the MIT license. See LICENSE for details.
  */
 
-#include "avionics_sim/GaussianMarkov_noise.hpp"
+#include "GaussianMarkov_noise.hpp"
 
 #include <algorithm>
 #include <functional>
@@ -48,7 +48,7 @@ void GaussianMarkov_noise::initialize(const double tau, const double sigma, cons
 	m_rand_gen.seed(seed_gen);
 
 	//save initial state
-	m_init_rng_state << m_rand_gen;	
+	m_init_rng_state << m_rand_gen;
 }
 
 void GaussianMarkov_noise::reset()
@@ -66,7 +66,7 @@ double GaussianMarkov_noise::update(const double dT)
 	{
 		return 0.0;
 	}
-	
+
 	const double alpha = exp(-dT / m_tau);
 
 	const double y_n = alpha * m_last_output + (1.0 - alpha) * m_sigma * m_normal_dist(m_rand_gen);

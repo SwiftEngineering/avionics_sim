@@ -1,5 +1,0 @@
-<truths>
-<vInfTruth>21.8</vInfTruth>
-<alphaDeg>0</alphaDeg>
-<forceTruth>[-3.0164237,0.0000000,-0.2391702]</forceTruth>
-</truths>

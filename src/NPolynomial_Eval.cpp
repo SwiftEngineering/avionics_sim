@@ -7,4 +7,4 @@
  * @license     Licensed under the MIT license. See LICENSE for details.
  */
 
-#include <avionics_sim/NPolynomial_Eval.hpp>
+#include "NPolynomial_Eval.hpp"

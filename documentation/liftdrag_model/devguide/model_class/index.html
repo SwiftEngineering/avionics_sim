@@ -1,0 +1,2246 @@
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+    <title>Lift Drag Model API Reference</title>
+
+    <style>
+      .highlight table td { padding: 5px; }
+.highlight table pre { margin: 0; }
+.highlight .gh {
+  color: #999999;
+}
+.highlight .sr {
+  color: #f6aa11;
+}
+.highlight .go {
+  color: #888888;
+}
+.highlight .gp {
+  color: #555555;
+}
+.highlight .gs {
+}
+.highlight .gu {
+  color: #aaaaaa;
+}
+.highlight .nb {
+  color: #f6aa11;
+}
+.highlight .cm {
+  color: #75715e;
+}
+.highlight .cp {
+  color: #75715e;
+}
+.highlight .c1 {
+  color: #75715e;
+}
+.highlight .cs {
+  color: #75715e;
+}
+.highlight .c, .highlight .ch, .highlight .cd, .highlight .cpf {
+  color: #75715e;
+}
+.highlight .err {
+  color: #960050;
+}
+.highlight .gr {
+  color: #960050;
+}
+.highlight .gt {
+  color: #960050;
+}
+.highlight .gd {
+  color: #49483e;
+}
+.highlight .gi {
+  color: #49483e;
+}
+.highlight .ge {
+  color: #49483e;
+}
+.highlight .kc {
+  color: #66d9ef;
+}
+.highlight .kd {
+  color: #66d9ef;
+}
+.highlight .kr {
+  color: #66d9ef;
+}
+.highlight .no {
+  color: #66d9ef;
+}
+.highlight .kt {
+  color: #66d9ef;
+}
+.highlight .mf {
+  color: #ae81ff;
+}
+.highlight .mh {
+  color: #ae81ff;
+}
+.highlight .il {
+  color: #ae81ff;
+}
+.highlight .mi {
+  color: #ae81ff;
+}
+.highlight .mo {
+  color: #ae81ff;
+}
+.highlight .m, .highlight .mb, .highlight .mx {
+  color: #ae81ff;
+}
+.highlight .sc {
+  color: #ae81ff;
+}
+.highlight .se {
+  color: #ae81ff;
+}
+.highlight .ss {
+  color: #ae81ff;
+}
+.highlight .sd {
+  color: #e6db74;
+}
+.highlight .s2 {
+  color: #e6db74;
+}
+.highlight .sb {
+  color: #e6db74;
+}
+.highlight .sh {
+  color: #e6db74;
+}
+.highlight .si {
+  color: #e6db74;
+}
+.highlight .sx {
+  color: #e6db74;
+}
+.highlight .s1 {
+  color: #e6db74;
+}
+.highlight .s, .highlight .sa, .highlight .dl {
+  color: #e6db74;
+}
+.highlight .na {
+  color: #a6e22e;
+}
+.highlight .nc {
+  color: #a6e22e;
+}
+.highlight .nd {
+  color: #a6e22e;
+}
+.highlight .ne {
+  color: #a6e22e;
+}
+.highlight .nf, .highlight .fm {
+  color: #a6e22e;
+}
+.highlight .vc {
+  color: #ffffff;
+}
+.highlight .nn {
+  color: #ffffff;
+}
+.highlight .ni {
+  color: #ffffff;
+}
+.highlight .bp {
+  color: #ffffff;
+}
+.highlight .vg {
+  color: #ffffff;
+}
+.highlight .vi {
+  color: #ffffff;
+}
+.highlight .nv, .highlight .vm {
+  color: #ffffff;
+}
+.highlight .w {
+  color: #ffffff;
+}
+.highlight {
+  color: #ffffff;
+}
+.highlight .n, .highlight .py, .highlight .nx {
+  color: #ffffff;
+}
+.highlight .nl {
+  color: #f92672;
+}
+.highlight .ow {
+  color: #f92672;
+}
+.highlight .nt {
+  color: #f92672;
+}
+.highlight .k, .highlight .kv {
+  color: #f92672;
+}
+.highlight .kn {
+  color: #f92672;
+}
+.highlight .kp {
+  color: #f92672;
+}
+.highlight .o {
+  color: #f92672;
+}
+    </style>
+    <link href="stylesheets/screen-a20eff65.css" rel="stylesheet" media="screen" />
+    <link href="stylesheets/print-c427a123.css" rel="stylesheet" media="print" />
+      <script src="javascripts/all-721d054c.js"></script>
+  </head>
+
+  <body class="index" data-languages="[&quot;cpp&quot;]">
+    <a href="#" id="nav-button">
+      <span>
+        NAV
+        <img src="images/navbar-cad8cdcb.png" alt="" />
+      </span>
+    </a>
+    <div class="toc-wrapper">
+      <img src="images/logo-cfde0723.png" class="logo" alt="" />
+        <div class="lang-selector">
+              <a href="#" data-language-name="cpp">cpp</a>
+        </div>
+        <div class="search">
+          <input type="text" class="search" id="input-search" placeholder="Search">
+        </div>
+        <ul class="search-results"></ul>
+      <ul id="toc" class="toc-list-h1">
+          <li>
+            <a href="#introduction" class="toc-h1 toc-link" data-title="Introduction">Introduction</a>
+          </li>
+          <li>
+            <a href="#how-to-use" class="toc-h1 toc-link" data-title="How To Use">How To Use</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#initialize-class" class="toc-h2 toc-link" data-title="Initialize class">Initialize class</a>
+                    </li>
+                  <li>
+                    <a href="#update-values-during-simulation-time-step" class="toc-h2 toc-link" data-title="Update values during simulation time step">Update values during simulation time step</a>
+                    </li>
+                  <li>
+                    <a href="#obtain-resultant-vector-at-end-of-time-step" class="toc-h2 toc-link" data-title="Obtain resultant vector at end of time step">Obtain resultant vector at end of time step</a>
+                    </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#calculation-steps" class="toc-h1 toc-link" data-title="Calculation Steps">Calculation Steps</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#convert-pose-and-world-linear-velocity-into-body-velocity" class="toc-h2 toc-link" data-title="Convert pose and world linear velocity into body velocity">Convert pose and world linear velocity into body velocity</a>
+		      <ul class="toc-list-h3">
+	                  <li>
+				<a href="#calculatelocalvelocities-implementation" class="toc-h3 toc-link" data-title="<em>calculateLocalVelocities</em> implementation"><em>calculateLocalVelocities</em> implementation</a>
+			    </li>
+	                  <li>
+				<a href="#project_vector_global" class="toc-h3 toc-link" data-title="<em>project_vector_global</em>"><em>project_vector_global</em></a>
+			    </li>
+			</ul>
+                    </li>
+                  <li>
+                    <a href="#calculate-aerodynamic-parameters-from-the-body-velocity" class="toc-h2 toc-link" data-title="Calculate aerodynamic parameters from the body velocity">Calculate aerodynamic parameters from the body velocity</a>
+		      <ul class="toc-list-h3">
+	                  <li>
+				<a href="#calculatelocalvelocities-logic-implementation" class="toc-h3 toc-link" data-title="<em>calculateLocalVelocities</em> logic implementation"><em>calculateLocalVelocities</em> logic implementation</a>
+			    </li>
+	                  <li>
+				<a href="#calculatewindangles-logic-implementation" class="toc-h3 toc-link" data-title="<em>calculateWindAngles</em> logic implementation"><em>calculateWindAngles</em> logic implementation</a>
+			    </li>
+			</ul>
+                    </li>
+                  <li>
+                    <a href="#calculate-dynamic-pressure" class="toc-h2 toc-link" data-title="Calculate dynamic pressure">Calculate dynamic pressure</a>
+                    </li>
+                  <li>
+                    <a href="#utilize-lookup-table-and-linear-interpolation-to-extract-coefficients-of-lift-and-drag-as-a-function-of-angle-of-attack-alpha" class="toc-h2 toc-link" data-title="Utilize lookup table and linear interpolation to extract coefficients of lift and drag as a function of angle of attack (alpha)">Utilize lookup table and linear interpolation to extract coefficients of lift and drag as a function of angle of attack (alpha)</a>
+		      <ul class="toc-list-h3">
+	                  <li>
+				<a href="#lookupcl-logic-implementation" class="toc-h3 toc-link" data-title="<em>lookupCL</em> logic implementation"><em>lookupCL</em> logic implementation</a>
+			    </li>
+	                  <li>
+				<a href="#lookupcd-logic-implementation" class="toc-h3 toc-link" data-title="<em>lookupCD</em> logic implementation"><em>lookupCD</em> logic implementation</a>
+			    </li>
+			</ul>
+                    </li>
+                  <li>
+                    <a href="#calculate-lift-and-drag-force-scalar-quantities" class="toc-h2 toc-link" data-title="Calculate lift and drag force scalar quantities">Calculate lift and drag force scalar quantities</a>
+		      <ul class="toc-list-h3">
+	                  <li>
+				<a href="#calculatelift" class="toc-h3 toc-link" data-title="calculateLift">calculateLift</a>
+			    </li>
+	                  <li>
+				<a href="#calculatedrag" class="toc-h3 toc-link" data-title="calculateDrag">calculateDrag</a>
+			    </li>
+			</ul>
+                    </li>
+                  <li>
+                    <a href="#calculate-drag-due-to-side-slip" class="toc-h2 toc-link" data-title="Calculate drag due to side slip">Calculate drag due to side slip</a>
+                    </li>
+                  <li>
+                    <a href="#convert-scalar-force-lift-drag-and-sideslip-drag-representations-from-wind-frame-into-body-fixed-coordinate-system" class="toc-h2 toc-link" data-title="Convert scalar force lift, drag, and sideslip drag representations from wind frame into body-fixed coordinate system">Convert scalar force lift, drag, and sideslip drag representations from wind frame into body-fixed coordinate system</a>
+		      <ul class="toc-list-h3">
+	                  <li>
+				<a href="#calculaterotatedliftanddrag" class="toc-h3 toc-link" data-title="calculateRotatedLiftAndDrag">calculateRotatedLiftAndDrag</a>
+			    </li>
+			</ul>
+                    </li>
+                  <li>
+                    <a href="#convert-scalar-body-force-representation-into-a-three-element-vector-representation-in-body-frame" class="toc-h2 toc-link" data-title="Convert scalar body force representation into a three element vector representation in body frame">Convert scalar body force representation into a three element vector representation in body frame</a>
+		      <ul class="toc-list-h3">
+	                  <li>
+				<a href="#calculateliftdragmodelvalues" class="toc-h3 toc-link" data-title="calculateLiftDragModelValues">calculateLiftDragModelValues</a>
+			    </li>
+			</ul>
+                    </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#methods" class="toc-h1 toc-link" data-title="Methods">Methods</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#public" class="toc-h2 toc-link" data-title="Public">Public</a>
+		      <ul class="toc-list-h3">
+	                  <li>
+				<a href="#setalpha" class="toc-h3 toc-link" data-title="setAlpha">setAlpha</a>
+			    </li>
+	                  <li>
+				<a href="#getalpha" class="toc-h3 toc-link" data-title="getAlpha">getAlpha</a>
+			    </li>
+	                  <li>
+				<a href="#setfreestreamvelocity" class="toc-h3 toc-link" data-title="setFreeStreamVelocity">setFreeStreamVelocity</a>
+			    </li>
+	                  <li>
+				<a href="#getfreestreamvelocity" class="toc-h3 toc-link" data-title="getFreeStreamVelocity">getFreeStreamVelocity</a>
+			    </li>
+	                  <li>
+				<a href="#getfreestreamvelocityvec" class="toc-h3 toc-link" data-title="getFreeStreamVelocityVec">getFreeStreamVelocityVec</a>
+			    </li>
+	                  <li>
+				<a href="#setplanarvelocity" class="toc-h3 toc-link" data-title="setPlanarVelocity">setPlanarVelocity</a>
+			    </li>
+	                  <li>
+				<a href="#getplanarvelocity" class="toc-h3 toc-link" data-title="getPlanarVelocity">getPlanarVelocity</a>
+			    </li>
+	                  <li>
+				<a href="#getplanarvelocityvec" class="toc-h3 toc-link" data-title="getPlanarVelocityVec">getPlanarVelocityVec</a>
+			    </li>
+	                  <li>
+				<a href="#setairdensity" class="toc-h3 toc-link" data-title="setAirDensity">setAirDensity</a>
+			    </li>
+	                  <li>
+				<a href="#getairdensity" class="toc-h3 toc-link" data-title="getAirDensity">getAirDensity</a>
+			    </li>
+	                  <li>
+				<a href="#setarea" class="toc-h3 toc-link" data-title="setArea">setArea</a>
+			    </li>
+	                  <li>
+				<a href="#getarea" class="toc-h3 toc-link" data-title="getArea">getArea</a>
+			    </li>
+	                  <li>
+				<a href="#setlateralarea" class="toc-h3 toc-link" data-title="setLateralArea">setLateralArea</a>
+			    </li>
+	                  <li>
+				<a href="#getlateralarea" class="toc-h3 toc-link" data-title="getLateralArea">getLateralArea</a>
+			    </li>
+	                  <li>
+				<a href="#setluts" class="toc-h3 toc-link" data-title="setLUTs">setLUTs</a>
+			    </li>
+	                  <li>
+				<a href="#calculatedynamicpressure" class="toc-h3 toc-link" data-title="calculateDynamicPressure">calculateDynamicPressure</a>
+			    </li>
+	                  <li>
+				<a href="#getdynamicpressure" class="toc-h3 toc-link" data-title="getDynamicPressure">getDynamicPressure</a>
+			    </li>
+	                  <li>
+				<a href="#lookupcl" class="toc-h3 toc-link" data-title="lookupCL">lookupCL</a>
+			    </li>
+	                  <li>
+				<a href="#lookupcd" class="toc-h3 toc-link" data-title="lookupCD">lookupCD</a>
+			    </li>
+	                  <li>
+				<a href="#calculatedrag-2" class="toc-h3 toc-link" data-title="calculateDrag">calculateDrag</a>
+			    </li>
+	                  <li>
+				<a href="#calculatelift-2" class="toc-h3 toc-link" data-title="calculateLift">calculateLift</a>
+			    </li>
+	                  <li>
+				<a href="#calculatelateralforce" class="toc-h3 toc-link" data-title="calculateLateralForce">calculateLateralForce</a>
+			    </li>
+	                  <li>
+				<a href="#getcl" class="toc-h3 toc-link" data-title="getCL">getCL</a>
+			    </li>
+	                  <li>
+				<a href="#getcd" class="toc-h3 toc-link" data-title="getCD">getCD</a>
+			    </li>
+	                  <li>
+				<a href="#getlift" class="toc-h3 toc-link" data-title="getLift">getLift</a>
+			    </li>
+	                  <li>
+				<a href="#getdrag" class="toc-h3 toc-link" data-title="getDrag">getDrag</a>
+			    </li>
+	                  <li>
+				<a href="#getlateralforce" class="toc-h3 toc-link" data-title="getLateralForce">getLateralForce</a>
+			    </li>
+	                  <li>
+				<a href="#calculateliftdragmodelvalues-2" class="toc-h3 toc-link" data-title="calculateLiftDragModelValues">calculateLiftDragModelValues</a>
+			    </li>
+	                  <li>
+				<a href="#convertdegreestoradians" class="toc-h3 toc-link" data-title="convertDegreesToRadians">convertDegreesToRadians</a>
+			    </li>
+	                  <li>
+				<a href="#convertradianstodegrees" class="toc-h3 toc-link" data-title="convertRadiansToDegrees">convertRadiansToDegrees</a>
+			    </li>
+	                  <li>
+				<a href="#setbeta" class="toc-h3 toc-link" data-title="setBeta">setBeta</a>
+			    </li>
+	                  <li>
+				<a href="#getbeta" class="toc-h3 toc-link" data-title="getBeta">getBeta</a>
+			    </li>
+	                  <li>
+				<a href="#setlateralvelocity" class="toc-h3 toc-link" data-title="setLateralVelocity">setLateralVelocity</a>
+			    </li>
+	                  <li>
+				<a href="#setlateralvelocity-2" class="toc-h3 toc-link" data-title="setLateralVelocity">setLateralVelocity</a>
+			    </li>
+	                  <li>
+				<a href="#getlateralvelocity" class="toc-h3 toc-link" data-title="getLateralVelocity">getLateralVelocity</a>
+			    </li>
+	                  <li>
+				<a href="#getlocalaircraftvelocity" class="toc-h3 toc-link" data-title="getLocalAircraftVelocity">getLocalAircraftVelocity</a>
+			    </li>
+	                  <li>
+				<a href="#getforcevector" class="toc-h3 toc-link" data-title="getForceVector">getForceVector</a>
+			    </li>
+	                  <li>
+				<a href="#setworldpose" class="toc-h3 toc-link" data-title="setWorldPose">setWorldPose</a>
+			    </li>
+	                  <li>
+				<a href="#getworldpose" class="toc-h3 toc-link" data-title="getWorldPose">getWorldPose</a>
+			    </li>
+	                  <li>
+				<a href="#setworldvelocity" class="toc-h3 toc-link" data-title="setWorldVelocity">setWorldVelocity</a>
+			    </li>
+	                  <li>
+				<a href="#getworldvelocity" class="toc-h3 toc-link" data-title="getWorldVelocity">getWorldVelocity</a>
+			    </li>
+	                  <li>
+				<a href="#calculatewindanglesandlocalvelocities" class="toc-h3 toc-link" data-title="calculateWindAnglesAndLocalVelocities">calculateWindAnglesAndLocalVelocities</a>
+			    </li>
+	                  <li>
+				<a href="#calculatelocalvelocities" class="toc-h3 toc-link" data-title="calculateLocalVelocities">calculateLocalVelocities</a>
+			    </li>
+	                  <li>
+				<a href="#calculatewindangles" class="toc-h3 toc-link" data-title="calculateWindAngles">calculateWindAngles</a>
+			    </li>
+	                  <li>
+				<a href="#setforwardvector" class="toc-h3 toc-link" data-title="setForwardVector">setForwardVector</a>
+			    </li>
+	                  <li>
+				<a href="#getforwardvector" class="toc-h3 toc-link" data-title="getForwardVector">getForwardVector</a>
+			    </li>
+	                  <li>
+				<a href="#setupwardvector" class="toc-h3 toc-link" data-title="setUpwardVector">setUpwardVector</a>
+			    </li>
+	                  <li>
+				<a href="#getupwardvector" class="toc-h3 toc-link" data-title="getUpwardVector">getUpwardVector</a>
+			    </li>
+	                  <li>
+				<a href="#setportvector" class="toc-h3 toc-link" data-title="setPortVector">setPortVector</a>
+			    </li>
+	                  <li>
+				<a href="#calculateportvector" class="toc-h3 toc-link" data-title="calculatePortVector">calculatePortVector</a>
+			    </li>
+	                  <li>
+				<a href="#getportvector" class="toc-h3 toc-link" data-title="getPortVector">getPortVector</a>
+			    </li>
+	                  <li>
+				<a href="#getlutalpha" class="toc-h3 toc-link" data-title="getLUTAlpha">getLUTAlpha</a>
+			    </li>
+	                  <li>
+				<a href="#getlutcl" class="toc-h3 toc-link" data-title="getLUTCL">getLUTCL</a>
+			    </li>
+	                  <li>
+				<a href="#getlutcd" class="toc-h3 toc-link" data-title="getLUTCD">getLUTCD</a>
+			    </li>
+			</ul>
+                    </li>
+                  <li>
+                    <a href="#private" class="toc-h2 toc-link" data-title="Private">Private</a>
+		      <ul class="toc-list-h3">
+	                  <li>
+				<a href="#emptylutandcoefficientvectors" class="toc-h3 toc-link" data-title="emptyLUTAndCoefficientVectors">emptyLUTAndCoefficientVectors</a>
+			    </li>
+	                  <li>
+				<a href="#conditionangle" class="toc-h3 toc-link" data-title="conditionAngle">conditionAngle</a>
+			    </li>
+	                  <li>
+				<a href="#valueiswithinbounds" class="toc-h3 toc-link" data-title="valueIsWithinBounds">valueIsWithinBounds</a>
+			    </li>
+	                  <li>
+				<a href="#calculaterotatedliftanddrag-2" class="toc-h3 toc-link" data-title="calculateRotatedLiftAndDrag">calculateRotatedLiftAndDrag</a>
+			    </li>
+	                  <li>
+				<a href="#calculateforcewithdirection" class="toc-h3 toc-link" data-title="calculateForceWithDirection">calculateForceWithDirection</a>
+			    </li>
+			</ul>
+                    </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#members" class="toc-h1 toc-link" data-title="Members">Members</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#public-2" class="toc-h2 toc-link" data-title="Public">Public</a>
+		      <ul class="toc-list-h3">
+	                  <li>
+				<a href="#min_air_density" class="toc-h3 toc-link" data-title="MIN_AIR_DENSITY">MIN_AIR_DENSITY</a>
+			    </li>
+	                  <li>
+				<a href="#max_air_density" class="toc-h3 toc-link" data-title="MAX_AIR_DENSITY">MAX_AIR_DENSITY</a>
+			    </li>
+	                  <li>
+				<a href="#min_vinf" class="toc-h3 toc-link" data-title="MIN_VINF">MIN_VINF</a>
+			    </li>
+	                  <li>
+				<a href="#max_vinf" class="toc-h3 toc-link" data-title="MAX_VINF">MAX_VINF</a>
+			    </li>
+	                  <li>
+				<a href="#max_lateral_velocity" class="toc-h3 toc-link" data-title="MAX_LATERAL_VELOCITY">MAX_LATERAL_VELOCITY</a>
+			    </li>
+	                  <li>
+				<a href="#min_lateral_velocity" class="toc-h3 toc-link" data-title="MIN_LATERAL_VELOCITY">MIN_LATERAL_VELOCITY</a>
+			    </li>
+	                  <li>
+				<a href="#min_cl" class="toc-h3 toc-link" data-title="MIN_CL">MIN_CL</a>
+			    </li>
+	                  <li>
+				<a href="#max_cl" class="toc-h3 toc-link" data-title="MAX_CL">MAX_CL</a>
+			    </li>
+	                  <li>
+				<a href="#min_cd" class="toc-h3 toc-link" data-title="MIN_CD">MIN_CD</a>
+			    </li>
+	                  <li>
+				<a href="#max_cd" class="toc-h3 toc-link" data-title="MAX_CD">MAX_CD</a>
+			    </li>
+	                  <li>
+				<a href="#min_lift" class="toc-h3 toc-link" data-title="MIN_LIFT">MIN_LIFT</a>
+			    </li>
+	                  <li>
+				<a href="#max_lift" class="toc-h3 toc-link" data-title="MAX_LIFT">MAX_LIFT</a>
+			    </li>
+	                  <li>
+				<a href="#min_drag" class="toc-h3 toc-link" data-title="MIN_DRAG">MIN_DRAG</a>
+			    </li>
+	                  <li>
+				<a href="#max_drag" class="toc-h3 toc-link" data-title="MAX_DRAG">MAX_DRAG</a>
+			    </li>
+	                  <li>
+				<a href="#min_lateral_force" class="toc-h3 toc-link" data-title="MIN_LATERAL_FORCE">MIN_LATERAL_FORCE</a>
+			    </li>
+	                  <li>
+				<a href="#max_lateral_force" class="toc-h3 toc-link" data-title="MAX_LATERAL_FORCE">MAX_LATERAL_FORCE</a>
+			    </li>
+	                  <li>
+				<a href="#coefficientlateralforce" class="toc-h3 toc-link" data-title="coefficientLateralForce">coefficientLateralForce</a>
+			    </li>
+	                  <li>
+				<a href="#lowestlutangle" class="toc-h3 toc-link" data-title="lowestLUTAngle">lowestLUTAngle</a>
+			    </li>
+	                  <li>
+				<a href="#highestlutangle" class="toc-h3 toc-link" data-title="highestLUTAngle">highestLUTAngle</a>
+			    </li>
+			</ul>
+                    </li>
+                  <li>
+                    <a href="#private-2" class="toc-h2 toc-link" data-title="Private">Private</a>
+		      <ul class="toc-list-h3">
+	                  <li>
+				<a href="#alpha" class="toc-h3 toc-link" data-title="alpha">alpha</a>
+			    </li>
+	                  <li>
+				<a href="#vinf" class="toc-h3 toc-link" data-title="vInf">vInf</a>
+			    </li>
+	                  <li>
+				<a href="#vplanar" class="toc-h3 toc-link" data-title="vPlanar">vPlanar</a>
+			    </li>
+	                  <li>
+				<a href="#rho" class="toc-h3 toc-link" data-title="rho">rho</a>
+			    </li>
+	                  <li>
+				<a href="#area" class="toc-h3 toc-link" data-title="area">area</a>
+			    </li>
+	                  <li>
+				<a href="#cl" class="toc-h3 toc-link" data-title="cl">cl</a>
+			    </li>
+	                  <li>
+				<a href="#cd" class="toc-h3 toc-link" data-title="cd">cd</a>
+			    </li>
+	                  <li>
+				<a href="#lift" class="toc-h3 toc-link" data-title="lift">lift</a>
+			    </li>
+	                  <li>
+				<a href="#drag" class="toc-h3 toc-link" data-title="drag">drag</a>
+			    </li>
+	                  <li>
+				<a href="#lateral_force" class="toc-h3 toc-link" data-title="lateral_force">lateral_force</a>
+			    </li>
+	                  <li>
+				<a href="#aero_lut_alpha" class="toc-h3 toc-link" data-title="Aero_LUT_alpha">Aero_LUT_alpha</a>
+			    </li>
+	                  <li>
+				<a href="#aero_lut_cl" class="toc-h3 toc-link" data-title="Aero_LUT_CL">Aero_LUT_CL</a>
+			    </li>
+	                  <li>
+				<a href="#aero_lut_cd" class="toc-h3 toc-link" data-title="Aero_LUT_CD">Aero_LUT_CD</a>
+			    </li>
+	                  <li>
+				<a href="#q" class="toc-h3 toc-link" data-title="q">q</a>
+			    </li>
+	                  <li>
+				<a href="#tolerance" class="toc-h3 toc-link" data-title="tolerance">tolerance</a>
+			    </li>
+	                  <li>
+				<a href="#floattolerance" class="toc-h3 toc-link" data-title="floatTolerance">floatTolerance</a>
+			    </li>
+	                  <li>
+				<a href="#aerointerp" class="toc-h3 toc-link" data-title="AeroInterp">AeroInterp</a>
+			    </li>
+	                  <li>
+				<a href="#mu" class="toc-h3 toc-link" data-title="mu">mu</a>
+			    </li>
+	                  <li>
+				<a href="#beta" class="toc-h3 toc-link" data-title="beta">beta</a>
+			    </li>
+	                  <li>
+				<a href="#lateralarea" class="toc-h3 toc-link" data-title="lateralArea">lateralArea</a>
+			    </li>
+	                  <li>
+				<a href="#lateral_velocity" class="toc-h3 toc-link" data-title="lateral_velocity">lateral_velocity</a>
+			    </li>
+			</ul>
+                    </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#reference-diagrams" class="toc-h1 toc-link" data-title="Reference Diagrams">Reference Diagrams</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#lift-drag-model-uml-class" class="toc-h2 toc-link" data-title="Lift Drag Model UML Class">Lift Drag Model UML Class</a>
+                    </li>
+              </ul>
+          </li>
+      </ul>
+        <ul class="toc-footer">
+            <li><a href='https://github.com/slatedocs/slate'>Documentation Powered by Slate</a></li>
+        </ul>
+    </div>
+    <div class="page-wrapper">
+      <div class="dark-box"></div>
+      <div class="content">
+        <h1 id='introduction'>Introduction</h1>
+<p>The Lift Drag Model C++ class in the <em>avionics_sim</em> library calculates forces on an element (lift, drag, side slip drag) given a six dimensional world pose and three dimensional world velocity.</p>
+
+<p>The mathematical model implemented by this class can be read about <a href="../../mathematical_model/README.md">here</a>, while the plugin that implements this class can be read about <a href="../plugin/index.html">here</a>.</p>
+<h1 id='how-to-use'>How To Use</h1><h2 id='initialize-class'>Initialize class</h2>
+<p>Initialize the class with values that should remain static during the simulation. </p>
+
+<blockquote>
+<p>Values that should remain static are element area, element lateral area, lookup tables, forward vector, and upward vector. The lookup tables are presumed to be read in from a file into a comma delimited string before their values are interpolated. Once these values are set, calculate the port vector to complete initialization.</p>
+</blockquote>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="c1">//Vectors for holding interpolation results for each LUT.</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">LUT_Alpha</span><span class="p">,</span> <span class="n">LUT_CL</span><span class="p">,</span> <span class="n">LUT_CD</span><span class="p">;</span>
+
+<span class="c1">//Sample area</span>
+<span class="kt">double</span> <span class="n">area</span> <span class="o">=</span> <span class="p">...;</span>
+
+<span class="kt">double</span> <span class="n">lateral_area</span> <span class="o">=</span> <span class="p">...;</span>
+
+<span class="c1">//Set area</span>
+<span class="n">LiftDragModel</span><span class="p">.</span><span class="n">setArea</span><span class="p">(</span><span class="n">area</span><span class="p">);</span>
+
+<span class="c1">//Set lateral area</span>
+<span class="n">LiftDragModel</span><span class="p">.</span><span class="n">setLateralArea</span><span class="p">(</span><span class="n">lateral_area</span><span class="p">);</span>
+
+<span class="c1">//String containing example LUT values for alpha (in degrees)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">strLUTAlpha</span><span class="o">=</span><span class="p">...;</span>
+
+<span class="c1">//String containing example LUT values for C_L</span>
+<span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">strLUTCL</span><span class="o">=</span><span class="p">...;</span>
+
+<span class="c1">//String containing example LUT values for C_D</span>
+<span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">strLUTCD</span><span class="o">=</span><span class="p">...;</span>
+
+<span class="c1">//Sample ignition Vector3D objects for upward and forward vectors.</span>
+<span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="n">upward</span><span class="o">=</span><span class="p">...;</span>
+
+<span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="n">forward</span><span class="o">=</span><span class="p">...;</span>
+
+<span class="c1">//Using the Bilinear interpolation class in avionics_sim, obtain the interpolated values of LUT Alpha.</span>
+<span class="n">avionics_sim</span><span class="o">::</span><span class="n">Bilinear_interp</span><span class="o">::</span><span class="n">get1DLUTelementsFromString</span><span class="p">(</span><span class="n">strLUTAlpha</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">LUT_Alpha</span><span class="p">);</span>
+
+<span class="c1">//Using the Bilinear interpolation class in avionics_sim, obtain the interpolated values of LUT CL.</span>
+<span class="n">avionics_sim</span><span class="o">::</span><span class="n">Bilinear_interp</span><span class="o">::</span><span class="n">get1DLUTelementsFromString</span><span class="p">(</span><span class="n">strLUTCL</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">LUT_CL</span><span class="p">);</span>
+
+<span class="c1">//Using the Bilinear interpolation class in avionics_sim, obtain the interpolated values of LUT CD.</span>
+<span class="n">avionics_sim</span><span class="o">::</span><span class="n">Bilinear_interp</span><span class="o">::</span><span class="n">get1DLUTelementsFromString</span><span class="p">(</span><span class="n">strLUTCD</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">LUT_CD</span><span class="p">);</span>
+
+<span class="c1">//Initialize the model lookup tables with the interpolated values.</span>
+<span class="n">LiftDragModel</span><span class="p">.</span><span class="n">setLUTs</span><span class="p">(</span><span class="n">LUTalpha</span><span class="p">,</span> <span class="n">LUTCL</span><span class="p">,</span> <span class="n">LUTCD</span><span class="p">);</span>
+
+<span class="c1">//Set the upward and forward vectors.</span>
+<span class="n">LiftDragModel</span><span class="p">.</span><span class="n">setUpwardVector</span><span class="p">(</span><span class="n">upward</span><span class="p">);</span>
+
+<span class="n">LiftDragModel</span><span class="p">.</span><span class="n">setUpwardVector</span><span class="p">(</span><span class="n">forward</span><span class="p">);</span>
+
+<span class="c1">//Calculate the port vector</span>
+<span class="n">LiftDragModel</span><span class="p">.</span><span class="n">calculatePortVector</span><span class="p">();</span>
+
+</code></pre></div><h2 id='update-values-during-simulation-time-step'>Update values during simulation time step</h2>
+<p>Per time step, update the world velocity and pose, then calculate wind angles and velocities. If applicable, update velocities and angles according to cases of propeller wash and control surface. Then, calculate the resultant force by calling <em>calculateLiftDragModelValues</em>. </p>
+
+<blockquote>
+<p>World velocity can be updated by calling <em>setWorldVelocity</em> and passing in a Vector3d object representing world velocity. World pose is updated by calling <em>setWorldPose</em>.</p>
+</blockquote>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="c1">//Sample world velocity</span>
+<span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="n">vel</span> <span class="o">=</span> <span class="p">...;</span>
+
+<span class="c1">// Sample world pose (with orientation in radians)</span>
+<span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Pose3d</span> <span class="n">pose</span> <span class="o">=</span> <span class="p">...;</span>
+
+<span class="cm">/*
+Sample air density. 
+If this is fixed, consider setting this value 
+during initialization process instead.
+*/</span>
+<span class="kt">double</span> <span class="n">rho</span> <span class="o">=</span> <span class="p">...;</span>
+
+<span class="c1">//Set air density</span>
+<span class="n">LiftDragModel</span><span class="p">.</span><span class="n">setAirDensity</span><span class="p">(</span><span class="n">rho</span><span class="p">);</span>
+
+<span class="c1">//Set world velocity</span>
+<span class="n">LiftDragModel</span><span class="p">.</span><span class="n">setWorldVelocity</span><span class="p">(</span><span class="n">vel</span><span class="p">);</span>
+
+<span class="c1">//Set pose.</span>
+<span class="n">LiftDragModel</span><span class="p">.</span><span class="n">setWorldPose</span><span class="p">(</span><span class="n">pose</span><span class="p">);</span>
+
+<span class="c1">//Sample flag for indicating that there is prop wash</span>
+<span class="kt">bool</span> <span class="n">isPropWash</span><span class="o">=</span><span class="p">...;</span>
+
+<span class="c1">//Sample flag for indicating that this is a control suface.</span>
+<span class="kt">bool</span> <span class="n">isControlSurface</span><span class="o">=</span><span class="p">...;</span>
+
+<span class="c1">//Sample flag indicating whether or not to calculate forces as rotated.</span>
+<span class="kt">bool</span> <span class="n">calculateRotatedForces</span><span class="o">=</span><span class="p">...;</span>
+
+<span class="c1">//Sample value for motor exit velocity</span>
+<span class="kt">double</span> <span class="n">motorExitVelocity</span><span class="o">=</span><span class="p">...;</span>
+
+<span class="c1">//Sample propeller wash angle value (in this example, the value is presumed to be in radians)</span>
+<span class="kt">double</span> <span class="n">propellerWashAngle</span><span class="o">=</span><span class="p">...;</span>
+
+<span class="k">try</span>
+<span class="p">{</span>
+    <span class="c1">// Calcuate Angles and Velocities</span>
+    <span class="n">LiftDragModel</span><span class="p">.</span><span class="n">calculateWindAnglesAndLocalVelocities</span><span class="p">();</span>
+
+    <span class="cm">/*
+    In this example, freestream velocity will be set to 
+    motor exit velocity if there is a propeller wash and 
+    the motor exit velocity exceeds the calculated 
+    freestream velocity. The angle of attack (alpha) 
+    will also be updated.
+    */</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">isPropWash</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">motorExitVelocity</span> <span class="o">&gt;</span> <span class="n">LiftDragModel</span><span class="p">.</span><span class="n">getFreeStreamVelocity</span><span class="p">())</span>
+        <span class="p">{</span>
+            <span class="n">LiftDragModel</span><span class="p">.</span><span class="n">setFreeStreamVelocity</span><span class="p">(</span><span class="n">motorExitVelocity</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="c1">//Set the alpha under propwash to propellerWashAngle.</span>
+        <span class="n">LiftDragModel</span><span class="p">.</span><span class="n">setAlpha</span><span class="p">(</span><span class="n">propellerWashAngle</span><span class="p">,</span><span class="nb">true</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="cm">/*In this example, if this is a control surface, 
+    set alpha from control surface deflection 
+    angle in radians.
+    */</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">isControlSurface</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">double</span> <span class="n">controlAngle</span> <span class="o">=</span> <span class="p">...;</span>
+        <span class="n">LiftDragModel</span><span class="p">.</span><span class="n">setAlpha</span><span class="p">(</span><span class="n">controlAngle</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Set air density</span>
+    <span class="n">LiftDragModel</span><span class="p">.</span><span class="n">setAirDensity</span><span class="p">(</span><span class="n">rho</span><span class="p">);</span>
+
+    <span class="cm">/* 
+    Calculate Lift and Drag according to 
+    aerodynamic element type. 
+    This is determined by the flag isControlSurface 
+    in this example.
+    */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">isControlSurface</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">calculateRotatedForces</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="n">calculateRotatedForces</span><span class="o">=</span><span class="nb">true</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">//Calculate resultant force.</span>
+    <span class="n">LiftDragModel</span><span class="p">.</span><span class="n">calculateLiftDragModelValues</span><span class="p">(</span><span class="n">calculateRotatedForces</span><span class="p">);</span>
+   <span class="p">}</span>
+   <span class="k">catch</span> <span class="p">(</span><span class="k">const</span> <span class="n">Lift_drag_model_exception</span><span class="o">&amp;</span> <span class="n">e</span><span class="p">)</span>
+   <span class="p">{</span>
+       <span class="c1">//Handle any exceptions thrown</span>
+   <span class="p">}</span>
+</code></pre></div><h2 id='obtain-resultant-vector-at-end-of-time-step'>Obtain resultant vector at end of time step</h2>
+<p>After calling <em>calculateLiftDragModelValues</em>, call <em>getForceVector</em> to obtain the resultant force.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="c1">// Obtain resultant force vector.</span>
+<span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="n">force</span> <span class="o">=</span> <span class="n">LiftDragModel</span><span class="p">.</span><span class="n">getForceVector</span><span class="p">();</span>
+</code></pre></div><h1 id='calculation-steps'>Calculation Steps</h1>
+<p>The lift drag model performs steps two through eight of the ten steps in the  <a href="https://github.com/slatedocs/slate">lift drag mathematical model</a>.</p>
+<h2 id='convert-pose-and-world-linear-velocity-into-body-velocity'>Convert pose and world linear velocity into body velocity</h2>
+<p>This is done in the method <em>calculateLocalVelocities</em> by calling the <em>CoordUtils</em> class method <em>project_vector_global</em>.</p>
+<h3 id='calculatelocalvelocities-implementation'><em>calculateLocalVelocities</em> implementation</h3>
+<p>World velocity and pose are passed into <em>project_vector_global</em>, as well as a reference to the object that will contain the body velocity values.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">void</span> <span class="n">Lift_drag_model</span><span class="o">::</span><span class="n">calculateLocalVelocities</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">double</span> <span class="n">vInLDPlane_s</span><span class="p">;</span> <span class="c1">// Scalar magnitude of speed in LD plane.</span>
+
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">exceptions</span><span class="o">=</span><span class="s">"Lift_drag_model::calculateLocalVelocities:</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+    <span class="kt">bool</span> <span class="n">exceptionOccurred</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+    <span class="kt">bool</span> <span class="n">criticalExceptionOccurred</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+
+    <span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="n">vWorldAircraftVelocity</span> <span class="o">=</span> <span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span><span class="p">(</span><span class="n">worldVel</span><span class="p">.</span><span class="n">X</span><span class="p">(),</span> 
+    <span class="n">worldVel</span><span class="p">.</span><span class="n">Y</span><span class="p">(),</span> <span class="n">worldVel</span><span class="p">.</span><span class="n">Z</span><span class="p">());</span>
+
+    <span class="c1">// Calculate world linear velocity in wing coordinate frame.</span>
+    <span class="n">avionics_sim</span><span class="o">::</span><span class="n">Coordinate_Utils</span><span class="o">::</span><span class="n">project_vector_global</span><span class="p">(</span><span class="n">worldPose</span><span class="p">,</span> <span class="n">vWorldAircraftVelocity</span><span class="p">,</span> 
+    <span class="o">&amp;</span><span class="n">wingFrameVelocity</span><span class="p">);</span>
+
+    <span class="c1">//...</span>
+<span class="p">}</span>
+</code></pre></div><h3 id='project_vector_global'><em>project_vector_global</em></h3>
+<p>Body velocity is computed using quaternions using the following equation from the lift drag mathematical model:
+$$
+\begin{equation}V_{body}=(\mathbf F_w \cdot \mathbf V_{world}, \mathbf R_w \cdot \mathbf V_{world}, \mathbf U_w \cdot \mathbf V_{world}) \end{equation}
+$$</p>
+
+<blockquote>
+<p>Implementation of body velocity calculation</p>
+</blockquote>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">int</span> <span class="n">Coordinate_Utils</span><span class="o">::</span><span class="n">project_vector_global</span><span class="p">(</span><span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Pose3d</span> <span class="n">targetFrame</span><span class="p">,</span> 
+<span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="n">vec</span><span class="p">,</span> 
+<span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="o">*</span> <span class="k">const</span> <span class="n">res</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// Unit direction vectors in target (world) frame.</span>
+
+    <span class="c1">//Forward is positive on x-axis in world frame. </span>
+    <span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="n">forward</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">);</span>
+
+    <span class="c1">//Upward is positive on z-axis in world frame.</span>
+    <span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="n">upward</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">);</span>
+
+    <span class="c1">// Rotate into target frame to get direction unit vectors. </span>
+    <span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="n">forwardI</span> <span class="o">=</span> <span class="n">targetFrame</span><span class="p">.</span><span class="n">Rot</span><span class="p">().</span><span class="n">RotateVector</span><span class="p">(</span><span class="n">forward</span><span class="p">);</span> 
+    <span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="n">upwardI</span> <span class="o">=</span> <span class="n">targetFrame</span><span class="p">.</span><span class="n">Rot</span><span class="p">().</span><span class="n">RotateVector</span><span class="p">(</span><span class="n">upward</span><span class="p">);</span> 
+
+    <span class="c1">// Cross product to get right direction vector.</span>
+    <span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="n">rightI</span> <span class="o">=</span> <span class="n">upwardI</span><span class="p">.</span><span class="n">Cross</span><span class="p">(</span><span class="n">forwardI</span><span class="p">).</span><span class="n">Normalize</span><span class="p">();</span>
+
+    <span class="c1">// Project source vector into target frame. </span>
+    <span class="o">*</span><span class="n">res</span> <span class="o">=</span> <span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span><span class="p">(</span><span class="n">forwardI</span><span class="p">.</span><span class="n">Dot</span><span class="p">(</span><span class="n">vec</span><span class="p">),</span> 
+    <span class="n">rightI</span><span class="p">.</span><span class="n">Dot</span><span class="p">(</span><span class="n">vec</span><span class="p">),</span>
+    <span class="n">upwardI</span><span class="p">.</span><span class="n">Dot</span><span class="p">(</span><span class="n">vec</span><span class="p">));</span> 
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span> 
+<span class="p">}</span>
+</code></pre></div><h2 id='calculate-aerodynamic-parameters-from-the-body-velocity'>Calculate aerodynamic parameters from the body velocity</h2>
+<p>The aerodynamic parameters $$\alpha, \beta, V_{\infty} ,  and  V_{planar}$$ are calculated from the body velocity by calling the method <em>calculateWindAnglesAndLocalVelocities</em>, which in turn calls <em>calculateLocalVelocities</em> and <em>calculateWindAngles</em>.</p>
+<h3 id='calculatelocalvelocities-logic-implementation'><em>calculateLocalVelocities</em> logic implementation</h3>
+<p>This method calculates </p>
+
+<p>
+$$
+V_{\infty} \\ and \\ V_{planar}
+$$
+</p>
+
+<p>as </p>
+
+<p>
+$$
+V_{\infty} =  \sqrt{{{V_{body}}_x}^2 + {{V_{body}}_y}^2 + {{V_{body}}_z}^2} 
+$$
+</p>
+
+<p>and</p>
+
+<p>
+$$
+V_{planar} = \sqrt{{{V_{body}}_x}^2 + {{V_{body}}_z}^2}
+$$
+</p>
+
+<p>and must be called be called before <em>calculateWindAngles</em>. This method also determines lateral velocity. Please see the <b>Methods</b> section for more information.</p>
+
+<blockquote>
+<p>Implementation of freestream and planar velocity calculation</p>
+</blockquote>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">void</span> <span class="n">Lift_drag_model</span><span class="o">::</span><span class="n">calculateLocalVelocities</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">double</span> <span class="n">vInLDPlane_s</span><span class="p">;</span> <span class="c1">// Scalar magnitude of speed in LD plane.</span>
+
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">exceptions</span><span class="o">=</span><span class="s">"Lift_drag_model::calculateLocalVelocities:</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+    <span class="kt">bool</span> <span class="n">exceptionOccurred</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+    <span class="kt">bool</span> <span class="n">criticalExceptionOccurred</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+
+    <span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="n">vWorldAircraftVelocity</span> <span class="o">=</span> <span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span><span class="p">(</span><span class="n">worldVel</span><span class="p">.</span><span class="n">X</span><span class="p">(),</span> 
+    <span class="n">worldVel</span><span class="p">.</span><span class="n">Y</span><span class="p">(),</span> <span class="n">worldVel</span><span class="p">.</span><span class="n">Z</span><span class="p">());</span>
+
+    <span class="c1">// Calculate world linear velocity in wing coordinate frame.</span>
+    <span class="n">avionics_sim</span><span class="o">::</span><span class="n">Coordinate_Utils</span><span class="o">::</span><span class="n">project_vector_global</span><span class="p">(</span><span class="n">worldPose</span><span class="p">,</span> <span class="n">vWorldAircraftVelocity</span><span class="p">,</span> 
+    <span class="o">&amp;</span><span class="n">wingFrameVelocity</span><span class="p">);</span>
+
+    <span class="n">vInFreestreamPlane_v</span> <span class="o">=</span> <span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span><span class="p">(</span><span class="n">wingFrameVelocity</span><span class="p">.</span><span class="n">X</span><span class="p">(),</span> 
+    <span class="n">wingFrameVelocity</span><span class="p">.</span><span class="n">Y</span><span class="p">(),</span> <span class="n">wingFrameVelocity</span><span class="p">.</span><span class="n">Z</span><span class="p">());</span>
+
+    <span class="kt">double</span> <span class="n">vInFreestream_s</span> <span class="o">=</span> <span class="n">vInFreestreamPlane_v</span><span class="p">.</span><span class="n">Length</span><span class="p">();</span>
+
+    <span class="c1">// Remove spanwise and vertical component</span>
+    <span class="n">vInLDPlane_v</span> <span class="o">=</span> <span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span><span class="p">(</span><span class="n">wingFrameVelocity</span><span class="p">.</span><span class="n">X</span><span class="p">(),</span> 
+    <span class="mi">0</span><span class="p">,</span> <span class="n">wingFrameVelocity</span><span class="p">.</span><span class="n">Z</span><span class="p">());</span>
+
+    <span class="n">vInLDPlane_s</span> <span class="o">=</span> <span class="n">vInLDPlane_v</span><span class="p">.</span><span class="n">Length</span><span class="p">();</span> <span class="c1">// Calculate scalar</span>
+
+   <span class="c1">// ...</span>
+<span class="p">}</span>
+</code></pre></div><h3 id='calculatewindangles-logic-implementation'><em>calculateWindAngles</em> logic implementation</h3>
+<p>This method calculates the angles $$\alpha \ and \ \beta$$</p>
+
+<p>as</p>
+
+<p>$$
+\begin{equation}\alpha = \frac{-u}{w}\end{equation}
+$$</p>
+
+<p>and</p>
+
+<p>$$
+\begin{equation}\beta = arcsin(\frac{-v}{V_{\infty}})\end{equation}
+$$</p>
+
+<p>where</p>
+
+<p>
+$$
+u={{V_{body}}_x}\cdot\vec{u}_{fwd} \\
+v={{V_{body}}_y}\cdot\vec{u}_{lat} \\
+w={{V_{body}}_z}\cdot\vec{u}_{up}
+$$
+</p>
+
+<p>where</p>
+
+<p>
+$$
+\vec{u}_{lat} = {\vec{u}_{up}}\times{\vec{u}_{fwd}}
+$$
+</p>
+
+<blockquote>
+<p>Implementation of wind angle calculation</p>
+</blockquote>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">void</span> <span class="n">Lift_drag_model</span><span class="o">::</span><span class="n">calculateWindAngles</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">bool</span> <span class="n">exceptionOccurred</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+    <span class="kt">bool</span> <span class="n">criticalExceptionOccurred</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">exceptions</span><span class="o">=</span><span class="s">"Lift_drag_model::calculateWindAngles:</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+    <span class="c1">//Calculate velocity in each direction.</span>
+    <span class="kt">double</span> <span class="n">u</span> <span class="o">=</span> <span class="n">vecUpwd</span><span class="p">.</span><span class="n">Dot</span><span class="p">(</span><span class="n">wingFrameVelocity</span><span class="p">);</span>
+    <span class="kt">double</span> <span class="n">v</span> <span class="o">=</span> <span class="n">vecPort</span><span class="p">.</span><span class="n">Dot</span><span class="p">(</span><span class="n">wingFrameVelocity</span><span class="p">);</span>
+    <span class="kt">double</span> <span class="n">w</span> <span class="o">=</span> <span class="n">vecFwd</span><span class="p">.</span><span class="n">Dot</span><span class="p">(</span><span class="n">wingFrameVelocity</span><span class="p">);</span>
+
+    <span class="c1">// Calculate alpha</span>
+    <span class="kt">double</span> <span class="n">y</span><span class="o">=-</span><span class="n">u</span><span class="p">;</span>
+
+    <span class="kt">double</span> <span class="n">x</span><span class="o">=</span><span class="n">w</span><span class="p">;</span>
+
+    <span class="n">errno</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">atan2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">);</span>
+
+    <span class="c1">//...</span>
+
+    <span class="c1">//Calculate beta</span>
+    <span class="n">y</span><span class="o">=-</span><span class="n">v</span><span class="p">;</span>
+
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">asin</span><span class="p">(</span><span class="n">y</span><span class="o">/</span><span class="n">vInf</span><span class="p">);</span>
+
+    <span class="c1">//...</span>
+<span class="p">}</span>
+</code></pre></div><h2 id='calculate-dynamic-pressure'>Calculate dynamic pressure</h2>
+<p>Dynamic pressure is calculated as a function of planar velocity in the method <em>calculateDynamicPressure</em>:</p>
+
+<p>$$
+q_{planar} = \frac{1}{2}\rho V_{planar}^2
+$$</p>
+
+<blockquote>
+<p>Implementation of dynamic pressure calculation</p>
+</blockquote>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">void</span> <span class="n">Lift_drag_model</span><span class="o">::</span><span class="n">calculateDynamicPressure</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">q</span><span class="o">=</span><span class="mf">0.5</span><span class="o">*</span><span class="n">rho</span><span class="o">*</span><span class="n">vInf</span><span class="o">*</span><span class="n">vInf</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><h2 id='utilize-lookup-table-and-linear-interpolation-to-extract-coefficients-of-lift-and-drag-as-a-function-of-angle-of-attack-alpha'>Utilize lookup table and linear interpolation to extract coefficients of lift and drag as a function of angle of attack (alpha)</h2>
+<p>Once the lookup tables have been set by the plugin and alpha has been calculated, the methods <em>lookupCL</em> and <em>lookupCD</em> are used respectively to obtain the coefficients of lift and drag from the lookup tables. Each function uses linear interpolation to obtain the coefficient value.</p>
+
+<aside class="warning">
+The values in the alpha lookup table are presumed to be in degrees.
+</aside>
+<h3 id='lookupcl-logic-implementation'><em>lookupCL</em> logic implementation</h3>
+<p>Given the alpha and CL LUTs and an angle, retrieve the lift coefficient and store it in model variable <em>cl</em>. This value can be retrieved using the method <em>getCL</em>.</p>
+
+<blockquote>
+<p>Implementation of coefficient of lift interpolation</p>
+</blockquote>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">void</span> <span class="n">Lift_drag_model</span><span class="o">::</span><span class="n">lookupCL</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">AeroInterp</span><span class="p">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">Aero_LUT_alpha</span><span class="p">,</span><span class="n">Aero_LUT_CL</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cl</span><span class="p">);</span>
+    <span class="c1">//...</span>
+<span class="p">}</span>
+</code></pre></div><h3 id='lookupcd-logic-implementation'><em>lookupCD</em> logic implementation</h3>
+<p>Given the alpha and CD LUTs and an angle, retrieve the drag coefficient and store it in model variable <em>cd</em>. The final value of <em>cd</em> is calculated one of two ways depending on whether the model is being applied to a control surface (see implementation). This value can be retrieved using the method <em>getCD</em>.</p>
+
+<blockquote>
+<p>Implementation of coefficient of drag interpolation</p>
+</blockquote>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">void</span> <span class="n">Lift_drag_model</span><span class="o">::</span><span class="n">lookupCD</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">isControlSurface</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">double</span> <span class="n">cdAtAlphaZero</span><span class="p">;</span>
+
+        <span class="c1">//Now, we subtract cd @ alpha=0 from the one obtained at alpha iff alpha not zero.</span>
+        <span class="n">AeroInterp</span><span class="p">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">Aero_LUT_alpha</span><span class="p">,</span><span class="n">Aero_LUT_CD</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cd</span><span class="p">);</span>
+        <span class="n">AeroInterp</span><span class="p">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">Aero_LUT_alpha</span><span class="p">,</span><span class="n">Aero_LUT_CD</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cdAtAlphaZero</span><span class="p">);</span>
+        <span class="n">cd</span><span class="o">=</span><span class="n">cd</span><span class="o">-</span><span class="n">cdAtAlphaZero</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="n">AeroInterp</span><span class="p">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">Aero_LUT_alpha</span><span class="p">,</span><span class="n">Aero_LUT_CD</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cd</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><h2 id='calculate-lift-and-drag-force-scalar-quantities'>Calculate lift and drag force scalar quantities</h2>
+<p>This is done in the method <em>calculateLiftDragModelValues</em> by calling <em>calculateLift</em> and <em>calculateDrag</em>.</p>
+<h3 id='calculatelift'>calculateLift</h3>
+<p>The lift scalar value is calculated according to the following equation in the mathematical model.</p>
+
+<p>$$
+\begin{equation}L = C_LqA\end{equation}
+$$</p>
+
+<blockquote>
+<p>Implementation of coefficient of scalar lift calculation</p>
+</blockquote>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">void</span> <span class="n">Lift_drag_model</span><span class="o">::</span><span class="n">calculateLift</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">lift</span><span class="o">=</span><span class="n">cl</span><span class="o">*</span><span class="n">q</span><span class="o">*</span><span class="n">getArea</span><span class="p">();</span>
+    <span class="c1">//...</span>
+<span class="p">}</span>
+</code></pre></div><h3 id='calculatedrag'>calculateDrag</h3>
+<p>The drag scalar value is calculated similarly:.</p>
+
+<p>$$
+\begin{equation}L = C_DqA\end{equation}
+$$</p>
+
+<blockquote>
+<p>Implementation of coefficient of scalar drag calculation</p>
+</blockquote>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">void</span> <span class="n">Lift_drag_model</span><span class="o">::</span><span class="n">calculateDrag</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">drag</span><span class="o">=</span><span class="n">cd</span><span class="o">*</span><span class="n">q</span><span class="o">*</span><span class="n">getArea</span><span class="p">();</span>
+    <span class="c1">//...</span>
+<span class="p">}</span>
+</code></pre></div><h2 id='calculate-drag-due-to-side-slip'>Calculate drag due to side slip</h2>
+<p>This is through the <em>calculateLateralForce</em> method in <em>calculateLiftDragModelValues</em> using the equation</p>
+
+<p>$$
+D_{ss} = C_{D_{ss}}q_{ss}A_{lat}
+$$</p>
+
+<p>where</p>
+
+<p>$$
+C_{D_{ss}}\ is \ coefficient \ of \ side \ slip \ drag \
+$$</p>
+
+<p>$$
+A_{lat}\ is \ lateral \ area \ of \ element \
+$$</p>
+
+<p>$$
+q_{ss} = \frac{1}{2} \rho {{V_{body}}_y}^2
+$$</p>
+
+<blockquote>
+<p>Implementation of coefficient of side slip drag calculation</p>
+</blockquote>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">void</span> <span class="n">Lift_drag_model</span><span class="o">::</span><span class="n">calculateLateralForce</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">double</span> <span class="n">q_lat</span><span class="o">=</span><span class="mf">0.5</span><span class="o">*</span><span class="n">rho</span><span class="o">*</span><span class="n">lateral_velocity</span><span class="o">*</span><span class="n">lateral_velocity</span><span class="p">;</span>
+    <span class="n">lateral_force</span><span class="o">=</span><span class="n">q_lat</span><span class="o">*</span><span class="n">coefficientLateralForce</span><span class="o">*</span><span class="n">getLateralArea</span><span class="p">();</span>
+    <span class="c1">//...</span>
+<span class="p">}</span>
+</code></pre></div><h2 id='convert-scalar-force-lift-drag-and-sideslip-drag-representations-from-wind-frame-into-body-fixed-coordinate-system'>Convert scalar force lift, drag, and sideslip drag representations from wind frame into body-fixed coordinate system</h2>
+<p>If the lift drag model is not being applied to a control surface, lift and drag must be converted into their rotated values. Conversion occurs in the method <em>calculateRotatedLiftAndDrag</em>.</p>
+<h3 id='calculaterotatedliftanddrag'>calculateRotatedLiftAndDrag</h3>
+<p>Rotated lift and drag are calculated as follows:</p>
+
+<p>$$
+F_{up} = L*cos(\alpha) + D*sin(\alpha)
+$$</p>
+
+<p>$$
+F_{fwd} = L*sin(\alpha) - D*cos(\alpha)
+$$</p>
+
+<blockquote>
+<p>Implementation of lift and drag rotation</p>
+</blockquote>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">void</span> <span class="n">Lift_drag_model</span><span class="o">::</span><span class="n">calculateRotatedLiftAndDrag</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">double</span> <span class="n">alphaInRadians</span><span class="o">=</span><span class="n">convertDegreesToRadians</span><span class="p">(</span><span class="n">alpha</span><span class="p">);</span>
+    <span class="kt">double</span> <span class="n">rotated_lift</span> <span class="o">=</span> <span class="p">(</span><span class="n">lift</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">alphaInRadians</span><span class="p">))</span><span class="o">+</span><span class="p">(</span><span class="n">drag</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">alphaInRadians</span><span class="p">));</span>
+    <span class="kt">double</span> <span class="n">rotated_drag</span> <span class="o">=</span> <span class="p">(</span><span class="n">lift</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">alphaInRadians</span><span class="p">))</span><span class="o">-</span><span class="p">(</span><span class="n">drag</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">alphaInRadians</span><span class="p">));</span>
+    <span class="n">lift</span><span class="o">=</span><span class="n">rotated_lift</span><span class="p">;</span>
+    <span class="n">drag</span><span class="o">=</span><span class="n">rotated_drag</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><h2 id='convert-scalar-body-force-representation-into-a-three-element-vector-representation-in-body-frame'>Convert scalar body force representation into a three element vector representation in body frame</h2>
+<p>For the calculation of the final resultant force in body-fixed coordinate frame, convert the scalar force quantities into the appropriate directions in body-fixed coordinate frame.</p>
+
+<p>This is done in the method <em>calculateForceWithDirection</em>.</p>
+<h3 id='calculateliftdragmodelvalues'>calculateLiftDragModelValues</h3>
+<p>The final resultant force is calculated as follows:</p>
+
+<p>
+$$
+F_R = (F_{up} * \vec{u}_{up}) + (F_{fwd} * \vec{u}_{fwd}) + (F_{lat} * \vec{u}_{lat})
+$$
+</p>
+
+<p>An extra step is performed to get the direction of drag.</p>
+
+<blockquote>
+<p>Implementation of scalar body force conversion into three element vector</p>
+</blockquote>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">void</span> <span class="n">Lift_drag_model</span><span class="o">::</span><span class="n">calculateForceWithDirection</span><span class="p">(</span><span class="kt">bool</span> <span class="n">calculatedRotatedForces</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// Get direction of lift by multiplying lift by upward vector.</span>
+    <span class="n">liftVec</span> <span class="o">=</span> <span class="n">lift</span> <span class="o">*</span> <span class="n">vecUpwd</span><span class="p">;</span>
+
+    <span class="cm">/* Get direction of drag. This should be in the opposite direction of velocity.
+    If the drag has been calculated as rotated, do not take -vecFwd as direction of drag, 
+    as this has been factored in by the rotation. Otherwise, use -vecFwd to get direction of drag.
+    */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">calculatedRotatedForces</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">dragVec</span> <span class="o">=</span> <span class="n">drag</span> <span class="o">*</span> <span class="o">-</span><span class="n">vecFwd</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="n">dragVec</span> <span class="o">=</span> <span class="n">drag</span> <span class="o">*</span> <span class="n">vecFwd</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">//Get direction of lateral force.</span>
+    <span class="n">lateralForceVec</span> <span class="o">=</span> <span class="n">lateral_force</span> <span class="o">*</span> <span class="n">vecPort</span><span class="p">;</span>
+
+    <span class="c1">//Add the forces together. All variables are of type ignition::math::Vector3d.</span>
+    <span class="n">force</span> <span class="o">=</span> <span class="n">liftVec</span> <span class="o">+</span> <span class="n">lateralForceVec</span> <span class="o">+</span> <span class="n">dragVec</span><span class="p">;</span>
+
+    <span class="c1">//Correct any NaN values.</span>
+    <span class="n">force</span><span class="p">.</span><span class="n">Correct</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div><h1 id='methods'>Methods</h1><h2 id='public'>Public</h2><h3 id='setalpha'>setAlpha</h3>
+<p>Sets value of alpha.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">void</span> <span class="nf">setAlpha</span><span class="p">(</span><span class="kt">double</span> <span class="n">_alpha</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">isInRadians</span><span class="o">=</span><span class="nb">false</span><span class="p">);</span>
+</code></pre></div><h4 id='return-type'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters'>Input Parameters</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>_alpha</td>
+<td>N/A</td>
+<td>Value of alpha angle.</td>
+</tr>
+<tr>
+<td>isInRadians</td>
+<td>false</td>
+<td>If set to false, the value is presumed to be in degrees.</td>
+</tr>
+</tbody></table>
+
+<aside class="warning">
+The model stores values in degrees because alpha LUT values are in degrees.
+</aside>
+
+<aside class="warning">
+This method will throw an exception if an invalid value (NaN) is passed in for <i>_alpha</i>.
+</aside>
+
+<aside class="warning">
+This method will throw an exception if a value outside the range of <i>MIN_ALPHA</i> and <i>MAX_ALPHA</i> is passed in for <i>_alpha</i>.
+</aside>
+<h3 id='getalpha'>getAlpha</h3>
+<p>Returns value of alpha in degrees.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="nf">getAlpha</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-2'>Return Type</h4>
+<p>double</p>
+<h4 id='input-parameters-2'>Input Parameters</h4>
+<p>None</p>
+
+<aside class="notice">
+If radians are desired, use the function <i>convertDegreesToRadians</i> to convert the returned value from degrees into radians.
+</aside>
+<h3 id='setfreestreamvelocity'>setFreeStreamVelocity</h3>
+<p>Sets value of freestream velocity.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">void</span> <span class="nf">setFreeStreamVelocity</span><span class="p">(</span><span class="kt">double</span> <span class="n">_fsVel</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">overridePlanarAndFreestream</span><span class="o">=</span><span class="nb">false</span><span class="p">);</span>
+</code></pre></div><h4 id='return-type-3'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-3'>Input Parameters</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>_speed</td>
+<td>N/A</td>
+<td>Value of freestream velocity.</td>
+</tr>
+<tr>
+<td>overridePlanarAndFreestream</td>
+<td>false</td>
+<td>If set to true, the planar velocity will also be replaced by _speed.</td>
+</tr>
+</tbody></table>
+
+<aside class="warning">
+This method will throw an exception if an invalid value (NaN) is passed in for <i>_speed</i>.
+</aside>
+<h3 id='getfreestreamvelocity'>getFreeStreamVelocity</h3>
+<p>Returns value of freestream velocity.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="nf">getFreeStreamVelocity</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-4'>Return Type</h4>
+<p>double</p>
+<h4 id='input-parameters-4'>Input Parameters</h4>
+<p>None</p>
+<h3 id='getfreestreamvelocityvec'>getFreeStreamVelocityVec</h3>
+<p>Returns value of freestream velocity as a vector.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="nf">getFreeStreamVelocityVec</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-5'>Return Type</h4>
+<p>ignition::math::Vector3d</p>
+<h4 id='input-parameters-5'>Input Parameters</h4>
+<p>None</p>
+<h3 id='setplanarvelocity'>setPlanarVelocity</h3>
+<p>Sets value of planar velocity.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">setPlanarVelocity</span><span class="p">(</span><span class="kt">double</span> <span class="n">_planarVel</span><span class="p">);</span>
+</code></pre></div><h4 id='return-type-6'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-6'>Input Parameters</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>_planarVel</td>
+<td>N/A</td>
+<td>Value of planar velocity.</td>
+</tr>
+</tbody></table>
+
+<aside class="warning">
+This method will throw an exception if an invalid value (NaN) is passed in for <i>_planarVel</i>.
+</aside>
+<h3 id='getplanarvelocity'>getPlanarVelocity</h3>
+<p>Returns value of planar velocity.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="nf">getFreeStreamVelocity</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-7'>Return Type</h4>
+<p>double</p>
+<h4 id='input-parameters-7'>Input Parameters</h4>
+<p>None</p>
+<h3 id='getplanarvelocityvec'>getPlanarVelocityVec</h3>
+<p>Returns value of planar velocity as a vector.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="nf">getPlanarVelocityVec</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-8'>Return Type</h4>
+<p>ignition::math::Vector3d</p>
+<h4 id='input-parameters-8'>Input Parameters</h4>
+<p>None</p>
+<h3 id='setairdensity'>setAirDensity</h3>
+<p>Sets value of planar velocity.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">setAirDensity</span><span class="p">(</span><span class="kt">double</span> <span class="n">_rho</span><span class="p">);</span>
+</code></pre></div><h4 id='return-type-9'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-9'>Input Parameters</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>_rho</td>
+<td>N/A</td>
+<td>Value for air density (rho).</td>
+</tr>
+</tbody></table>
+
+<aside class="warning">
+This method will throw an exception if an invalid value (NaN) is passed in for <i>_rho</i>.
+</aside>
+
+<aside class="warning">
+This method will throw an exception if a value outside the range of <i>MIN_AIR_DENSITY</i> and <i>MAX_AIR_DENSITY</i> is passed in for <i>_rho</i>.
+</aside>
+<h3 id='getairdensity'>getAirDensity</h3>
+<p>Returns value of air density.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="nf">getAirDensity</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-10'>Return Type</h4>
+<p>double</p>
+<h4 id='input-parameters-10'>Input Parameters</h4>
+<p>None</p>
+<h3 id='setarea'>setArea</h3>
+<p>Sets value of surface area.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">setArea</span><span class="p">(</span><span class="kt">double</span> <span class="n">_area</span><span class="p">);</span>
+</code></pre></div><h4 id='return-type-11'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-11'>Input Parameters</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>_area</td>
+<td>N/A</td>
+<td>Value for surface area.</td>
+</tr>
+</tbody></table>
+
+<aside class="warning">
+This method will throw an exception if an invalid value (NaN) is passed in for <i>_area</i>.
+</aside>
+
+<aside class="warning">
+This method will throw an exception if a value outside the range of <i>MIN_AREA</i> and <i>MAX_AREA</i> is passed in for <i>_area</i>.
+</aside>
+<h3 id='getarea'>getArea</h3>
+<p>Returns value of area</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="nf">getArea</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-12'>Return Type</h4>
+<p>double</p>
+<h4 id='input-parameters-12'>Input Parameters</h4>
+<p>None</p>
+<h3 id='setlateralarea'>setLateralArea</h3>
+<p>Sets value of lateral surface area.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">setLateralArea</span><span class="p">(</span><span class="kt">double</span> <span class="n">area</span><span class="p">);</span>
+</code></pre></div><h4 id='return-type-13'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-13'>Input Parameters</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>area</td>
+<td>N/A</td>
+<td>Value for lateral surface area.</td>
+</tr>
+</tbody></table>
+
+<aside class="warning">
+This method will throw an exception if an invalid value (NaN) is passed in for <i>_area</i>.
+</aside>
+
+<aside class="warning">
+This method will throw an exception if a value less than zero is passed in for <i>_area</i>.
+</aside>
+<h3 id='getlateralarea'>getLateralArea</h3>
+<p>Returns value of area</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="nf">getLateralArea</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-14'>Return Type</h4>
+<p>double</p>
+<h4 id='input-parameters-14'>Input Parameters</h4>
+<p>None</p>
+<h3 id='setluts'>setLUTs</h3>
+<p>Sets value of CL, CD, and Alpha look up tables.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">setLUTs</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span> <span class="n">alphas</span><span class="p">,</span> 
+ <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span> <span class="n">cls</span><span class="p">,</span> 
+ <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span> <span class="n">cds</span><span class="p">);</span>
+</code></pre></div><h4 id='return-type-15'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-15'>Input Parameters</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>alphas</td>
+<td>N/A</td>
+<td>Reference to vector containing alpha values.</td>
+</tr>
+<tr>
+<td>cls</td>
+<td>N/A</td>
+<td>Reference to vector containing lift coefficient values.</td>
+</tr>
+<tr>
+<td>cds</td>
+<td>N/A</td>
+<td>Reference to vector containing drag coefficient values.</td>
+</tr>
+</tbody></table>
+<h3 id='calculatedynamicpressure'>calculateDynamicPressure</h3>
+<p>Calculates dynamic pressure (q).</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">calculateDynamicPressure</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-16'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-16'>Input Parameters</h4>
+<p>N/A</p>
+<h3 id='getdynamicpressure'>getDynamicPressure</h3>
+<p>Returns value of dynamic pressure (q).</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="nf">getDynamicPressure</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-17'>Return Type</h4>
+<p>double</p>
+<h4 id='input-parameters-17'>Input Parameters</h4>
+<p>None</p>
+<h3 id='lookupcl'>lookupCL</h3>
+<p>Calculate/retrieve coefficient of lift from LUTs.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">lookupCL</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-18'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-18'>Input Parameters</h4>
+<p>N/A</p>
+<h3 id='lookupcd'>lookupCD</h3>
+<p>Calculate/retrieve coefficient of drag from LUTs.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">lookupCD</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-19'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-19'>Input Parameters</h4>
+<p>N/A</p>
+<h3 id='calculatedrag-2'>calculateDrag</h3>
+<p>Calculates value of drag.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">calculateDrag</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-20'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-20'>Input Parameters</h4>
+<p>N/A</p>
+<h3 id='calculatelift-2'>calculateLift</h3>
+<p>Calculates value of lift.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">calculateLift</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-21'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-21'>Input Parameters</h4>
+<p>N/A</p>
+<h3 id='calculatelateralforce'>calculateLateralForce</h3>
+<p>Calculates lateral force.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">calculateLateralForce</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-22'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-22'>Input Parameters</h4>
+<p>N/A</p>
+<h3 id='getcl'>getCL</h3>
+<p>Returns value of lift coefficient.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">double</span> <span class="nf">getCL</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-23'>Return Type</h4>
+<p>double</p>
+<h4 id='input-parameters-23'>Input Parameters</h4>
+<p>N/A</p>
+<h3 id='getcd'>getCD</h3>
+<p>Returns value of drag coefficient.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">double</span> <span class="nf">getCD</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-24'>Return Type</h4>
+<p>double</p>
+<h4 id='input-parameters-24'>Input Parameters</h4>
+<p>N/A</p>
+<h3 id='getlift'>getLift</h3>
+<p>Returns scalar value of lift.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">double</span> <span class="nf">getLift</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-25'>Return Type</h4>
+<p>double</p>
+<h4 id='input-parameters-25'>Input Parameters</h4>
+<p>N/A</p>
+<h3 id='getdrag'>getDrag</h3>
+<p>Returns scalar value of drag.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">double</span> <span class="nf">getDrag</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-26'>Return Type</h4>
+<p>double</p>
+<h4 id='input-parameters-26'>Input Parameters</h4>
+<p>N/A</p>
+<h3 id='getlateralforce'>getLateralForce</h3>
+<p>Returns scalar value of lateral force.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">double</span> <span class="nf">getLateralForce</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-27'>Return Type</h4>
+<p>double</p>
+<h4 id='input-parameters-27'>Input Parameters</h4>
+<p>N/A</p>
+<h3 id='calculateliftdragmodelvalues-2'>calculateLiftDragModelValues</h3>
+<p>Calculates important output values of the model (cl, cd, forces).</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">calculateLiftDragModelValues</span><span class="p">(</span><span class="kt">bool</span> <span class="n">calculateRotatedForces</span><span class="o">=</span><span class="nb">true</span><span class="p">);</span>
+</code></pre></div><h4 id='return-type-28'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-28'>Input Parameters</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>calculateRotatedForces</td>
+<td>true</td>
+<td>If true, lift and drag forces will be calculated as rotated.</td>
+</tr>
+</tbody></table>
+<h3 id='convertdegreestoradians'>convertDegreesToRadians</h3>
+<p>Returns value of angle in radians.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">double</span> <span class="nf">convertDegreesToRadians</span><span class="p">(</span><span class="kt">double</span> <span class="n">_angleDegrees</span><span class="p">);</span>
+</code></pre></div><h4 id='return-type-29'>Return Type</h4>
+<p>double</p>
+<h4 id='input-parameters-29'>Input Parameters</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>_angleDegrees</td>
+<td>N/A</td>
+<td>Value of angle in degrees</td>
+</tr>
+</tbody></table>
+<h3 id='convertradianstodegrees'>convertRadiansToDegrees</h3>
+<p>Returns value of angle in degrees.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">double</span> <span class="nf">convertDegreesToRadians</span><span class="p">(</span><span class="kt">double</span> <span class="n">_angleDegrees</span><span class="p">);</span>
+</code></pre></div><h4 id='return-type-30'>Return Type</h4>
+<p>double</p>
+<h4 id='input-parameters-30'>Input Parameters</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>_angleRadians</td>
+<td>N/A</td>
+<td>Value of angle in radians</td>
+</tr>
+</tbody></table>
+<h3 id='setbeta'>setBeta</h3>
+<p>Sets value of beta.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">setBeta</span><span class="p">(</span><span class="kt">double</span> <span class="n">_beta</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">isInRadians</span><span class="o">=</span><span class="nb">false</span><span class="p">);</span>
+</code></pre></div><h4 id='return-type-31'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-31'>Input Parameters</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>_beta</td>
+<td>N/A</td>
+<td>Value of beta angle.</td>
+</tr>
+<tr>
+<td>isInRadians</td>
+<td>false</td>
+<td>If set to false, the value is presumed to be in degrees.</td>
+</tr>
+</tbody></table>
+
+<aside class="warning">
+This method will throw an exception if an invalid value (NaN) is passed in for <i>_beta</i>.
+</aside>
+
+<aside class="warning">
+This method will throw an exception if a value outside the range of <i>LOWER_BETA_BOUND</i> and <i>UPPER_BETA_BOUND</i> is passed in for <i>_beta</i>.
+</aside>
+<h3 id='getbeta'>getBeta</h3>
+<p>Returns value of beta (side slip angle)</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="nf">getBeta</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-32'>Return Type</h4>
+<p>double</p>
+<h4 id='input-parameters-32'>Input Parameters</h4>
+<p>None</p>
+<h3 id='setlateralvelocity'>setLateralVelocity</h3>
+<p>Sets value of lateral velocity using pose and world velocity to calculate value.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">setLateralVelocity</span><span class="p">(</span><span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Pose3d</span> <span class="n">wingPose</span><span class="p">,</span> <span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="n">worldVel</span><span class="p">);</span>
+</code></pre></div><h4 id='return-type-33'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-33'>Input Parameters</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>wingPose</td>
+<td>N/A</td>
+<td>World pose.</td>
+</tr>
+<tr>
+<td>worldVel</td>
+<td>N/A</td>
+<td>World linear velocity.</td>
+</tr>
+</tbody></table>
+<h3 id='setlateralvelocity-2'>setLateralVelocity</h3>
+<p>Sets value of lateral velocity to a specified value.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">setLateralVelocity</span><span class="p">(</span><span class="kt">double</span> <span class="n">vel</span><span class="p">);</span>
+</code></pre></div><h4 id='return-type-34'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-34'>Input Parameters</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>vel</td>
+<td>N/A</td>
+<td>A chosen lateral velocity.</td>
+</tr>
+</tbody></table>
+<h3 id='getlateralvelocity'>getLateralVelocity</h3>
+<p>Returns value of current lateral velocity.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="nf">getLateralVelocity</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-35'>Return Type</h4>
+<p>double</p>
+<h4 id='input-parameters-35'>Input Parameters</h4>
+<p>None</p>
+<h3 id='getlocalaircraftvelocity'>getLocalAircraftVelocity</h3>
+<p>Returns value of local aircraft velocity as a vector.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="nf">getLocalAircraftVelocity</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-36'>Return Type</h4>
+<p>ignition::math::Vector3d</p>
+<h4 id='input-parameters-36'>Input Parameters</h4>
+<p>None</p>
+<h3 id='getforcevector'>getForceVector</h3>
+<p>Returns resultant force.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="nf">getForceVector</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-37'>Return Type</h4>
+<p>ignition::math::Vector3d</p>
+<h4 id='input-parameters-37'>Input Parameters</h4>
+<p>None</p>
+<h3 id='setworldpose'>setWorldPose</h3>
+<p>Sets world pose.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">setWorldPose</span><span class="p">(</span><span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Pose3d</span> <span class="n">pose</span><span class="p">);</span>
+</code></pre></div><h4 id='return-type-38'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-38'>Input Parameters</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>pose</td>
+<td>N/A</td>
+<td>World pose, as obtained by Gazebo or other source.</td>
+</tr>
+</tbody></table>
+<h3 id='getworldpose'>getWorldPose</h3>
+<p>Returns value of world pose.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Pose3d</span> <span class="nf">getWorldPose</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-39'>Return Type</h4>
+<p>ignition::math::Pose3d</p>
+<h4 id='input-parameters-39'>Input Parameters</h4>
+<p>None</p>
+<h3 id='setworldvelocity'>setWorldVelocity</h3>
+<p>Sets world velocity.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">setWorldVelocity</span><span class="p">(</span><span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="n">vel</span><span class="p">);</span>
+</code></pre></div><h4 id='return-type-40'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-40'>Input Parameters</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>vel</td>
+<td>N/A</td>
+<td>World linear velocity, as obtained by Gazebo or other source.</td>
+</tr>
+</tbody></table>
+<h3 id='getworldvelocity'>getWorldVelocity</h3>
+<p>Returns value of world linear velocity.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="nf">getWorldVelocity</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-41'>Return Type</h4>
+<p>ignition::math::Vector3d</p>
+<h4 id='input-parameters-41'>Input Parameters</h4>
+<p>None</p>
+<h3 id='calculatewindanglesandlocalvelocities'>calculateWindAnglesAndLocalVelocities</h3>
+<p>Calls both <em>calculateLocalVelocities</em> and <em>calculateWindAngles</em> as one wrapper function.</p>
+
+<aside class="warning">
+This function will throw an exception if any caught exception is thrown by <i>calculateLocalVelocities</i> and <i>calculateWindAngles</i>.
+</aside>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">calculateWindAnglesAndLocalVelocities</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-42'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-42'>Input Parameters</h4>
+<p>None</p>
+<h3 id='calculatelocalvelocities'>calculateLocalVelocities</h3>
+<p>Calculates local velocities.</p>
+
+<aside class="warning">
+This function must be called before <i>calculateWindAngles</i>.
+</aside>
+
+<aside class="warning">
+This function will throw an exception if any caught exception is thrown by its calls to <i>setFreeStreamVelocity</i>, <i>setPlanarVelocity</i> and <i>setLateralVelocity</i>.
+</aside>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">calculateWindAngles</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-43'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-43'>Input Parameters</h4>
+<p>None</p>
+<h3 id='calculatewindangles'>calculateWindAngles</h3>
+<p>Calculates alpha and beta angles from wing pose and world velocity.</p>
+
+<aside class="warning">
+This function will throw an exception if any caught exception is thrown by <i>setAlpha</i> and <i>setBeta</i>.
+</aside>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">calculateWindAngles</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-44'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-44'>Input Parameters</h4>
+<p>None</p>
+<h3 id='setforwardvector'>setForwardVector</h3>
+<p>Set forward unit vector.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">setForwardVector</span><span class="p">(</span><span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="n">fwd</span><span class="p">);</span>
+</code></pre></div><h4 id='return-type-45'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-45'>Input Parameters</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>fwd</td>
+<td>N/A</td>
+<td>Forward unit vector</td>
+</tr>
+</tbody></table>
+<h3 id='getforwardvector'>getForwardVector</h3>
+<p>Get forward unit vector.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="nf">getForwardVector</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-46'>Return Type</h4>
+<p>ignition::math::Vector3d</p>
+<h4 id='input-parameters-46'>Input Parameters</h4>
+<p>None</p>
+<h3 id='setupwardvector'>setUpwardVector</h3>
+<p>Set upward unit vector.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">setUpwardVector</span><span class="p">(</span><span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="n">upward</span><span class="p">);</span>
+</code></pre></div><h4 id='return-type-47'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-47'>Input Parameters</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>upward</td>
+<td>N/A</td>
+<td>Upward unit vector</td>
+</tr>
+</tbody></table>
+<h3 id='getupwardvector'>getUpwardVector</h3>
+<p>Get upward unit vector.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="nf">getUpwardVector</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-48'>Return Type</h4>
+<p>ignition::math::Vector3d</p>
+<h4 id='input-parameters-48'>Input Parameters</h4>
+<p>None</p>
+<h3 id='setportvector'>setPortVector</h3>
+<p>Set port unit vector.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">setPortVector</span><span class="p">(</span><span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="n">port</span><span class="p">);</span>
+</code></pre></div><h4 id='return-type-49'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-49'>Input Parameters</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>port</td>
+<td>N/A</td>
+<td>Upward unit vector</td>
+</tr>
+</tbody></table>
+<h3 id='calculateportvector'>calculatePortVector</h3>
+<p>Calculate port vector as cross product of forward and upward.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code> <span class="kt">void</span> <span class="nf">calculatePortVector</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-50'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-50'>Input Parameters</h4>
+<p>None</p>
+<h3 id='getportvector'>getPortVector</h3>
+<p>Get port unit vector.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="n">ignition</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Vector3d</span> <span class="nf">getPortVector</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-51'>Return Type</h4>
+<p>ignition::math::Vector3d</p>
+<h4 id='input-parameters-51'>Input Parameters</h4>
+<p>None</p>
+<h3 id='getlutalpha'>getLUTAlpha</h3>
+<p>Get alpha LUT.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">getLUTAlpha</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-52'>Return Type</h4>
+<p>std::vector of type double.</p>
+<h4 id='input-parameters-52'>Input Parameters</h4>
+<p>None</p>
+<h3 id='getlutcl'>getLUTCL</h3>
+<p>Get CL LUT.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">getLUTCL</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-53'>Return Type</h4>
+<p>std::vector of type double.</p>
+<h4 id='input-parameters-53'>Input Parameters</h4>
+<p>None</p>
+<h3 id='getlutcd'>getLUTCD</h3>
+<p>Get CD LUT.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">getLUTCD</span><span class="p">());</span>
+</code></pre></div><h4 id='return-type-54'>Return Type</h4>
+<p>std::vector of type double.</p>
+<h4 id='input-parameters-54'>Input Parameters</h4>
+<p>None</p>
+<h2 id='private'>Private</h2><h3 id='emptylutandcoefficientvectors'>emptyLUTAndCoefficientVectors</h3>
+<p>Make empty the the LUT, CL, and CD vectors.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">void</span> <span class="nf">emptyLUTAndCoefficientVectors</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-55'>Return Type</h4>
+<p>None</p>
+<h4 id='input-parameters-55'>Input Parameters</h4>
+<p>None</p>
+<h3 id='conditionangle'>conditionAngle</h3>
+<p>Conditions any angle outside of (-lowerBound, upperBound) to be within that range. Presumes that angle is in degrees.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="nf">conditionAngle</span><span class="p">(</span><span class="kt">double</span> <span class="n">angle_in</span><span class="p">,</span> 
+<span class="kt">double</span> <span class="n">lowerLimit</span><span class="o">=</span><span class="n">lowestLUTAngle</span><span class="p">,</span> 
+<span class="kt">double</span> <span class="n">upperLimit</span><span class="o">=</span><span class="n">highestLUTAngle</span><span class="p">,</span> 
+<span class="kt">int</span> <span class="n">increment</span><span class="o">=</span><span class="mi">5</span><span class="p">);</span>
+</code></pre></div><h4 id='return-type-56'>Return Type</h4>
+<p>double</p>
+<h4 id='input-parameters-56'>Input Parameters</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>angle_in</td>
+<td>N/A</td>
+<td>Angle to condition.</td>
+</tr>
+<tr>
+<td>lowerLimit</td>
+<td>lowestLUTAngle</td>
+<td>Lower bound of condition range (lowest acceptable value)</td>
+</tr>
+<tr>
+<td>upperLimit</td>
+<td>highestLUTAngle</td>
+<td>Upper bound of condition range (lowest acceptable value)</td>
+</tr>
+<tr>
+<td>increment</td>
+<td>5</td>
+<td>Amount to increment in conditioning process.</td>
+</tr>
+</tbody></table>
+<h3 id='valueiswithinbounds'>valueIsWithinBounds</h3>
+<p>Function to check if a given value is within a given bound.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">bool</span> <span class="nf">valueIsWithinBounds</span><span class="p">(</span><span class="kt">double</span> <span class="o">&amp;</span><span class="n">value</span><span class="p">,</span> 
+<span class="kt">double</span> <span class="n">lowerBound</span><span class="p">,</span> 
+<span class="kt">double</span> <span class="n">upperBound</span><span class="p">,</span> 
+<span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">itemName</span><span class="p">,</span> 
+<span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">errMsg</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">capToBound</span><span class="o">=</span><span class="nb">false</span><span class="p">);</span>
+</code></pre></div><h4 id='return-type-57'>Return Type</h4>
+<p>bool</p>
+<h4 id='input-parameters-57'>Input Parameters</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>value</td>
+<td>N/A</td>
+<td>Reference to value to check.</td>
+</tr>
+<tr>
+<td>lowerBound</td>
+<td>N/A</td>
+<td>Lower bound of condition range</td>
+</tr>
+<tr>
+<td>upperBound</td>
+<td>N/A</td>
+<td>Upper bound of condition range</td>
+</tr>
+<tr>
+<td>itemName</td>
+<td>N/A</td>
+<td>Name of variable containing value to check</td>
+</tr>
+<tr>
+<td>errMsg</td>
+<td>N/A</td>
+<td>Error message to be populated if and only value is not within bounds.</td>
+</tr>
+<tr>
+<td>capToBound</td>
+<td>N/A</td>
+<td>If true, value will be set to upperBound value (if exceeding it) or lowerBound (if below it)</td>
+</tr>
+</tbody></table>
+<h3 id='calculaterotatedliftanddrag-2'>calculateRotatedLiftAndDrag</h3>
+<p>Calculate rotated force magnitudes.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">void</span> <span class="nf">calculateRotatedLiftAndDrag</span><span class="p">();</span>
+</code></pre></div><h4 id='return-type-58'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-58'>Input Parameters</h4>
+<p>None</p>
+<h3 id='calculateforcewithdirection'>calculateForceWithDirection</h3>
+<p>Calculate force vector with direction.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">void</span> <span class="nf">calculateForceWithDirection</span><span class="p">(</span><span class="kt">bool</span> <span class="n">calculatedRotatedForces</span><span class="p">);</span>
+</code></pre></div><h4 id='return-type-59'>Return Type</h4>
+<p>void</p>
+<h4 id='input-parameters-59'>Input Parameters</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>calculatedRotatedForces</td>
+<td>N/A</td>
+<td>If true, do not calculate drag direction with the negative value of the forward unit vector.</td>
+</tr>
+</tbody></table>
+<h1 id='members'>Members</h1><h2 id='public-2'>Public</h2><h3 id='min_air_density'>MIN_AIR_DENSITY</h3>
+<p>Minimum acceptable air density. </p>
+
+<aside class="notice">
+Air density minimum and maximum values presume the following:<br/>
+30 degrees Celsius at Sea Level = 1.160 kg/m^3<br/>
+0 degrees Celsius at sea level = 1.29 kg/m^3<br/>
+3000 ft Density altitude = 0.9093 kg/m^3<br/>
+</aside>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="k">constexpr</span> <span class="k">static</span> <span class="kt">double</span> <span class="n">MIN_AIR_DENSITY</span><span class="o">=</span><span class="mf">0.9</span><span class="p">;</span>
+</code></pre></div><h4 id='type'>Type</h4>
+<p>double</p>
+<h3 id='max_air_density'>MAX_AIR_DENSITY</h3>
+<p>Maximum acceptable air density.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="k">constexpr</span> <span class="k">static</span> <span class="kt">double</span> <span class="n">MAX_AIR_DENSITY</span><span class="o">=</span><span class="mf">1.3</span><span class="p">;</span>
+</code></pre></div><h4 id='type-2'>Type</h4>
+<p>double</p>
+<h3 id='min_vinf'>MIN_VINF</h3>
+<p>Minimum acceptable freestream velocity</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="k">constexpr</span> <span class="k">static</span> <span class="kt">double</span> <span class="n">MIN_VINF</span><span class="o">=</span><span class="mf">0.0</span><span class="p">;</span>
+</code></pre></div><h4 id='type-3'>Type</h4>
+<p>double</p>
+<h3 id='max_vinf'>MAX_VINF</h3>
+<p>Maximum acceptable freestream velocity</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="k">constexpr</span> <span class="k">static</span> <span class="kt">double</span> <span class="n">MAX_VINF</span><span class="o">=</span><span class="mf">100.0</span><span class="p">;</span>
+</code></pre></div><h4 id='type-4'>Type</h4>
+<p>double</p>
+<h3 id='max_lateral_velocity'>MAX_LATERAL_VELOCITY</h3>
+<p>Maximum acceptable lateral velocity</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="k">constexpr</span> <span class="k">static</span> <span class="kt">double</span> <span class="n">MAX_LATERAL_VELOCITY</span><span class="o">=</span><span class="mf">50.0</span><span class="p">;</span>
+</code></pre></div><h4 id='type-5'>Type</h4>
+<p>double</p>
+<h3 id='min_lateral_velocity'>MIN_LATERAL_VELOCITY</h3>
+<p>Minimum acceptable lateral velocity</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="k">constexpr</span> <span class="k">static</span> <span class="kt">double</span> <span class="n">MIN_LATERAL_VELOCITY</span><span class="o">=-</span><span class="n">MAX_LATERAL_VELOCITY</span><span class="p">;</span>
+</code></pre></div><h4 id='type-6'>Type</h4>
+<p>double</p>
+<h4 id='type-7'>Type</h4>
+<p>double</p>
+<h3 id='min_cl'>MIN_CL</h3>
+<p>Minimum acceptable coefficient of lift (CL).</p>
+
+<aside class="notice">
+CL presumes limits of aircraft + margin
+</aside>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="k">constexpr</span> <span class="k">static</span> <span class="kt">double</span> <span class="n">MIN_CL</span><span class="o">=-</span><span class="mf">1.5</span><span class="p">;</span>
+</code></pre></div><h4 id='type-8'>Type</h4>
+<p>double</p>
+<h3 id='max_cl'>MAX_CL</h3>
+<p>Maximum acceptable coefficient of lift (CL).</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="k">constexpr</span> <span class="k">static</span> <span class="kt">double</span> <span class="n">MAX_CL</span><span class="o">=</span><span class="mf">1.4</span><span class="p">;</span>
+</code></pre></div><h4 id='type-9'>Type</h4>
+<p>double</p>
+<h3 id='min_cd'>MIN_CD</h3>
+<p>Minimum acceptable coefficient of drag (CD).</p>
+
+<aside class="notice">
+CD presumes limits of aircraft + margin
+</aside>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="k">constexpr</span> <span class="k">static</span> <span class="kt">double</span> <span class="n">MIN_CD</span><span class="o">=</span><span class="mf">0.0</span><span class="p">;</span>
+</code></pre></div><h4 id='type-10'>Type</h4>
+<p>double</p>
+<h3 id='max_cd'>MAX_CD</h3>
+<p>Maximum acceptable coefficient of drag (CD).</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="k">constexpr</span> <span class="k">static</span> <span class="kt">double</span> <span class="n">MAX_CD</span><span class="o">=</span><span class="mf">2.0</span><span class="p">;</span>
+</code></pre></div><h4 id='type-11'>Type</h4>
+<p>double</p>
+<h3 id='min_lift'>MIN_LIFT</h3>
+<p>Minimum acceptable value for lift scalar.</p>
+
+<aside class="notice">
+Lift corresponds to pushing roughly 1g.
+</aside>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="k">constexpr</span> <span class="k">static</span> <span class="kt">double</span> <span class="n">MIN_LIFT</span><span class="o">=</span><span class="mf">0.0</span><span class="p">;</span>
+</code></pre></div><h4 id='type-12'>Type</h4>
+<p>double</p>
+<h3 id='max_lift'>MAX_LIFT</h3>
+<p>Maximum acceptable value for lift scalar.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="k">constexpr</span> <span class="k">static</span> <span class="kt">double</span> <span class="n">MAX_LIFT</span><span class="o">=</span><span class="mf">200.0</span><span class="p">;</span>
+</code></pre></div><h4 id='type-13'>Type</h4>
+<p>double</p>
+<h3 id='min_drag'>MIN_DRAG</h3>
+<p>Minimum acceptable value for drag scalar.</p>
+
+<aside class="notice">
+Drag corresponds to pushing roughly 1g.
+</aside>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="k">constexpr</span> <span class="k">static</span> <span class="kt">double</span> <span class="n">MIN_DRAG</span><span class="o">=</span><span class="mf">0.0</span><span class="p">;</span>
+</code></pre></div><h4 id='type-14'>Type</h4>
+<p>double</p>
+<h3 id='max_drag'>MAX_DRAG</h3>
+<p>Maximum acceptable value for drag scalar.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="k">constexpr</span> <span class="k">static</span> <span class="kt">double</span> <span class="n">MAX_DRAG</span><span class="o">=</span><span class="mf">100.0</span><span class="p">;</span>
+</code></pre></div><h4 id='type-15'>Type</h4>
+<p>double</p>
+<h3 id='min_lateral_force'>MIN_LATERAL_FORCE</h3>
+<p>Minimum lateral force</p>
+
+<aside class="notice">
+This presumes a minimum lateral velocity of -50m/s at an air density of 1.225
+</aside>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="k">constexpr</span> <span class="k">static</span> <span class="kt">double</span> <span class="n">MIN_LATERAL_FORCE</span><span class="o">=-</span><span class="mf">796.25</span><span class="p">;</span>
+</code></pre></div><h4 id='type-16'>Type</h4>
+<p>double</p>
+<h3 id='max_lateral_force'>MAX_LATERAL_FORCE</h3>
+<p>Maximum acceptable value for lateral force.</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="k">constexpr</span> <span class="k">static</span> <span class="kt">double</span> <span class="n">MAX_LATERAL_FORCE</span><span class="o">=</span><span class="mf">796.25</span><span class="p">;</span>
+</code></pre></div><h4 id='type-17'>Type</h4>
+<p>double</p>
+<h3 id='coefficientlateralforce'>coefficientLateralForce</h3>
+<p>Coefficient of lateral force</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="k">constexpr</span> <span class="k">static</span> <span class="kt">double</span> <span class="n">coefficientLateralForce</span><span class="o">=</span><span class="mf">0.2</span><span class="p">;</span>
+</code></pre></div><h4 id='type-18'>Type</h4>
+<p>double</p>
+<h3 id='lowestlutangle'>lowestLUTAngle</h3>
+<p>Lowest possible value in alpha LUT</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="k">constexpr</span> <span class="k">static</span> <span class="kt">int</span> <span class="n">lowestLUTAngle</span><span class="o">=-</span><span class="mi">180</span><span class="p">;</span>
+</code></pre></div><h4 id='type-19'>Type</h4>
+<p>double</p>
+<h3 id='highestlutangle'>highestLUTAngle</h3>
+<p>Highest possible value in alpha LUT</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="k">constexpr</span> <span class="k">static</span> <span class="kt">int</span> <span class="n">highestLUTAngle</span><span class="o">=</span><span class="mi">180</span><span class="p">;</span>
+</code></pre></div><h4 id='type-20'>Type</h4>
+<p>double</p>
+<h2 id='private-2'>Private</h2><h3 id='alpha'>alpha</h3>
+<p>Value of alpha (angle of attack)</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="n">alpha</span><span class="p">;</span>
+</code></pre></div><h4 id='type-21'>Type</h4>
+<p>double</p>
+<h3 id='vinf'>vInf</h3>
+<p>Aircraft freestream velocity (v infinity)</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="n">vInf</span><span class="p">;</span>
+</code></pre></div><h4 id='type-22'>Type</h4>
+<p>double</p>
+<h3 id='vplanar'>vPlanar</h3>
+<p>Planar body velocity (v infinity)</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="n">vPlanar</span><span class="p">;</span>
+</code></pre></div><h4 id='type-23'>Type</h4>
+<p>double</p>
+<h3 id='rho'>rho</h3>
+<p>Value of rho</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="n">rho</span><span class="p">;</span>
+</code></pre></div><h4 id='type-24'>Type</h4>
+<p>double</p>
+<h3 id='area'>area</h3>
+<p>Value of area</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="n">area</span><span class="p">;</span>
+</code></pre></div><h4 id='type-25'>Type</h4>
+<p>double</p>
+<h3 id='cl'>cl</h3>
+<p>Lift coefficient</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="n">cl</span><span class="p">;</span>
+</code></pre></div><h4 id='type-26'>Type</h4>
+<p>double</p>
+<h3 id='cd'>cd</h3>
+<p>Drag coefficient</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="n">cd</span><span class="p">;</span>
+</code></pre></div><h4 id='type-27'>Type</h4>
+<p>double</p>
+<h3 id='lift'>lift</h3>
+<p>Scalar value for lift</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="n">lift</span><span class="p">;</span>
+</code></pre></div><h4 id='type-28'>Type</h4>
+<p>double</p>
+<h3 id='drag'>drag</h3>
+<p>Scalar value for drag</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="n">drag</span><span class="p">;</span>
+</code></pre></div><h4 id='type-29'>Type</h4>
+<p>double</p>
+<h3 id='lateral_force'>lateral_force</h3>
+<p>Scalar value for lateral force</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="n">lateral_force</span><span class="p">;</span>
+</code></pre></div><h4 id='type-30'>Type</h4>
+<p>double</p>
+<h3 id='aero_lut_alpha'>Aero_LUT_alpha</h3>
+<p>alpha LUT</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">Aero_LUT_alpha</span><span class="p">;</span>
+</code></pre></div><h4 id='type-31'>Type</h4>
+<p>std::vector of type double</p>
+
+<p>​          </p>
+<h3 id='aero_lut_cl'>Aero_LUT_CL</h3>
+<p>Lift coefficient LUT</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">Aero_LUT_CL</span><span class="p">;</span>
+</code></pre></div><h4 id='type-32'>Type</h4>
+<p>std::vector of type double</p>
+<h3 id='aero_lut_cd'>Aero_LUT_CD</h3>
+<p>Drag coefficient LUT</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">Aero_LUT_CD</span><span class="p">;</span>
+</code></pre></div><h4 id='type-33'>Type</h4>
+<p>std::vector of type double</p>
+<h3 id='q'>q</h3>
+<p>Dynamic pressure</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="n">q</span><span class="p">;</span>
+</code></pre></div><h4 id='type-34'>Type</h4>
+<p>double</p>
+<h3 id='tolerance'>tolerance</h3>
+<p>Tolerance for floating point comparisons (double)</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="k">constexpr</span> <span class="k">static</span> <span class="kt">double</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">;</span>
+</code></pre></div><h4 id='type-35'>Type</h4>
+<p>double</p>
+<h3 id='floattolerance'>floatTolerance</h3>
+<p>Tolerance for floating point comparisons (float)</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="k">constexpr</span> <span class="k">static</span> <span class="kt">double</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">;</span>
+</code></pre></div><h4 id='type-36'>Type</h4>
+<p>double</p>
+
+<p>​          </p>
+<h3 id='aerointerp'>AeroInterp</h3>
+<p>Bilinear interpolator instance</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="n">avionics_sim</span><span class="o">::</span><span class="n">Bilinear_interp</span> <span class="n">AeroInterp</span><span class="p">;</span>
+</code></pre></div><h4 id='type-37'>Type</h4>
+<p>avionics_sim::Bilinear_interp</p>
+<h3 id='mu'>mu</h3>
+<p>Math utility object (used for floating point comparison, display of digits to a certain precision)</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="n">Math_util</span> <span class="n">mu</span><span class="p">;</span>
+</code></pre></div><h4 id='type-38'>Type</h4>
+<p>Math_util</p>
+<h3 id='beta'>beta</h3>
+<p>Value of beta (side slip angle)</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="n">beta</span><span class="p">;</span>
+</code></pre></div><h4 id='type-39'>Type</h4>
+<p>double</p>
+<h3 id='lateralarea'>lateralArea</h3>
+<p>Lateral area of aircraft</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="n">lateralArea</span><span class="p">;</span>
+</code></pre></div><h4 id='type-40'>Type</h4>
+<p>double</p>
+<h3 id='lateral_velocity'>lateral_velocity</h3>
+<p>Y component of wingframe (body) velocity. Used in calculating lateral force</p>
+<div class="highlight"><pre class="highlight cpp tab-cpp"><code><span class="kt">double</span> <span class="n">lateral_velocity</span><span class="p">;</span>
+</code></pre></div><h4 id='type-41'>Type</h4>
+<p>double</p>
+<h1 id='reference-diagrams'>Reference Diagrams</h1><h2 id='lift-drag-model-uml-class'>Lift Drag Model UML Class</h2>
+<p><img src="images/Lift_Drag_Model_UML_Class_Diagram-2cd442de.png" alt="Lift Drag Model UML diagram" /></p>
+
+      </div>
+      <div class="dark-box">
+          <div class="lang-selector">
+                <a href="#" data-language-name="cpp">cpp</a>
+          </div>
+      </div>
+    </div>
+  </body>
+</html>
