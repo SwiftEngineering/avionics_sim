@@ -6,8 +6,8 @@
  * @license     Licensed under the MIT license. See LICENSE for details.
  */
 
-#include "avionics_sim/Differential_pressure_sensor_model.hpp"
-#include "avionics_sim/US_1976_atmosphere.hpp"
+#include "Differential_pressure_sensor_model.hpp"
+#include "US_1976_atmosphere.hpp"
 
 #include <cmath>
 #include <cstdlib>

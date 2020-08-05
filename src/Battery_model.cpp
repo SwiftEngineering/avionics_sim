@@ -6,7 +6,7 @@
  * @license     Licensed under the MIT license. See LICENSE for details.
  */
 
-#include "avionics_sim/Battery_model.hpp"
+#include "Battery_model.hpp"
 
 #include <boost/math/tools/rational.hpp>
 
@@ -51,7 +51,7 @@ void Battery_model::update_soc(const double current, const double timestep, doub
     }
 }
 
-// discharge curves are in mAhrs 
+// discharge curves are in mAhrs
 double Battery_model::get_voltage(const double soc, const double current_in, const double timestep)
 {
     double current = current_in;

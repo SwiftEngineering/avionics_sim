@@ -15,7 +15,7 @@
 //https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19760017709.pdf
 
 //http://www.pdas.com/atmosdownload.html
-#include "avionics_sim/US_1976_atmosphere.hpp"
+#include "US_1976_atmosphere.hpp"
 
 #include <cmath>
 #include <exception>
@@ -61,7 +61,7 @@ double US_1976_atmosphere::get_temperature(const double geopot_height)
 	const double Lmb = lapse_rate[(size_t)layer];
 	const double Tmb = base_temp[(size_t)layer];
 	const double Hb = base_geopot_height_km[(size_t)layer];
-	
+
 
 	double Tm = Tmb + Lmb * (geopot_height_km - Hb);
 
