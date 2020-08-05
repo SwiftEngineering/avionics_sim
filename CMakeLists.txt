@@ -1,52 +1,38 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
-project(avionics_sim)
+project(avionics_sim C CXX)
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_CXX_STANDARD 11)
 
 # Find the Ignition-Math library
 set(IGN_MATH_VER 4)
 find_package(ignition-math${IGN_MATH_VER} REQUIRED)
 
-add_library(avionics_sim
-	src/Battery_model.cpp
-	src/Differential_pressure_sensor_model.cpp
-	src/Exponential_smoothing_filter.cpp
-	src/GaussianMarkov_noise.cpp
-	src/Motor_current_consumption_model.cpp
-	src/NPolynomial_Eval.cpp
-	src/US_1976_atmosphere.cpp
-	src/Bilinear_interp.cpp
-	src/Lift_drag_model.cpp
-	src/Coordinate_Utils.cpp
-)
+include_directories(include)
+file(GLOB Sources "src/*.cpp")
+file(GLOB Headers "include/*.hpp")
 
-target_include_directories(avionics_sim PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/include
-)
+add_library(${PROJECT_NAME} ${Sources} ${Headers})
 
-target_link_libraries(avionics_sim ignition-math${IGN_MATH_VER}::ignition-math${IGN_MATH_VER})
+target_include_directories(
+  ${PROJECT_NAME} PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-set(AVIONICS_SIM_HEADERS 
-	include/avionics_sim/Battery_model.hpp
-	include/avionics_sim/Differential_pressure_sensor_model.hpp
-	include/avionics_sim/Exponential_smoothing_filter.hpp
-	include/avionics_sim/GaussianMarkov_noise.hpp
-	include/avionics_sim/Math_util.hpp
-	include/avionics_sim/NPolynomial_Eval.hpp
-	include/avionics_sim/US_1976_atmosphere.hpp
-	include/avionics_sim/Lift_drag_model.hpp
-	include/avionics_sim/Coordinate_Utils.hpp
-	include/avionics_sim/AvionicsSimException.hpp
-	include/avionics_sim/Lift_drag_model_exception.hpp
-)
+target_link_libraries(${PROJECT_NAME} ignition-math${IGN_MATH_VER}::ignition-math${IGN_MATH_VER})
 
-install(TARGETS avionics_sim
+enable_testing()
+add_subdirectory(test)
+
+install(
+  TARGETS avionics_sim
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   COMPONENT avionics-sim
 )
 
 install(
-  FILES ${AVIONICS_SIM_HEADERS} DESTINATION include/avionics_sim
+  FILES ${Headers}
+  DESTINATION include/avionics_sim
   COMPONENT avionics-sim-dev
 )
 

@@ -1,4 +1,4 @@
-#include "avionics_sim/Motor_current_consumption_model.hpp"
+#include "Motor_current_consumption_model.hpp"
 #include <cmath>
 #include <cstdio>
 #include <limits>

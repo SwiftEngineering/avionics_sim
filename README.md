@@ -32,7 +32,7 @@ Currently intended for use with PX4's sitl_gazebo.
 
 ## Copyright
 
-Copyright (c) Swift Engineering Inc. 2018
+Copyright (c) Swift Engineering Inc. 2020
 
 ## License
 
@@ -109,4 +109,10 @@ The function takes three arguments two of which are inputs and one of which is a
 
 This aerodynamic model replaces a single $\frac{C_L}{\alpha}$ slope coefficient and associated ${C_L}_{max}$ with an aerodynamic lookup table where, for each $\alpha$ there exists an associated $C_L$ and $C_D$.  The main benefit of this method is that it allows reasonable estimates of aerodynamic parameters up to and past stall, i.e. ${C_L}_{max}$. This is particularly important for tailsitting transition vehicles that operate in the range $0 < \alpha < 90$ and beyond. 
 
-The documentation for this aerodynamic model is located [here](documentation/liftdrag_model/README.md).
+The documentation for this aerodynamic model is in three parts.
+
+[Documentation for the mathematical basis of this aerodynamic model](documentation/liftdrag_model/mathematical_model/README.md).
+
+[Documentation for Gazebo plugin](documentation/liftdrag_model/devguide/plugin/index.html).
+
+[Documentation for Lift Drag Model C++ class](documentation/liftdrag_model/devguide/model_class/index.html).

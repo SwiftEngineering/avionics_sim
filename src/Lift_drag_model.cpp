@@ -1,21 +1,22 @@
 /**
  * @brief       Lift_drag_model
  * @file        Lift_drag_model.cpp
- * @author      Ihimu Ukpo <iukpo@swiftengineering.com>, Evan Johnson <erjohnson227@gmail.com>
+ * @author      Evan Johnson <erjohnson227@gmail.com>, Conrad McGreal <cmcgreal@swiftengineering.com>, Mike Lyons <mlyons@swiftengineering.com>, Ihimu Ukpo <iukpo@swiftengineering.com>, Nicholas Luzuriaga <nluzuriaga@swiftengineering.com>
  * @copyright   Copyright (c) 2019, Swift Engineering Inc.
  * @license     Licensed under the MIT license. See LICENSE for details.
  */
 
-#include "avionics_sim/Lift_drag_model.hpp"
-#include "avionics_sim/Coordinate_Utils.hpp"
+#include "Lift_drag_model.hpp"
+#include "Coordinate_Utils.hpp"
 #include <functional>
 #include <errno.h>
+#include <algorithm>
 
 /*
 Added so can now throw exceptions. Plugin should do a try/catch. Depending on exception message,
 Lift Drag Plugin should be able to report a warning or critical error.
 */
-#include "avionics_sim/Lift_drag_model_exception.hpp"
+#include "Lift_drag_model_exception.hpp"
 
 #include <sstream>
 #include <cstdlib>
@@ -26,828 +27,143 @@ Lift Drag Plugin should be able to report a warning or critical error.
 
 #define DEGREES_IN_RADIANS 57.2958
 
-namespace avionics_sim
-{
-    Lift_drag_model::Lift_drag_model() :
-        alpha(0.0),
-        vInf(0.0),
-        vPlanar(0.0),
-        rho(1.225),
-        area(1.0),
-        cl(0.0),
-        cd(0.0),
-        lift(0.0),
-        drag(0.0),
-        lateral_force(0.0),
-        q(0.0),
-        AeroInterp(avionics_sim::Bilinear_interp()),
-        isControlSurface(false),
-        beta(0.0),
-        lateralArea(0.0),
-        lateral_velocity(0.0),
-        force(ignition::math::Vector3d(0.0, 0.0, 0.0)),
-        wingFrameVelocity(ignition::math::Vector3d(0.0, 0.0, 0.0)),
-        worldPose(ignition::math::Pose3d(0.0,0.0,0.0,0.0,0.0,0.0)),
-        worldVel(ignition::math::Vector3d(0.0, 0.0, 0.0)),
-        vecFwd(ignition::math::Vector3d(0.0, 0.0, 0.0)),
-        vecUpwd(ignition::math::Vector3d(0.0, 0.0, 0.0)),
-        vecPort(ignition::math::Vector3d(0.0, 0.0, 0.0)),
-        radialSymmetry(false),
-        vInLDPlane_v(ignition::math::Vector3d(0.0, 0.0, 0.0)),
-        vInFreestreamPlane_v(ignition::math::Vector3d(0.0, 0.0, 0.0)),
-        liftVec(ignition::math::Vector3d(0.0, 0.0, 0.0)),
-        dragVec(ignition::math::Vector3d(0.0, 0.0, 0.0)),
-        lateralForceVec(ignition::math::Vector3d(0.0, 0.0, 0.0)){}
+namespace avionics_sim {
+Lift_drag_model::Lift_drag_model() :
+  angleOfAttack_deg(0.0),
+  vInf(0.0),
+  vPlanar_m_per_s(0.0),
+  airDensity_kg_per_m3(1.225),
+  area(1.0),
+  cl(0.0),
+  cd(0.0),
+  lift(0.0),
+  drag(0.0),
+  lateral_force(0.0),
+  q(0.0),
+  AeroInterp(avionics_sim::Bilinear_interp()),
+  beta(0.0),
+  lateralArea(0.1),
+  lateral_velocity(0.0),
+  force(ignition::math::Vector3d(0.0, 0.0, 0.0)),
+  wingFrameVelocity(ignition::math::Vector3d(0.0, 0.0, 0.0)),
+  worldPose(ignition::math::Pose3d(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)),
+  worldVel(ignition::math::Vector3d(0.0, 0.0, 0.0)),
+  vecFwd(ignition::math::Vector3d(0.0, 0.0, 0.0)),
+  vecUpwd(ignition::math::Vector3d(0.0, 0.0, 0.0)),
+  vecPort(ignition::math::Vector3d(0.0, 0.0, 0.0)),
+  radialSymmetry(false),
+  vInLDPlane_v(ignition::math::Vector3d(0.0, 0.0, 0.0)),
+  vInFreestreamPlane_v(ignition::math::Vector3d(0.0, 0.0, 0.0)),
+  liftVec(ignition::math::Vector3d(0.0, 0.0, 0.0)),
+  dragVec(ignition::math::Vector3d(0.0, 0.0, 0.0)),
+  lateralForceVec(ignition::math::Vector3d(0.0, 0.0, 0.0)) {
+}
 
-    void Lift_drag_model::emptyLUTAndCoefficientVectors()
-    {
-        //Clear out the vectors if they are not empty.
-        if (!Aero_LUT_alpha.empty())
-        {
-            Aero_LUT_alpha.clear();
-        }
-        if (!Aero_LUT_CL.empty())
-        {
-            Aero_LUT_CL.clear();
-        }
-        if (!Aero_LUT_CD.empty())
-        {
-            Aero_LUT_CD.clear();
-        }
+Lift_drag_model::~Lift_drag_model() {
+}
+
+void Lift_drag_model::testUpdateForcesInBody_N(
+  ignition::math::Pose3d poseInWorld_m_rad,
+  ignition::math::Vector3d velocityInWorld_m_per_s,
+  double propWashVelocity_m_per_s,
+  double controlAngle_rad) {
+
+  setWorldPose(poseInWorld_m_rad);
+  setWorldVelocity(velocityInWorld_m_per_s);
+
+  updateWindAnglesAndLocalVelocities();
+
+  if(!isnan(propWashVelocity_m_per_s)) {
+    if (propWashVelocity_m_per_s > vInf) {
+      setFreeStreamVelocity(propWashVelocity_m_per_s);
+      setPlanarVelocity(propWashVelocity_m_per_s);
     }
 
-    Lift_drag_model::~Lift_drag_model()
-    {
-        emptyLUTAndCoefficientVectors();
-    }
+    setAngleOfAttack(0,true);
+  }
 
-    void Lift_drag_model::setAlpha(double _alpha, bool isInRadians)
-    {
-        const double LOWER_ALPHA_BOUND=-180.0;
-        const double UPPER_ALPHA_BOUND=180.0;
+  bool rotateForces = true;
+  if(!isnan(controlAngle_rad)) {
+    setAngleOfAttack(controlAngle_rad, true);
+    rotateForces=false;
+  }
 
-        //Check if incoming alpha is NaN. Throw an exception if it is.
-        if (isnan(_alpha))
+  updateLiftDragModelValues(rotateForces);
+}
+
+ignition::math::Vector3d Lift_drag_model::updateForcesInBody_N(
+  ignition::math::Pose3d poseInWorld_m_rad,
+  ignition::math::Vector3d velocityInWorld_m_per_s) {
+
+  setWorldPose(poseInWorld_m_rad);
+  setWorldVelocity(velocityInWorld_m_per_s);
+
+  updateWindAnglesAndLocalVelocities();
+
+  updateForcesInBody_N(
+    getFreeStreamVelocity(),
+    getPlanarVelocity_m_per_s(),
+    getAngleOfAttack_deg());
+}
+
+/**
+ * Calculates the lift and drag for a body in the aerodynamic
+ */
+ignition::math::Vector3d Lift_drag_model::updateForcesInBody_N(
+    double freestreamVelocity_m_per_s,
+    double planarVelocity_m_per_s,
+    double angleOfAttack_deg) {
+
+  setFreeStreamVelocity(freestreamVelocity_m_per_s);
+  setPlanarVelocity(planarVelocity_m_per_s);
+  setAngleOfAttack(angleOfAttack_deg);
+
+  calculateDynamicPressure();
+
+  updateCL();
+
+  updateCD();
+
+  updateLift();
+
+  updateDrag();
+
+  updateLateralForce();
+
+  rotateForcesToBody();
+
+  return getForceVector();
+
+}
+
+void Lift_drag_model::updateLiftDragModelValues(bool rotateForces) {
+
+  calculateDynamicPressure();
+
+        updateCL();
+
+        updateCD();
+
+        updateLift();
+
+        updateDrag();
+
+        updateLateralForce();
+
+        if (rotateForces)
         {
-            std::string errMsg="Lift_drag_model::setAlpha: Angle of attack is NaN";
-            Lift_drag_model_exception e(errMsg, true);
-            throw e;
-        }
-
-        //Else, set new value, but check if alpha is within bounds when vInf is greater than a certain minimum. Throw an exception if it is not.
-        else
-        {
-            if (isInRadians)
-            {
-                alpha=convertRadiansToDegrees(_alpha);
-            }
-            else
-            {
-                alpha=_alpha;
-            }
-
-            /*
-            Check if alpha is in [-180, 180]. If not, condition it to be so, then throw an exception. While this should not happen (atan2 guarantees that resulting value is in the range of [-pi, pi]), this check is put into place in case a function that does not use atan2 sets the value of the angle).
-            */
-
-            //Employ new method valueIsWithinBounds for better checking (compares with floating point precision)
-            std::string errMsg;
-            if (!valueIsWithinBounds(alpha, LOWER_ALPHA_BOUND, UPPER_ALPHA_BOUND, "Alpha", errMsg))
-            {
-                double conditionedAngle=conditionAngle(alpha);
-                errMsg="Lift_drag_model::setAlpha: "+errMsg;
-
-                alpha=conditionedAngle;
-
-                errMsg=errMsg+". Angle will be conditioned to a value of "+mu.to_string_with_precision(conditionedAngle, 2)+".";
-
-                Lift_drag_model_exception e(errMsg);
-                throw e;
-            }
-        }
-    }
-
-    double Lift_drag_model::getAlpha()
-    {
-        return alpha;
-    }
-
-    void Lift_drag_model::setBeta(double _beta, bool isInRadians)
-    {
-        const double LOWER_BETA_BOUND=-180.0;
-        const double UPPER_BETA_BOUND=180.0;
-
-        std::string errMsg;
-
-        //Check if incoming alpha is NaN. Throw an exception if it is.
-        if (isnan(_beta))
-        {
-            errMsg="Lift_drag_model::setBeta: Beta angle is NaN";
-            Lift_drag_model_exception e(errMsg, true);
-            throw e;
-        }
-
-        //Else, set new value, but check if beta is within bounds when vInf is greater than a certain minimum. Throw an exception if it is not.
-        else
-        {
-            if (isInRadians)
-            {
-                beta=convertRadiansToDegrees(_beta);
-            }
-            else
-            {
-                beta=_beta;
-            }
-
-            /*Check if beta is in [-180, 180]. If not, condition it to be so, then throw an exception. While this should not happen (atan2 guarantees that resulting value is in the range of [-pi, pi]), this check is put into place in case a function that does not use atan2 sets the value of the angle).*/
-
-            if (!valueIsWithinBounds(beta, LOWER_BETA_BOUND, UPPER_BETA_BOUND, "Beta", errMsg))
-            {
-                errMsg="Lift_drag_model::setBeta: "+errMsg;
-
-                /*
-                Until try catches are restored in lift drag plugin, stop throwing exceptions.
-                Failure to catch leads to crash.
-                Lift_drag_model_exception e(errMsg);
-                throw e;
-                */
-            }
+            double alphaInRadians=DEG2RAD(angleOfAttack_deg);
+            double rotated_lift = (lift*cos(alphaInRadians))+(drag*sin(alphaInRadians));
+            double rotated_drag = (lift*sin(alphaInRadians))-(drag*cos(alphaInRadians));
+            lift=rotated_lift;
+            drag=rotated_drag;
         }
 
-    }
-
-    double Lift_drag_model::getBeta()
-    {
-        return beta;
-    }
-
-    void Lift_drag_model::setFreeStreamVelocity(double _fsVel, bool overridePlanarAndFreestream)
-    {
-        std::string errMsg;
-
-        //Check if incoming speed is NaN. Throw a critical exception if it is.
-        if (isnan(_fsVel))
-        {
-            errMsg="Lift_drag_model::setFreeStreamVelocity: vInf is NaN";
-            Lift_drag_model_exception e(errMsg, true);
-            throw e;
-        }
-
-        else
-        {
-            vInf=_fsVel;
-
-            if (overridePlanarAndFreestream)
-            {
-                //Because the model uses vPlanar in calculating pressure only, update the calculated vPlanar velocity as well.
-                setPlanarVelocity(vInf);
-            }
-
-            //Check if vInf is within bounds. If not, store vInf as either MIN_VINF or MAX_VINF if bounds exceeded, then throw an exception.
-            if (!valueIsWithinBounds(vInf, MIN_VINF, MAX_VINF, "VInf", errMsg))
-            {
-                Lift_drag_model_exception e(errMsg);
-                throw e;
-
-            }
-        }
-    }
-
-    double Lift_drag_model::getFreeStreamVelocity()
-    {
-        return vInf;
-    }
-
-    ignition::math::Vector3d Lift_drag_model::getFreeStreamVelocityVec()
-    {
-        return vInFreestreamPlane_v;
-    }
-
-    void Lift_drag_model::setPlanarVelocity(double _planarVel)
-    {
-        std::string errMsg;
-
-        //Check if incoming speed is NaN. Throw a critical exception if it is.
-        if (isnan(_planarVel))
-        {
-            errMsg="Lift_drag_model::setPlanarVelocity: planar velocity is NaN";
-            Lift_drag_model_exception e(errMsg, true);
-            throw e;
-        }
-
-        else
-        {
-            vPlanar=_planarVel;
-
-            //Check if vInf is within bounds. If not, store vInf as either MIN_VINF or MAX_VINF if bounds exceeded, then throw an exception.
-            if (!valueIsWithinBounds(vPlanar, MIN_VINF, MAX_VINF, "vPlanar", errMsg))
-            {
-                Lift_drag_model_exception e(errMsg);
-                throw e;
-
-            }
-        }
-    }
-
-    double Lift_drag_model::getPlanarVelocity()
-    {
-        return vPlanar;
-    }
-
-    ignition::math::Vector3d Lift_drag_model::getPlanarVelocityVec()
-    {
-        return vInLDPlane_v;
-    }
-
-    void Lift_drag_model::setArea(double _area)
-    {
-        std::string errMsg;
-
-        //Check if incoming area is NaN. Throw a critical exception if it is.
-        if (isnan(_area))
-        {
-            errMsg="Lift_drag_model::setArea: area is NaN";
-            Lift_drag_model_exception e(errMsg, true);
-            throw e;
-        }
-
-        else
-        {
-            area=_area;
-
-            //Check if area is within bounds. If not, store area as either MIN_AREA or MAX_AREA if bounds exceeded, then throw an exception.
-            if (!valueIsWithinBounds(area, MIN_AREA, MAX_AREA, "Area", errMsg))
-            {
-                Lift_drag_model_exception e(errMsg);
-                throw e;
-            }
-
-        }
-    }
-
-    double Lift_drag_model::getArea()
-    {
-        return area;
-    }
-
-    void Lift_drag_model::setLateralArea(double _area)
-    {
-
-        std::string errMsg;
-
-        //Check if incoming area is NaN. Throw a critical exception if it is.
-        if (isnan(_area))
-        {
-            errMsg="Lift_drag_model::setLateralArea: area is NaN";
-
-            Lift_drag_model_exception e(errMsg, true);
-            throw e;
-        }
-
-        //Check if the area is less than zero. If it is, throw a critical exception.
-        else if (_area<0)
-        {
-            errMsg="Lift_drag_model::setLateralArea: area is less than zero";
-
-            Lift_drag_model_exception e(errMsg, true);
-            throw e;
-        }
-
-        else
-        {
-            //No minimum or maximum has been specified for lateral area, so just set the value as received.
-            lateralArea=_area;
-        }
-    }
-
-    double Lift_drag_model::getLateralArea()
-    {
-        return lateralArea;
-    }
-
-    void Lift_drag_model::setLUTs(const std::vector<double>& alphas, const std::vector<double>& cls, const std::vector<double>& cds)
-    {
-	    //Clear out the vectors if they are not empty.
-        emptyLUTAndCoefficientVectors();
-
-        if (!alphas.empty())
-        {
-            Aero_LUT_alpha.reserve(alphas.size());
-            copy(alphas.begin(),alphas.end(),std::back_inserter(Aero_LUT_alpha));
-        }
-
-        if (!cls.empty())
-        {
-            Aero_LUT_CL.reserve(cls.size());
-            copy(cls.begin(),cls.end(),std::back_inserter(Aero_LUT_CL));
-        }
-
-        if (!alphas.empty())
-        {
-            Aero_LUT_CD.reserve(cds.size());
-            copy(cds.begin(),cds.end(),std::back_inserter(Aero_LUT_CD));
-        }
-    }
-
-    void Lift_drag_model::setAirDensity(double _rho)
-    {
-        std::string errMsg;
-
-        //Check if incoming _rho is NaN. Throw a critical exception if it is.
-        if (isnan(_rho))
-        {
-            errMsg="Lift_drag_model::setAirDensity: rho (air density) is NaN";
-            Lift_drag_model_exception e(errMsg, true);
-            throw e;
-        }
-        else
-        {
-            rho=_rho;
-
-            //Check if air density is within bounds. Throw an exception if it is not.
-            if (!valueIsWithinBounds(rho, MIN_AIR_DENSITY, MAX_AIR_DENSITY, "Air density", errMsg))
-            {
-                Lift_drag_model_exception e(errMsg);
-                throw e;
-            }
-
-        }
-    }
-
-    double Lift_drag_model::getAirDensity()
-    {
-        return rho;
-    }
-
-    double Lift_drag_model::getCL()
-    {
-        return cl;
-    }
-
-    double Lift_drag_model::getCD()
-    {
-        return cd;
-    }
-
-    void Lift_drag_model::lookupCL()
-    {
-        AeroInterp.interpolate(Aero_LUT_alpha,Aero_LUT_CL, alpha, &cl);
-    }
-
-    void Lift_drag_model::lookupCD()
-    {
-        if (isControlSurface)
-        {
-            double cdAtAlphaZero;
-
-            //Now, we subtract cd @ alpha=0 from the one obtained at alpha iff alpha not zero.
-            AeroInterp.interpolate(Aero_LUT_alpha,Aero_LUT_CD, alpha, &cd);
-            AeroInterp.interpolate(Aero_LUT_alpha,Aero_LUT_CD, 0, &cdAtAlphaZero);
-            cd=cd-cdAtAlphaZero;
-        }
-        else
-        {
-            AeroInterp.interpolate(Aero_LUT_alpha,Aero_LUT_CD, alpha, &cd);
-        }
-    }
-
-    void Lift_drag_model::calculateLift()
-    {
-        lift=cl*q*getArea();
-    }
-
-    void Lift_drag_model::calculateDrag()
-    {
-        drag=cd*q*getArea();
-    }
-
-    void Lift_drag_model::calculateLateralForce()
-    {
-        double q_lat=0.5*rho*lateral_velocity*lateral_velocity;
-        lateral_force=q_lat*coefficientLateralForce*getLateralArea();
-    }
-
-    double Lift_drag_model::getLift()
-    {
-        return lift;
-    }
-
-    double Lift_drag_model::getDrag()
-    {
-        return drag;
-    }
-
-    double Lift_drag_model::getLateralForce()
-    {
-        return lateral_force;
-    }
-
-    double Lift_drag_model::convertRadiansToDegrees(double _angleRadians)
-    {
-        return _angleRadians * DEGREES_IN_RADIANS;
-    }
-
-    double Lift_drag_model::convertDegreesToRadians(double _angleDegrees)
-    {
-        return _angleDegrees / DEGREES_IN_RADIANS;
-    }
-
-    void Lift_drag_model::calculateDynamicPressure()
-    {
-        q=0.5*rho*vPlanar*vPlanar;
-    }
-
-    double Lift_drag_model::getDynamicPressure()
-    {
-        return q;
-    }
-
-    void Lift_drag_model::calculateWindAngles()
-    {
-        bool exceptionOccurred=false;
-        bool criticalExceptionOccurred=false;
-        std::string exceptions="Lift_drag_model::calculateWindAngles:\n";
-
-        //Calculate velocity in each direction.
-        double u = vecUpwd.Dot(wingFrameVelocity);
-        double v = vecPort.Dot(wingFrameVelocity);
-        double w = vecFwd.Dot(wingFrameVelocity);
-
-        // Calculate alpha
-        double y=-u;
-
-        double x=w;
-
-        errno = 0;
-
-        alpha = atan2(y,x);
-
-        //If a domain error has occurred, set alpha to zero, then record exception data.
-        if (math_errhandling & MATH_ERRNO)
-        {
-            if (errno==EDOM)
-            {
-                //Set angle to zero.
-                alpha=0;
-
-                //Package up again as a lift drag exception and throw again.
-                std::string errMsg="Lift_drag_model::calculateWindAngles: domain error for atan in calculating alpha";
-
-                criticalExceptionOccurred=true;
-
-                exceptions=errMsg+"\n";
-            }
-        }
-
-        //Set alpha
-        try
-        {
-            setAlpha(alpha,true);
-        }
-        catch(Lift_drag_model_exception& e)
-        {
-            exceptionOccurred=true;
-
-            if (e.isCritical())
-            {
-                criticalExceptionOccurred=true;
-            }
-
-            exceptions=exceptions+e.what()+"\n";
-        }
-
-        //Calculate beta
-        y=-v;
-
-        beta = asin(y/vInf);
-
-        //If a domain error has occurred, set beta to zero, then throw an exception.
-        if (math_errhandling & MATH_ERRNO)
-        {
-            if (errno==EDOM)
-            {
-                /*Set angle to zero. Because simulation will have an initial vInf of zero, don't
-                contribute to exceptions.*/
-                beta=0;
-            }
-        }
-
-        //Set beta
-        try
-        {
-            setBeta(beta,true);
-        }
-        catch(Lift_drag_model_exception& e)
-        {
-            exceptionOccurred=true;
-
-            if (e.isCritical())
-            {
-                criticalExceptionOccurred=true;
-            }
-
-            exceptions=exceptions+e.what()+"\n";
-        }
-
-        //If any exceptions occurred along the way, throw a new exception that has the combined exception history of all the prior exceptions.
-        if (exceptionOccurred)
-        {
-            Lift_drag_model_exception e(exceptions, criticalExceptionOccurred);
-            throw e;
-        }
-    }
-
-    void Lift_drag_model::setControlSurfaceFlag(bool isCSSurface)
-    {
-        isControlSurface=isCSSurface;
-    }
-
-    bool Lift_drag_model::getControlSurfaceFlag()
-    {
-        return isControlSurface;
-    }
-
-    double Lift_drag_model::conditionAngle(double angle_in, double lowerLimit, double upperLimit, int increment)
-    {
-        double angle_out=angle_in;
-
-        //Sanity check: Make adjustment only if upperLimit<lowerLimit.
-        if ( (lowerLimit<upperLimit) )
-        {
-            while (angle_out > upperLimit)
-            {
-                angle_out = angle_out - increment ;
-            }
-
-            while (angle_out < lowerLimit)
-            {
-                angle_out = angle_out + increment ;
-            }
-        }
-        return angle_out;
-    }
-
-    bool Lift_drag_model::valueIsWithinBounds(double &value, double lowerBound, double upperBound, std::string itemName, std::string &errMsg, bool capToBound)
-    {
-        bool withinBounds=true;
-
-        bool below=mu.rough_lt(value, lowerBound, tolerance);
-        bool above=mu.rough_gt(value, upperBound, tolerance);
-
-        if ( below || above )
-        {
-            withinBounds=false;
-
-            //Set error message.
-            errMsg=itemName+"= "+mu.to_string_with_precision(value,16)+" and is not within bounds of ["+mu.to_string_with_precision(lowerBound,16)+", "+mu.to_string_with_precision(upperBound,16)+"]. ";
-
-            //Set to nearest bound if capToBound.
-            if (capToBound)
-            {
-                if (below)
-                {
-                    value=lowerBound;
-                }
-                else if (above)
-                {
-                    value=upperBound;
-                }
-
-                errMsg=errMsg+itemName+" will be constrained to "+mu.to_string_with_precision(value,16)+". ";
-            }
-        }
-
-        return withinBounds;
-    }
-
-    void Lift_drag_model::setLateralVelocity(double vel)
-    {
-        //Check if the drag force is within bounds. Throw an exception if it is not.
-        std::string errMsg;
-
-        //Check if incoming lateral velocity is NaN. Throw a critical exception if it is.
-        if (isnan(vel))
-        {
-            errMsg="Lift_drag_model::setLateralVelocity: lateral velocity is NaN";
-            Lift_drag_model_exception e(errMsg, true);
-            throw e;
-        }
-
-        else
-        {
-            lateral_velocity=vel;
-
-            //Check if lateral velocity is within bounds. If not, throw an exception.
-            if (!valueIsWithinBounds(lateral_velocity, MIN_LATERAL_VELOCITY, MAX_LATERAL_VELOCITY, "Lateral velocity", errMsg))
-            {
-                Lift_drag_model_exception e(errMsg);
-                throw e;
-            }
-        }
-    }
-
-    void Lift_drag_model::calculateLocalVelocities()
-    {
-        double vInLDPlane_s; // Scalar magnitude of speed in LD plane.
-
-        std::string exceptions="Lift_drag_model::calculateLocalVelocities:\n";
-
-        bool exceptionOccurred=false;
-        bool criticalExceptionOccurred=false;
-
-        ignition::math::Vector3d vWorldAircraftVelocity = ignition::math::Vector3d(worldVel.X(), worldVel.Y(), worldVel.Z());
-
-        // Calculate world linear velocity in wing coordinate frame.
-        avionics_sim::Coordinate_Utils::project_vector_global(worldPose, vWorldAircraftVelocity, &wingFrameVelocity);
-
-        vInFreestreamPlane_v = ignition::math::Vector3d(wingFrameVelocity.X(), wingFrameVelocity.Y(), wingFrameVelocity.Z());
-
-        double vInFreestream_s = vInFreestreamPlane_v.Length();
-
-        // Remove spanwise and vertical component
-        vInLDPlane_v = ignition::math::Vector3d(wingFrameVelocity.X(), 0, wingFrameVelocity.Z());
-
-        vInLDPlane_s = vInLDPlane_v.Length(); // Calculate scalar
-
-        // Set freestream velocity.
-        try
-        {
-            setFreeStreamVelocity(vInFreestream_s);
-        }
-        catch(Lift_drag_model_exception& e)
-        {
-            exceptionOccurred=true;
-
-            if (e.isCritical())
-            {
-                criticalExceptionOccurred=true;
-            }
-
-            exceptions=exceptions+e.what()+"\n";
-        }
-
-        // Set planar velocity.
-        try
-        {
-            setPlanarVelocity(vInLDPlane_s);
-        }
-        catch(Lift_drag_model_exception& e)
-        {
-            exceptionOccurred=true;
-
-            if (e.isCritical())
-            {
-                criticalExceptionOccurred=true;
-            }
-
-            exceptions=exceptions+e.what()+"\n";
-        }
-
-        //Set lateral velocity
-        try
-        {
-            setLateralVelocity(wingFrameVelocity.Y());
-        }
-        catch(Lift_drag_model_exception& e)
-        {
-            exceptionOccurred=true;
-
-            if (e.isCritical())
-            {
-                criticalExceptionOccurred=true;
-            }
-
-            exceptions=exceptions+e.what()+"\n";
-        }
-        if (exceptionOccurred)
-        {
-            Lift_drag_model_exception e(exceptions, criticalExceptionOccurred);
-            throw e;
-        }
-    }
-
-    void Lift_drag_model::calculateLiftDragModelValues(bool calculateRotatedForces)
-    {
-        calculateDynamicPressure();
-
-        std::string exceptions="Lift_drag_model::calculateLiftDragModelValues:\n";
-
-        AvionicsSimTryCatchBlock cldmvBlock;
-
-        cldmvBlock.tryCatch(this,&avionics_sim::Lift_drag_model::lookupCL);
-
-        cldmvBlock.tryCatch(this,&avionics_sim::Lift_drag_model::lookupCD);
-
-        cldmvBlock.tryCatch(this,&avionics_sim::Lift_drag_model::calculateLift);
-
-        cldmvBlock.tryCatch(this,&avionics_sim::Lift_drag_model::calculateDrag);
-
-        cldmvBlock.tryCatch(this,&avionics_sim::Lift_drag_model::calculateLateralForce);
-
-        //If rotation is required, calculate rotated forces.
-        // TODO: Check Rotations and Directions
-        if (calculateRotatedForces)
-        {
-            calculateRotatedLiftAndDrag();
-            lateral_force=0;
-        }
-
-         //Calculate force vector with appropriate direction.
-        calculateForceWithDirection(calculateRotatedForces);
-
-        //If any exceptions occurred along the way, throw a new exception that has the combined exception history of all the prior exceptions.
-        if (cldmvBlock.exceptionHasOccurred())
-        {
-            Lift_drag_model_exception e(cldmvBlock.getExceptionMessage(), cldmvBlock.exceptionIsCritical());
-            throw e;
-        }
-    }
-
-    void Lift_drag_model::calculateRotatedLiftAndDrag()
-    {
-        double alphaInRadians=convertDegreesToRadians(alpha);
-        double rotated_lift = (lift*cos(alphaInRadians))+(drag*sin(alphaInRadians));
-        double rotated_drag = (lift*sin(alphaInRadians))-(drag*cos(alphaInRadians));
-        lift=rotated_lift;
-        drag=rotated_drag;
-    }
-
-    void Lift_drag_model::calculateWindAnglesAndLocalVelocities()
-    {
-        AvionicsSimTryCatchBlock cldmvBlock;
-
-        cldmvBlock.tryCatch(this,&avionics_sim::Lift_drag_model::calculateLocalVelocities);
-
-        cldmvBlock.tryCatch(this,&avionics_sim::Lift_drag_model::calculateWindAngles);
-
-        //If any exceptions occurred along the way, throw a new exception that has the combined exception history of all the prior exceptions.
-        if (cldmvBlock.exceptionHasOccurred())
-        {
-            Lift_drag_model_exception e(cldmvBlock.getExceptionMessage(), cldmvBlock.exceptionIsCritical());
-            throw e;
-        }
-    }
-
-    void Lift_drag_model::setWorldPose(ignition::math::Pose3d pose)
-    {
-        worldPose = pose;
-
-        //Correct NaN values (Calling Correct() fixes any NaN issues.). See ignition documentation for more information.
-        worldPose.Correct();
-    }
-
-    void Lift_drag_model::setWorldVelocity(ignition::math::Vector3d vel)
-    {
-        worldVel = vel;
-
-        //Correct NaN values (Calling Correct() fixes any NaN issues.). See ignition documentation for more information.
-        worldVel.Correct();
-    }
-
-    void Lift_drag_model::setForwardVector(ignition::math::Vector3d fwd)
-    {
-        vecFwd = fwd;
-
-        //Eliminate any NaN values.
-        vecFwd.Correct();
-    }
-
-    void Lift_drag_model::setUpwardVector(ignition::math::Vector3d upward)
-    {
-        vecUpwd = upward;
-
-        //Eliminate any NaN values.
-        vecUpwd.Correct();
-    }
-
-    void Lift_drag_model::calculatePortVector()
-    {
-        vecPort =  vecUpwd.Cross(vecFwd);
-    }
-
-    void Lift_drag_model::setPortVector(ignition::math::Vector3d port)
-    {
-        vecPort=port;
-        vecPort.Correct();
-
-        //Normalize to get a proper unit vector.
-        vecPort.Normalize();
-    }
-
-    void Lift_drag_model::calculateForceWithDirection(bool calculatedRotatedForces)
-    {
-        // Get direction of lift by multiplying lift by upward vector.
         liftVec = lift * vecUpwd;
 
-        /* Get direction of drag. This should be in the opposite direction of velocity.
-        If the drag has been calculated as rotated, do not take -vecFwd as direction of drag, as this has been factored in by the rotation. Otherwise, use -vecFwd to get direction of drag.
-        */
-        if (!calculatedRotatedForces)
-        {
+        if (!rotateForces) {
             dragVec = drag * -vecFwd;
-        }
-        else
-        {
+        } else {
             dragVec = drag * vecFwd;
         }
 
@@ -859,6 +175,304 @@ namespace avionics_sim
 
         //Correct any NaN values.
         force.Correct();
-    }
+}
+
+void Lift_drag_model::rotateForcesToBody() {
+  double angleOfAttacks_rad = DEG2RAD(angleOfAttack_deg);
+  double rotated_lift = (lift * cos(angleOfAttacks_rad)) + (drag * sin(
+                          angleOfAttacks_rad));
+  double rotated_drag = (lift * sin(angleOfAttacks_rad)) - (drag * cos(
+                          angleOfAttacks_rad));
+
+  // Get direction of lift by multiplying lift by upward vector.
+  liftVec = rotated_lift * vecUpwd;
+
+  /* Get direction of drag. This should be in the opposite direction of velocity.
+  If the drag has been calculated as rotated, do not take -vecFwd as direction of drag, as this has been factored in by the rotation. Otherwise, use -vecFwd to get direction of drag.
+  */
+  dragVec = rotated_drag * vecFwd;
+
+  //Get direction of lateral force.
+  lateralForceVec = lateral_force * vecPort;
+
+  //Add the forces together.
+  force = liftVec + lateralForceVec + dragVec;
+
+  //Correct any NaN values.
+  force.Correct();
+}
+
+
+void Lift_drag_model::setBasisVectors(ignition::math::Vector3d forward,
+                                      ignition::math::Vector3d upward) {
+  vecFwd = forward;
+  vecUpwd = upward;
+
+  //Eliminate any NaN values.
+  vecFwd.Correct();
+  vecUpwd.Correct();
+
+  vecPort =  vecFwd.Cross(vecUpwd);
+}
+
+
+void Lift_drag_model::setAngleOfAttack(double _alpha, bool isInRadians) {
+  //Assert that value is not a NaN.
+  assert(!isnan(_alpha));
+
+  if (isInRadians) {
+    angleOfAttack_deg = RAD2DEG(_alpha);
+  } else {
+    angleOfAttack_deg = _alpha;
+  }
+}
+
+const double Lift_drag_model::getAngleOfAttack_deg() {
+  return angleOfAttack_deg;
+}
+
+void Lift_drag_model::setSideSlipAngle_deg(double _beta, bool isInRadians) {
+  //Assert that value is not a NaN.
+  assert(!isnan(_beta));
+
+  if (isInRadians) {
+    beta = RAD2DEG(_beta);
+  } else {
+    beta = _beta;
+  }
+}
+
+double Lift_drag_model::getSideSlipAngle_deg() {
+  return beta;
+}
+
+void Lift_drag_model::setFreeStreamVelocity(double _fsVel,
+    bool overridePlanarAndFreestream) {
+  assert(!isnan(_fsVel));
+
+  vInf = _fsVel;
+
+  if (overridePlanarAndFreestream) {
+    //Because the model uses vPlanar in calculating pressure only, update the calculated vPlanar velocity as well.
+    setPlanarVelocity(vInf);
+  }
+}
+
+double Lift_drag_model::getFreeStreamVelocity() {
+  return vInf;
+}
+
+ignition::math::Vector3d Lift_drag_model::getFreeStreamVelocityVec() {
+  return vInFreestreamPlane_v;
+}
+
+void Lift_drag_model::setPlanarVelocity(double _planarVel) {
+  assert(!isnan(_planarVel));
+
+  vPlanar_m_per_s = _planarVel;
+
+}
+
+const double Lift_drag_model::getPlanarVelocity_m_per_s() {
+  return vPlanar_m_per_s;
+}
+
+void Lift_drag_model::setArea(double _area) {
+  assert((!isnan(_area)) && (_area > 0));
+
+  area = _area;
+}
+
+const double Lift_drag_model::getArea() {
+  return area;
+}
+
+void Lift_drag_model::setLateralArea(double _area) {
+
+  assert((!isnan(_area)) && (_area > 0));
+
+  lateralArea = _area;
+}
+
+const double Lift_drag_model::getLateralArea() {
+  return lateralArea;
+}
+
+void Lift_drag_model::setLUTs(const std::vector<double> &angleOfAttacks_deg,
+                              const std::vector<double> &cls, const std::vector<double> &cds) {
+  airfoilProfileLUT = LookupTable({ANGLE_OF_ATTACK_ID, CL_ID, CD_ID}, {angleOfAttacks_deg, cls, cds});
+}
+
+void Lift_drag_model::setAirDensity(double _rho) {
+  assert(!isnan(_rho));
+
+  airDensity_kg_per_m3 = _rho;
+}
+
+const double Lift_drag_model::getAirDensity_kg_per_m3() {
+  return airDensity_kg_per_m3;
+}
+
+const double Lift_drag_model::getCL() {
+  return cl;
+}
+
+const double Lift_drag_model::getCD() {
+  return cd;
+}
+
+
+const double Lift_drag_model::getLift() {
+  return lift;
+}
+
+const double Lift_drag_model::getDrag() {
+  return drag;
+}
+
+const double Lift_drag_model::getLateralDrag() {
+  return lateral_force;
+}
+
+void Lift_drag_model::calculateDynamicPressure() {
+  q = 0.5 * airDensity_kg_per_m3 * vPlanar_m_per_s * vPlanar_m_per_s;
+}
+
+double Lift_drag_model::getDynamicPressure() {
+  return q;
+}
+
+void Lift_drag_model::updateWindAngles() {
+  //Calculate velocity in each direction.
+  double u = vecUpwd.Dot(wingFrameVelocity);
+  double v = vecPort.Dot(wingFrameVelocity);
+  double w = vecFwd.Dot(wingFrameVelocity);
+
+  // Calculate alpha
+  double y = -u;
+
+  double x = w;
+
+  errno = 0;
+
+  double angleOfAttack_rad = atan2(y, x);
+
+  //Assert that there are no domain errors.
+  if (math_errhandling & MATH_ERRNO) {
+    assert(errno != EDOM);
+  }
+
+  //Set alpha
+  setAngleOfAttack(angleOfAttack_rad, true);
+
+  //Calculate beta
+  y = -v;
+
+  double beta_rad = DEG2RAD(beta);
+
+  if (vInf > 0) {
+    beta_rad = asin(y / vInf);
+  }
+
+  //Assert that there are no domain errors.
+  if (math_errhandling & MATH_ERRNO) {
+    assert(errno != EDOM);
+  }
+
+  setSideSlipAngle_deg(beta_rad, true);
+}
+
+void Lift_drag_model::setLateralVelocity(double vel) {
+  assert(!isnan(vel));
+  lateral_velocity = vel;
+}
+
+void Lift_drag_model::calculateLocalVelocities() {
+  double vInLDPlane_s; // Scalar magnitude of speed in LD plane.
+
+  std::string exceptions = "Lift_drag_model::calculateLocalVelocities:\n";
+
+  bool exceptionOccurred = false;
+  bool criticalExceptionOccurred = false;
+
+  ignition::math::Vector3d vWorldAircraftVelocity = ignition::math::Vector3d(
+        worldVel.X(), worldVel.Y(), worldVel.Z());
+
+  // Calculate world linear velocity in wing coordinate frame.
+  avionics_sim::Coordinate_Utils::project_vector_global(worldPose,
+      vWorldAircraftVelocity, &wingFrameVelocity);
+
+  vInFreestreamPlane_v = ignition::math::Vector3d(wingFrameVelocity.X(),
+                         wingFrameVelocity.Y(), wingFrameVelocity.Z());
+
+  double vInFreestream_s = vInFreestreamPlane_v.Length();
+
+  // Remove spanwise and vertical component
+  vInLDPlane_v = ignition::math::Vector3d(wingFrameVelocity.X(), 0,
+                                          wingFrameVelocity.Z());
+
+  vInLDPlane_s = vInLDPlane_v.Length(); // Calculate scalar
+
+  setFreeStreamVelocity(vInFreestream_s);
+
+  // Set planar velocity.
+  setPlanarVelocity(vInLDPlane_s);
+
+  //Set lateral velocity
+  setLateralVelocity(wingFrameVelocity.Y());
+}
+
+// TODO: Investigate necessity of try catch blocks, seperate into function calls
+void Lift_drag_model::updateWindAnglesAndLocalVelocities() {
+  AvionicsSimTryCatchBlock cldmvBlock;
+
+  cldmvBlock.tryCatch(this,
+                      &avionics_sim::Lift_drag_model::calculateLocalVelocities);
+
+  cldmvBlock.tryCatch(this, &avionics_sim::Lift_drag_model::updateWindAngles);
+
+  //If any exceptions occurred along the way, throw a new exception that has the combined exception history of all the prior exceptions.
+  if (cldmvBlock.exceptionHasOccurred()) {
+    Lift_drag_model_exception e(cldmvBlock.getExceptionMessage(),
+                                cldmvBlock.exceptionIsCritical());
+    throw e;
+  }
+}
+
+void Lift_drag_model::setWorldPose(ignition::math::Pose3d pose) {
+  worldPose = pose;
+
+  //Correct NaN values (Calling Correct() fixes any NaN issues.). See ignition documentation for more information.
+  worldPose.Correct();
+}
+
+void Lift_drag_model::setWorldVelocity(ignition::math::Vector3d vel) {
+  worldVel = vel;
+
+  //Correct NaN values (Calling Correct() fixes any NaN issues.). See ignition documentation for more information.
+  worldVel.Correct();
+}
+
+void Lift_drag_model::updateCL() {
+  cl = airfoilProfileLUT.lookup(angleOfAttack_deg, ANGLE_OF_ATTACK_ID, CL_ID);
+}
+
+void Lift_drag_model::updateCD() {
+  cd = airfoilProfileLUT.lookup(angleOfAttack_deg, ANGLE_OF_ATTACK_ID, CD_ID);
+}
+
+void Lift_drag_model::updateLift() {
+  lift = cl * q * getArea();
+}
+
+void Lift_drag_model::updateDrag() {
+  drag = cd * q * getArea();
+}
+
+void Lift_drag_model::updateLateralForce() {
+  double q_lat = 0.5 * airDensity_kg_per_m3 * lateral_velocity * lateral_velocity;
+  lateral_force = q_lat * coefficientLateralForce * getLateralArea();
+}
+
 
 }

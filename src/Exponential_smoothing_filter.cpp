@@ -6,7 +6,7 @@
  * @license     Licensed under the MIT license. See LICENSE for details.
  */
 
-#include "avionics_sim/Exponential_smoothing_filter.hpp"
+#include "Exponential_smoothing_filter.hpp"
 
 #include <cmath>
 #include <limits>
@@ -27,7 +27,7 @@ Exponential_smoothing_filter::Exponential_smoothing_filter(const double f_3db, c
 
 void Exponential_smoothing_filter::reset()
 {
-	m_last_output = std::numeric_limits<double>::quiet_NaN();	
+	m_last_output = std::numeric_limits<double>::quiet_NaN();
 }
 
 void Exponential_smoothing_filter::set_last_output(const double y_last)
@@ -49,7 +49,7 @@ double Exponential_smoothing_filter::calculate_alpha(const double f_3db, const d
 	//return dT / (1.0 / (2.0 * M_PI * f_3db) + dT);
 
 	const double tau = get_tau(f_3db);
-	
+
 	return 1.0 - exp(-dT / tau);
 }
 

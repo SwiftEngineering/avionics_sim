@@ -1,8 +1,0 @@
-<inputs>
-<poseVectors>[0.0000000,0.0000000,0.0000000]</poseVectors>
-<worldLinearVels>[0.0000000,0.0000000,16.0000000]</worldLinearVels>
-<exitVelocities>[20.3,20.3,16,16]</exitVelocities>
-<controlSurfaceDeflections>[0.0000000,0.0000000,0.0000000,0.0000000]</controlSurfaceDeflections>
-<plantModels>[link_1,0.2489200,0,-1,0,-1]</plantModels>
-</inputs>
-
