@@ -73,7 +73,7 @@ protected:
 
 	//m, value from NASA TR R-459 pg 15
 	constexpr static double r0 = 6356766.0;
-	
+
 	//m/s/s, value from NASA TR R-459 pg 15
 	constexpr static double g0 = 9.80665;
 };
@@ -102,7 +102,7 @@ public:
 
 	//NASA-TM-X-74335 eq 24
 	//Kelvin
-	static double get_temperature(const double geopot_height);
+	static double get_temperature_K(const double geopot_height);
 
 	//NASA-TM-X-74335 eq 33a / 33b
 	//Pascal
@@ -123,7 +123,7 @@ protected:
 	constexpr static double base_pressure[] = {101325.0, 22632.06, 5474.889, 868.0187, 110.9063, 66.93887, 3.956720, 0.3733836};//in Pa
 
 	constexpr static double R_star = 8.31432e3;//m/(kmol K) - NASA TR R-459 pg 4 - nonstandard definition for US atmosphere 1976 used by convention
-	constexpr static double M_0 = 28.9644;//kg/kmol - NASA TR R-459 pg 17 - 
+	constexpr static double M_0 = 28.9644;//kg/kmol - NASA TR R-459 pg 17 -
 	constexpr static double g_0 = 9.80665;//m/s/s - NASA TR R-459 pg 4 - 1901 value for "45 degrees" / but really closer to 45deg 32min 33s
 	constexpr static double GMR = g_0 * M_0 / R_star * 1000.0;//g_o' * M_0 / R* in g K/s/s, ~34.163195
 	constexpr static double MR = M_0 / R_star;//M_0 / R* in kg K/m, ~0.0034837
