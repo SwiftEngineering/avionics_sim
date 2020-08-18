@@ -8,12 +8,14 @@
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector3.hh>
 
-#include "Lift_drag_model.hpp"
-#include "Lift_drag_model_exception.hpp"
+#include "AerodynamicModel.hpp"
+//#include "Lift_drag_model_exception.hpp"
+
+using namespace avionics_sim;
 
 class LiftDragModelTest : public ::testing::Test {
  protected:
-  avionics_sim::Lift_drag_model lift_drag_model_;
+  avionics_sim::AerodynamicModel lift_drag_model_;
   double tolerance = 0.001;
 
   // You can define per-test set-up logic as usual.
@@ -34,27 +36,21 @@ class LiftDragModelTest : public ::testing::Test {
     avionics_sim::Bilinear_interp::get1DLUTelementsFromString(alphaLUTCD,
         &LUT_NACA0012_CD);
 
-
-    // Initialize lift drag model for new test
-    lift_drag_model_ = avionics_sim::Lift_drag_model();
-
-    // all the LUT generation to objects should be reduced down
-    double area_m2 = 1.0;
-    double area_lateral_m2 = 0.1;
-    double airDensity_kg_per_m3 = 1.22;
-    ignition::math::Vector3d up(-1, 0, 0);
-    ignition::math::Vector3d forward(0, 0, 1);
-
-    lift_drag_model_.setLUTs(LUT_NACA0012_alpha, LUT_NACA0012_CL, LUT_NACA0012_CD);
-
     // Environment Configuration
-    lift_drag_model_.setAirDensity(airDensity_kg_per_m3);
+    PhysicsEnvironment environment = PhysicsEnvironment();
 
     // Body/Profile Configuration
+    double area_m2 = 1.0;
+    double area_lateral_m2 = 0.1;
+    Airfoil airfoil = Airfoil(
+      area_m2, area_lateral_m2,
+      LUT_NACA0012_alpha, LUT_NACA0012_CL, LUT_NACA0012_CD);
+
+    // Initialize lift drag model for new test
+    lift_drag_model_ = avionics_sim::AerodynamicModel(airfoil, environment);
+    ignition::math::Vector3d up(-1, 0, 0);
+    ignition::math::Vector3d forward(0, 0, 1);
     lift_drag_model_.setBasisVectors(forward, up);
-    lift_drag_model_.setArea(area_m2);
-    lift_drag_model_.setLateralArea(area_lateral_m2);
-    lift_drag_model_.setLUTs(LUT_NACA0012_alpha, LUT_NACA0012_CL, LUT_NACA0012_CD);
   }
 };
 
@@ -86,40 +82,13 @@ class LiftDragModelTest : public ::testing::Test {
 
 TEST_F(LiftDragModelTest, TestDynamicPressure) {
   // Given: Planar Velocity and Air Density
-  lift_drag_model_.setPlanarVelocity(20);
-  lift_drag_model_.setAirDensity(1.22);
+  double velocity_m_per_s = 20;
 
   // When: Dynamic Pressure is Calculated
-  lift_drag_model_.calculateDynamicPressure();
+  double dynamicPressure_Pa = lift_drag_model_.calculateDynamicPressure_Pa(velocity_m_per_s);
 
   // Then: Dynamic Pressure should match expected
-  ASSERT_NEAR(lift_drag_model_.getDynamicPressure(), 244, tolerance);
-}
-
-TEST_F(LiftDragModelTest, TestLookupCD) {
-// Given: Initial angle of attack
-  double expectedCD = 0.013442;
-  double angleOfAttack_deg = 4.651;
-  lift_drag_model_.setAngleOfAttack(angleOfAttack_deg);
-
-  // When: CL is looked up
-  lift_drag_model_.updateCD();
-
-  // Then: Resultant CL should match expected
-  ASSERT_NEAR(lift_drag_model_.getCD(), expectedCD, tolerance);
-}
-
-TEST_F(LiftDragModelTest, TestLookupCL) {
-  // Given: Initial angle of attack
-  double expectedCL = 0.511614;
-  double angleOfAttack_deg = 4.651;
-  lift_drag_model_.setAngleOfAttack(angleOfAttack_deg);
-
-  // When: CL is looked up
-  lift_drag_model_.updateCL();
-
-  // Then: Resultant CL should match expected
-  ASSERT_NEAR(lift_drag_model_.getCL(), expectedCL, tolerance);
+  ASSERT_NEAR(dynamicPressure_Pa, 244, tolerance);
 }
 
 // TEST_F(LiftDragModelTest, TestCalculatingWindAngles) {
@@ -139,18 +108,18 @@ TEST_F(LiftDragModelTest, TestLookupCL) {
 //               tolerance);
 // }
 
-TEST_F(LiftDragModelTest, TestCalculatingCalculatingLocalVelocities) {
+TEST_F(LiftDragModelTest, TestCalculatingLocalVelocities) {
   // Given: Initial Pose In World and Velocity
-  lift_drag_model_.setWorldPose(ignition::math::Pose3d(0, 0, 0, -0.09, 1.48,
-                                0.1));
-  lift_drag_model_.setWorldVelocity(ignition::math::Vector3d(10, 1, 0.1));
+  ignition::math::Pose3d poseInWorld_m_rad = ignition::math::Pose3d(0, 0, 0, -0.09, 1.48,
+                                0.1);
+  ignition::math::Vector3d velocityInWorld_m_per_s = ignition::math::Vector3d(10, 1, 0.1);
 
 
   // When: Local Velocities are calculate
-  lift_drag_model_.calculateLocalVelocities();
+  ignition::math::Vector3d velocityInBody_m_per_s = lift_drag_model_.transformToLocalVelocity(poseInWorld_m_rad, velocityInWorld_m_per_s);
 
   // Then: Velocities should match expected
-  ASSERT_NEAR(lift_drag_model_.getFreeStreamVelocity(), 10.0504, tolerance);
-  ASSERT_NEAR(lift_drag_model_.getPlanarVelocity_m_per_s(), 10.01, tolerance);
-  ASSERT_NEAR(lift_drag_model_.getLateralVelocity(), -0.90368, tolerance);
+  ASSERT_NEAR(velocityInBody_m_per_s.X(), 0.81165, tolerance);
+  ASSERT_NEAR(velocityInBody_m_per_s.Y(), -0.90368, tolerance);
+  ASSERT_NEAR(velocityInBody_m_per_s.Z(), 9.977, tolerance);
 }

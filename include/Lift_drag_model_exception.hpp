@@ -12,40 +12,40 @@ using namespace std;
 class Lift_drag_model_exception: public AvionicsSimException
 {
     public:
-        
-        // Constructor (C string).   
+
+        // Constructor (C string).
         ///
-        /// \brief      Constructor accepting a C String as input for exception message. 
+        /// \brief      Constructor accepting a C String as input for exception message.
         ///
-        /// \details   The string contents are copied upon construction. Hence, responsibility for deleting the char* lies with the caller. 
+        /// \details   The string contents are copied upon construction. Hence, responsibility for deleting the char* lies with the caller.
         /// \param[in]  message     C-style string error message
         /// \return      Instance of exception class
-        /// 
+        ///
         explicit Lift_drag_model_exception(const char* message, bool _isCritical=false):AvionicsSimException(message)
         {
                 msg_=message;
                 critical=_isCritical;
         }
 
-        // Constructor (STL C++ string).   
+        // Constructor (STL C++ string).
         ///
-        /// \brief      Constructor accepting a STL C++ string as input for exception message. 
+        /// \brief      Constructor accepting a STL C++ string as input for exception message.
         ///
-        /// \details    N/A 
+        /// \details    N/A
         /// \param[in]  message     STL C++ string error message
         /// \return      Instance of exception class
-        /// 
+        ///
         explicit Lift_drag_model_exception(const std::string& message, bool _isCritical=false):AvionicsSimException(message)
         {
                 msg_=message;
                 critical=_isCritical;
         }
 
-        // Destructor.  
+        // Destructor.
         ///
         /// \brief      Destructor
         ///
-        /// \details    Made virtual to allow for subclass destructor handling. 
+        /// \details    Made virtual to allow for subclass destructor handling.
         /// \param[in]  N/A
         /// \return     N/A
         virtual ~Lift_drag_model_exception() throw (){}
