@@ -140,11 +140,11 @@ There are three primary coordinate systems (also known as 'reference frames') in
 
 
 
-![windframe](images/body_world_reference_with_alpha_and_velocity_components.png)
+![windframe](images/body_in_world_fbd.png)
 
 ##### Footers - Introduction
 
-$^1$ In the illustration below, the axes $x$, $y$, and $z$ represent the Gazebo world axes, and $x'$, $y'$, and $z'$ represent the body axes of the aircraft. Arrows are pointing in direction of positive rotation.
+$^1$ In the illustration below, the axes $x$, $y$, and $z$ represent the Gazebo world axes. Arrows are pointing in direction of positive rotation.
 
 For the purposes of Gazebo ‘*pose*’ message, ‘pitch’ i.e. rotation around the y axis (which runs through the port wingtip), positive rotation is "nose down", whereas for the purposes aerodynamics $\alpha$ , positive $\alpha$ is "nose up". 
 
