@@ -97,33 +97,33 @@ TEST(US_1976_atmosphere_UnitTest, get_pressure) {
               5.0 * 0.00001);//precision loss, should be 0.00001
 }
 
-TEST(US_1976_atmosphere_UnitTest, get_temperature) {
+TEST(US_1976_atmosphere_UnitTest, get_temperature_K) {
   using namespace avionics_sim;
 
   //test the common points in geo potential height, sig figs from NASA table
-  EXPECT_NEAR(US_1976_atmosphere::get_temperature(-5000.0), 	320.650, 0.001);
-  EXPECT_NEAR(US_1976_atmosphere::get_temperature(0.0), 		288.150, 0.001);
-  EXPECT_NEAR(US_1976_atmosphere::get_temperature(5000.0),	255.650, 0.001);
+  EXPECT_NEAR(US_1976_atmosphere::get_temperature_K(-5000.0), 	320.650, 0.001);
+  EXPECT_NEAR(US_1976_atmosphere::get_temperature_K(0.0), 		288.150, 0.001);
+  EXPECT_NEAR(US_1976_atmosphere::get_temperature_K(5000.0),	255.650, 0.001);
 
-  EXPECT_NEAR(US_1976_atmosphere::get_temperature(11000.0), 	216.650, 0.001);
-  EXPECT_NEAR(US_1976_atmosphere::get_temperature(15000.0), 	216.650, 0.001);
+  EXPECT_NEAR(US_1976_atmosphere::get_temperature_K(11000.0), 	216.650, 0.001);
+  EXPECT_NEAR(US_1976_atmosphere::get_temperature_K(15000.0), 	216.650, 0.001);
 
-  EXPECT_NEAR(US_1976_atmosphere::get_temperature(20000.0), 	216.650, 0.001);
-  EXPECT_NEAR(US_1976_atmosphere::get_temperature(25000.0), 	221.650, 0.001);
+  EXPECT_NEAR(US_1976_atmosphere::get_temperature_K(20000.0), 	216.650, 0.001);
+  EXPECT_NEAR(US_1976_atmosphere::get_temperature_K(25000.0), 	221.650, 0.001);
 
-  EXPECT_NEAR(US_1976_atmosphere::get_temperature(32000.0), 	228.650, 0.001);
-  EXPECT_NEAR(US_1976_atmosphere::get_temperature(40000.0), 	251.050, 0.001);
+  EXPECT_NEAR(US_1976_atmosphere::get_temperature_K(32000.0), 	228.650, 0.001);
+  EXPECT_NEAR(US_1976_atmosphere::get_temperature_K(40000.0), 	251.050, 0.001);
 
-  EXPECT_NEAR(US_1976_atmosphere::get_temperature(47000.0), 	270.650, 0.001);
-  EXPECT_NEAR(US_1976_atmosphere::get_temperature(49000.0), 	270.650, 0.001);
+  EXPECT_NEAR(US_1976_atmosphere::get_temperature_K(47000.0), 	270.650, 0.001);
+  EXPECT_NEAR(US_1976_atmosphere::get_temperature_K(49000.0), 	270.650, 0.001);
 
-  EXPECT_NEAR(US_1976_atmosphere::get_temperature(51000.0), 	270.650, 0.001);
-  EXPECT_NEAR(US_1976_atmosphere::get_temperature(61000.0), 	242.650, 0.001);
+  EXPECT_NEAR(US_1976_atmosphere::get_temperature_K(51000.0), 	270.650, 0.001);
+  EXPECT_NEAR(US_1976_atmosphere::get_temperature_K(61000.0), 	242.650, 0.001);
 
-  EXPECT_NEAR(US_1976_atmosphere::get_temperature(71000.0), 	214.650, 0.001);
-  EXPECT_NEAR(US_1976_atmosphere::get_temperature(77000.0), 	202.650, 0.001);
+  EXPECT_NEAR(US_1976_atmosphere::get_temperature_K(71000.0), 	214.650, 0.001);
+  EXPECT_NEAR(US_1976_atmosphere::get_temperature_K(77000.0), 	202.650, 0.001);
 
-  EXPECT_NEAR(US_1976_atmosphere::get_temperature(84500.0),	187.650, 0.001);
+  EXPECT_NEAR(US_1976_atmosphere::get_temperature_K(84500.0),	187.650, 0.001);
 }
 
 TEST(US_1976_atmosphere_UnitTest, get_mass_density) {
