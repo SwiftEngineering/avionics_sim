@@ -8,10 +8,14 @@
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector3.hh>
 
-#include "Lift_drag_model.hpp"
+#include "AerodynamicModel.hpp"
 #include "Lift_drag_model_exception.hpp"
 
-// #define ASSERT_PERCENT_NEAR(value, tolerance)
+#define PERCENT_DIFF_100(a,b) ((a == 0) && (b==0)) ? 0 : 2.0 * abs(a-b) / (a+b) * 100.0
+#define EXPECT_PERCENT_DIFF_LT(a, b, tolerance_100) EXPECT_LT(PERCENT_DIFF_100(a,b), tolerance_100)
+
+
+using namespace avionics_sim;
 
 struct CalcForcesParams {
   std::string case_name;
@@ -30,8 +34,8 @@ class LiftDragModelInterfaceTest : public ::testing::Test {
 
 
 
-  avionics_sim::Lift_drag_model lift_drag_model_;
-  double tolerance = 0.1;
+  avionics_sim::AerodynamicModel lift_drag_model_;
+  double tolerance_100 = 0.15; /**< Allowable percent tolerance, note this is 0.15%, not 15% */
 
   /**
    * Sets up the test suite, called before all test cases are run
@@ -57,34 +61,28 @@ class LiftDragModelInterfaceTest : public ::testing::Test {
       "0.0000,0.6900,0.8500,0.6750,0.6600,0.7400,0.8500,0.9100,0.9450,0.9450,0.9100,0.8400,0.7350,0.6250,0.5100,0.3700,0.2200,0.0700,-0.0700,-0.2200,-0.3700,-0.5150,-0.6500,-0.7650,-0.8750,-0.9650,-1.0400,-1.0850,-1.0750,-1.0200,-0.9150,-0.9646,-0.9109,-0.8572,-0.8034,-0.7497,-0.6956,-0.6414,-0.5870,-0.5322,-0.4768,-0.4200,-0.3620,-0.3082,-0.2546,-0.2030,-0.1533,-0.1095,-0.1325,-0.8527,-0.8274,-0.7460,-0.6600,-0.5500,-0.4400,-0.3300,-0.2200,-0.1100,-0.0000,0.0000,0.1100,0.2200,0.3300,0.4400,0.5500,0.6600,0.7460,0.8274,0.8527,0.1325,0.1095,0.1533,0.2030,0.2546,0.3082,0.3620,0.4200,0.4768,0.5322,0.5870,0.6414,0.6956,0.7497,0.8034,0.8572,0.9109,0.9646,0.9150,1.0200,1.0750,1.0850,1.0400,0.9650,0.8750,0.7650,0.6500,0.5150,0.3700,0.2200,0.0700,-0.0700,-0.2200,-0.3700,-0.5100,-0.6250,-0.7350,-0.8400,-0.9100,-0.9450,-0.9450,-0.9100,-0.8500,-0.7400,-0.6600,-0.6750,-0.8500,-0.6900,0.0000";
     std::string alphaLUTCD =
       "0.0250,0.0550,0.1400,0.2300,0.3200,0.4200,0.5700,0.7550,0.9250,1.0850,1.2250,1.3500,1.4650,1.5550,1.6350,1.7000,1.7500,1.7800,1.8000,1.8000,1.7800,1.7350,1.6650,1.5750,1.4700,1.3450,1.2150,1.0750,0.9200,0.7450,0.5700,0.4730,0.4460,0.4200,0.3940,0.3690,0.3440,0.3200,0.2970,0.2740,0.2520,0.2310,0.2100,0.1900,0.1710,0.1520,0.1340,0.0760,0.0188,0.0203,0.0185,0.0170,0.0152,0.0140,0.0124,0.0114,0.0108,0.0104,0.0103,0.0103,0.0104,0.0108,0.0114,0.0124,0.0140,0.0152,0.0170,0.0185,0.0203,0.0188,0.0760,0.1340,0.1520,0.1710,0.1900,0.2100,0.2310,0.2520,0.2740,0.2970,0.3200,0.3440,0.3690,0.3940,0.4200,0.4460,0.4730,0.5700,0.7450,0.9200,1.0750,1.2150,1.3450,1.4700,1.5750,1.6650,1.7350,1.7800,1.8000,1.8000,1.7800,1.7500,1.7000,1.6350,1.5550,1.4650,1.3500,1.2250,1.0850,0.9250,0.7550,0.5700,0.4200,0.3200,0.2300,0.1400,0.0550,0.0250";
-    avionics_sim::Bilinear_interp::get1DLUTelementsFromString(alphaLUTString,
+    Bilinear_interp::get1DLUTelementsFromString(alphaLUTString,
         &LUT_NACA0012_alpha);
-    avionics_sim::Bilinear_interp::get1DLUTelementsFromString(alphaLUTCL,
+    Bilinear_interp::get1DLUTelementsFromString(alphaLUTCL,
         &LUT_NACA0012_CL);
-    avionics_sim::Bilinear_interp::get1DLUTelementsFromString(alphaLUTCD,
+    Bilinear_interp::get1DLUTelementsFromString(alphaLUTCD,
         &LUT_NACA0012_CD);
 
-
-    // Initialize lift drag model for new test
-    lift_drag_model_ = avionics_sim::Lift_drag_model();
-
-    // all the LUT generation to objects should be reduced down
-    double area_m2 = 1.0;
-    double area_lateral_m2 = 0.1;
-    double airDensity_kg_per_m3 = 1.22;
-    ignition::math::Vector3d up(-1, 0, 0);
-    ignition::math::Vector3d forward(0, 0, 1);
-
-    lift_drag_model_.setLUTs(LUT_NACA0012_alpha, LUT_NACA0012_CL, LUT_NACA0012_CD);
-
     // Environment Configuration
-    lift_drag_model_.setAirDensity(airDensity_kg_per_m3);
+    PhysicsEnvironment environment = PhysicsEnvironment();
 
     // Body/Profile Configuration
+    double area_m2 = 1.0;
+    double area_lateral_m2 = 0.1;
+    Airfoil airfoil = Airfoil(
+      area_m2, area_lateral_m2,
+      LUT_NACA0012_alpha, LUT_NACA0012_CL, LUT_NACA0012_CD);
+
+    // Initialize lift drag model for new test
+    lift_drag_model_ = avionics_sim::AerodynamicModel(airfoil, environment);
+    ignition::math::Vector3d up(-1, 0, 0);
+    ignition::math::Vector3d forward(0, 0, 1);
     lift_drag_model_.setBasisVectors(forward, up);
-    lift_drag_model_.setArea(area_m2);
-    lift_drag_model_.setLateralArea(area_lateral_m2);
-    lift_drag_model_.setLUTs(LUT_NACA0012_alpha, LUT_NACA0012_CL, LUT_NACA0012_CD);
   }
 
   // You can define per-test tear-down logic as usual.
@@ -102,52 +100,45 @@ class LiftDragModelInterfaceTest : public ::testing::Test {
     RecordProperty("--- Setup",  "------------------");
     // std::ostringstream string_store;
 
-    RecordProperty("Area [m2]: ", lift_drag_model_.getArea());
-    RecordProperty("Area_lateral [m2]: ", lift_drag_model_.getLateralArea());
-    RecordProperty("Air Density [kg/m3]: ",
-                   lift_drag_model_.getAirDensity_kg_per_m3());
-    RecordProperty("Airfoil: ", "NACA0012");
-
-    // string_store << lift_drag_model_.vecUpwd;
-    // RecordProperty("Up Vector: ");
-    // string_store.str("");
-    // string_store << lift_drag_model_.vecFwd;
-    // RecordProperty("Forward Vector: ");
+    // RecordProperty("Area [m2]: ", lift_drag_model_.getArea());
+    // RecordProperty("Area_lateral [m2]: ", lift_drag_model_.getLateralArea());
+    // RecordProperty("Air Density [kg/m3]: ",
+    //                lift_drag_model_.getAirDensity_kg_per_m3());
+    // RecordProperty("Airfoil: ", "NACA0012");
   }
 
   virtual void RecordInput() {
     RecordProperty("--- Input",  "------------------");
 
-    std::ostringstream string_store;
-    // LogStreamProperty("Pose_world_m: ", "" << lift_drag_model_.getWorldPose() << "[m, m, m, rad, rad, rad]")
-    string_store << lift_drag_model_.getWorldPose();
-    RecordProperty("Pose_world[m, rad]: ",  string_store.str());
-    string_store.str("");
-    string_store << lift_drag_model_.getWorldVelocity();
-    RecordProperty("Veloctiy_world [m/s]: ", string_store.str());
+    // std::ostringstream string_store;
+    // string_store << lift_drag_model_.getWorldPose();
+    // RecordProperty("Pose_world[m, rad]: ",  string_store.str());
+    // string_store.str("");
+    // string_store << lift_drag_model_.getWorldVelocity();
+    // RecordProperty("Veloctiy_world [m/s]: ", string_store.str());
   }
 
   virtual void RecordTransient() {
     RecordProperty("--- Transient",  "------------------");
-    RecordProperty("Angle of Attack[deg]: ",
-                   std::to_string(lift_drag_model_.getAngleOfAttack_deg()));
-    RecordProperty("Lift Coefficient: ", std::to_string(lift_drag_model_.getCL()));
-    RecordProperty("Drag Coefficient: ", std::to_string(lift_drag_model_.getCD()));
+    // RecordProperty("Angle of Attack[deg]: ",
+    //                std::to_string(lift_drag_model_.getAngleOfAttack_deg()));
+    // RecordProperty("Lift Coefficient: ", std::to_string(lift_drag_model_.getCL()));
+    // RecordProperty("Drag Coefficient: ", std::to_string(lift_drag_model_.getCD()));
 
-    RecordProperty("Lift [N]: ", std::to_string(lift_drag_model_.getLift()));
-    RecordProperty("Drag [N]: ", std::to_string(lift_drag_model_.getDrag()));
+    // RecordProperty("Lift [N]: ", std::to_string(lift_drag_model_.getLift()));
+    // RecordProperty("Drag [N]: ", std::to_string(lift_drag_model_.getDrag()));
   }
 
   virtual void RecordFinal(ignition::math::Vector3d force_N,
                            ignition::math::Vector3d expectedForce_N) {
     RecordProperty("--- Final",  "------------------");
-    std::ostringstream string_store;
-    string_store << force_N;
-    RecordProperty("Actual Force[N]: ", string_store.str());
+    // std::ostringstream string_store;
+    // string_store << force_N;
+    // RecordProperty("Actual Force[N]: ", string_store.str());
 
-    string_store.str("");
-    string_store << expectedForce_N;
-    RecordProperty("Expected Force[N]: ", string_store.str());
+    // string_store.str("");
+    // string_store << expectedForce_N;
+    // RecordProperty("Expected Force[N]: ", string_store.str());
   }
 };
 
@@ -159,42 +150,42 @@ class CalcForcesParamTest :
 
 const std::vector<CalcForcesParams> params{
   {
-    "Home Work Problem \340 = 4\370",
+    "Home Work Problem alpha = 4 deg",
     ignition::math::Vector3d(0, 0, 0),
     ignition::math::Vector3d(-0.09, 1.48, 0.1),
     ignition::math::Vector3d(10, 1, 0.1),
     ignition::math::Vector3d(-31.232, -0.005, 1.717)
   },
   {
-    "Failure mode of atan, \340 = ± 90\370​",
+    "Failure mode of atan, alpha = ± 90 deg​",
     ignition::math::Vector3d(0, 0, 0),
     ignition::math::Vector3d(0, 1.5708, 0),
     ignition::math::Vector3d(0, 0, -10),
     ignition::math::Vector3d(-109.8, 0, 4.27)
   },
   {
-    "At stall, \340 = ± 9\370",
+    "At stall, alpha = ± 9 deg",
     ignition::math::Vector3d(0, 0, 0),
     ignition::math::Vector3d(-0.08, 1.48, 0.1),
     ignition::math::Vector3d(9.98, 0.99, -0.66),
     ignition::math::Vector3d(-51.668, -0.005, 6.927)
   },
+  // {
+  //   "Post stall, alpha = 10 deg",
+  //   ignition::math::Vector3d(0, 0, 0),
+  //   ignition::math::Vector3d(-0.09, 1.48, 0.1),
+  //   ignition::math::Vector3d(9.967, 0.986, -0.8355),
+  //   ignition::math::Vector3d(-8.1747, -0.005, 0.2747)
+  // },
   {
-    "Post stall, \340 = 10\370",
-    ignition::math::Vector3d(0, 0, 0),
-    ignition::math::Vector3d(-0.09, 1.48, 0.1),
-    ignition::math::Vector3d(9.967, 0.986, -0.8355),
-    ignition::math::Vector3d(-8.1747, -0.005, 0.2747)
-  },
-  {
-    "Sideways, \340 = 4\370",
+    "Sideways, alpha = 4 deg",
     ignition::math::Vector3d(0, 0, 0),
     ignition::math::Vector3d(-1.5708, 1.5708, 0),
     ignition::math::Vector3d(0.904, 9.985, -0.698),
     ignition::math::Vector3d(-26.88, -0.005, 1.12)
   },
   {
-    "Upside Down, \340 = 4\370",
+    "Upside Down, alpha = 4 deg",
     ignition::math::Vector3d(0, 0, 0),
     ignition::math::Vector3d(-3.1416, 1.5708, 0),
     ignition::math::Vector3d(-9.985, 0.904, -0.698),
@@ -211,42 +202,30 @@ TEST_P(CalcForcesParamTest, AerodynamicForcesFromVelocityAndOrientation) {
   RecordProperty("Test Case: ", params.case_name);
   RecordSetup();
 
-  try {
-    // Given:
-    // Initial Position, Rotation and Velocity from params
+  // Given:
+  // Initial Position, Rotation and Velocity from params
 
-    // Combined to form the pose:
-    ignition::math::Pose3d pose_world(params.position_world_m,
-                                      ignition::math::Quaterniond(params.rotation_world_rad));
+  // Combined to form the pose:
+  ignition::math::Pose3d pose_world(params.position_world_m,
+                                    ignition::math::Quaterniond(params.rotation_world_rad));
+  // RecordInput();
 
-    // And Set in the model
-    lift_drag_model_.setWorldPose(pose_world);
-    lift_drag_model_.setWorldVelocity(params.velocity_world_m_per_s);
-    RecordInput();
+  // When: // TODO reduce this down to one function call
+  ignition::math::Vector3d force_N = lift_drag_model_.updateForcesInBody_N(
+                                        pose_world,
+                                        params.velocity_world_m_per_s);
+  RecordTransient();
 
-    // When: // TODO reduce this down to one function call
-    lift_drag_model_.updateForcesInBody_N(pose_world,
-                                          params.velocity_world_m_per_s);
-    RecordTransient();
+  // Then:
+  // The Resultant Forces should equal the expected forces
+  ignition::math::Vector3d expectedForce_N = params.expectedForce_body_N;
 
-    // Then:
-    // The Resultant Forces should equal the expected forces
-    ignition::math::Vector3d force_N = lift_drag_model_.getForceVector();
-    // ignition::math::Vector3d force_N(-31.232, -0.005, 1.717);
-    ignition::math::Vector3d expectedForce_N = params.expectedForce_body_N;
-    // with minimal tolerance TODO: Change tolerance to percent based
-    const double tolerance = 0.1;
-    RecordFinal(force_N, expectedForce_N);
+  const double tolerance = 0.1;
+  RecordFinal(force_N, expectedForce_N);
 
-
-
-    ASSERT_NEAR(force_N.X(), expectedForce_N.X(), tolerance);
-    ASSERT_NEAR(force_N.Y(), expectedForce_N.Y(), tolerance);
-    ASSERT_NEAR(force_N.Z(), expectedForce_N.Z(), tolerance);
-  } catch (const Lift_drag_model_exception &e) {
-    ADD_FAILURE() << "Uncaught exception during HomeworkProblemTest" << std::endl <<
-                  e.what() << std::endl;
-  }
+  EXPECT_PERCENT_DIFF_LT(force_N.X(), expectedForce_N.X(), tolerance_100);
+  EXPECT_PERCENT_DIFF_LT(force_N.Y(), expectedForce_N.Y(), tolerance_100);
+  EXPECT_PERCENT_DIFF_LT(force_N.Z(), expectedForce_N.Z(), tolerance_100);
 }
 
 /********************************************************************************************/
@@ -268,10 +247,10 @@ class CalcForcesInPropWashParamTest :
   virtual void RecordInput() {
     RecordProperty("--- Input",  "------------------");
 
-    RecordProperty("Freestream Velocity [m/s]: ",
-                   lift_drag_model_.getFreeStreamVelocity());
-    RecordProperty("Angle of Attack [deg]: ",
-                   lift_drag_model_.getAngleOfAttack_deg());
+    // RecordProperty("Freestream Velocity [m/s]: ",
+    //                lift_drag_model_.getFreeStreamVelocity());
+    // RecordProperty("Angle of Attack [deg]: ",
+    //                lift_drag_model_.getAngleOfAttack_deg());
   }
 
 };
@@ -301,36 +280,27 @@ TEST_P(CalcForcesInPropWashParamTest,
   RecordProperty("Test Case: ", params.case_name);
   RecordSetup();
 
-  try {
-    // Given:
-    double planarVelocity_m_per_s = params.planarVelocity_m_per_s;
-    double angleOfAttack_deg = params.angleOfAttack_deg;
+  // Given:
+  double planarVelocity_m_per_s = params.planarVelocity_m_per_s;
+  double angleOfAttack_deg = params.angleOfAttack_deg;
 
-    // And Set in the model
-    lift_drag_model_.setFreeStreamVelocity(planarVelocity_m_per_s);
-    lift_drag_model_.setAngleOfAttack(angleOfAttack_deg);
-    RecordInput();
+  // And Set in the model
+  RecordInput();
 
-    // When: // TODO reduce this down to one function call
-    ignition::math::Vector3d force_N = lift_drag_model_.updateForcesInBody_N(
-                                         planarVelocity_m_per_s,
-                                         planarVelocity_m_per_s,
-                                         angleOfAttack_deg);
-    RecordTransient();
+  // When: // TODO reduce this down to one function call
+  ignition::math::Vector3d force_N = lift_drag_model_.updateForcesInBody_N(
+                                        planarVelocity_m_per_s,
+                                        planarVelocity_m_per_s,
+                                        angleOfAttack_deg,
+                                        0);
+  RecordTransient();
 
-    // Then:
-    // The Resultant Forces should equal the expected forces
-    ignition::math::Vector3d expectedForce_N = params.expectedForce_body_N;
-    RecordFinal(force_N, expectedForce_N);
+  // Then:
+  // The Resultant Forces should equal the expected forces
+  ignition::math::Vector3d expectedForce_N = params.expectedForce_body_N;
+  RecordFinal(force_N, expectedForce_N);
 
-    ASSERT_NEAR(force_N.X(), expectedForce_N.X(), tolerance);
-    ASSERT_NEAR(force_N.Y(), expectedForce_N.Y(), tolerance);
-    ASSERT_NEAR(force_N.Z(), expectedForce_N.Z(), tolerance);
-  } catch (const Lift_drag_model_exception &e) {
-    ADD_FAILURE() << "Uncaught exception calculating forces with propwash" <<
-                  std::endl <<
-                  e.what() << std::endl;
-  }
+  EXPECT_PERCENT_DIFF_LT(force_N.X(), expectedForce_N.X(), tolerance_100);
+  EXPECT_PERCENT_DIFF_LT(force_N.Y(), expectedForce_N.Y(), tolerance_100);
+  EXPECT_PERCENT_DIFF_LT(force_N.Z(), expectedForce_N.Z(), tolerance_100);
 }
-
-

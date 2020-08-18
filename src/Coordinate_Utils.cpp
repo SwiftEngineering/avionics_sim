@@ -35,4 +35,21 @@ namespace avionics_sim
 
         return 0;
     }
+
+    ignition::math::Quaterniond Coordinate_Utils::QuatFromBasis(ignition::math::Vector3d forward, ignition::math::Vector3d up) {
+      ignition::math::Vector3d  m2 = forward.Normalize();
+      ignition::math::Vector3d  m1 = m2.Cross(up).Normalize();
+      ignition::math::Vector3d  m0 = m1.Cross(m2).Normalize();
+
+
+      ignition::math::Matrix4d rotAMatrix = ignition::math::Matrix4d(
+          m0.X(), m0.Y(), m0.Z(), 0,
+          m1.X(), m1.Y(), m1.Z(), 0,
+          m2.X(), m2.Y(), m2.Z(), 0,
+          0, 0, 0, 1
+      );
+
+      return rotAMatrix.Rotation();
+    }
+
 }
