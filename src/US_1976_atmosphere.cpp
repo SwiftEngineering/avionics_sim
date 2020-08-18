@@ -52,7 +52,7 @@ US_1976_atmosphere::ATMOSPHERE_LAYER US_1976_atmosphere::get_layer(const double 
 	return ATMOSPHERE_LAYER::MESOPAUSE;
 }
 
-double US_1976_atmosphere::get_temperature(const double geopot_height)
+double US_1976_atmosphere::get_temperature_K(const double geopot_height)
 {
 	const double geopot_height_km = geopot_height / 1000.0;
 
@@ -96,7 +96,7 @@ double US_1976_atmosphere::get_pressure(const double geopot_height)
 double US_1976_atmosphere::get_mass_density(const double geopot_height)
 {
 	const double P = get_pressure(geopot_height);
-	const double Tm = get_temperature(geopot_height);
+	const double Tm = get_temperature_K(geopot_height);
 
 	double rho = P * MR / Tm;
 
