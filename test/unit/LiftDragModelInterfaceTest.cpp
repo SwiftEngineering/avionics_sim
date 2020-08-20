@@ -21,6 +21,8 @@ struct CalcForcesParams {
   std::string case_name;
   ignition::math::Vector3d position_world_m;
   ignition::math::Vector3d rotation_world_rad;
+  double propWash_m_per_s;
+  double controlAngle_rad;
   ignition::math::Vector3d velocity_world_m_per_s;
   ignition::math::Vector3d expectedForce_body_N;
 };
@@ -35,7 +37,7 @@ class LiftDragModelInterfaceTest : public ::testing::Test {
 
 
   avionics_sim::AerodynamicModel lift_drag_model_;
-  double tolerance_100 = 0.15; /**< Allowable percent tolerance, note this is 0.15%, not 15% */
+  double tolerance_100 = 0.5; /**< Allowable percent tolerance, note this is 0.15%, not 15% */
 
   /**
    * Sets up the test suite, called before all test cases are run
@@ -150,16 +152,29 @@ class CalcForcesParamTest :
 
 const std::vector<CalcForcesParams> params{
   {
-    "Home Work Problem alpha = 4 deg",
+    "Home Work Problem alpha = 4 deg, beta = 5.1587 deg",
     ignition::math::Vector3d(0, 0, 0),
     ignition::math::Vector3d(-0.09, 1.48, 0.1),
+    NAN,
+    NAN,
     ignition::math::Vector3d(10, 1, 0.1),
     ignition::math::Vector3d(-31.232, -0.005, 1.717)
+  },
+  {
+    "Home Work Problem alpha = 4 deg, beta = -5.1587 deg",
+    ignition::math::Vector3d(0, 0, 0),
+    ignition::math::Vector3d(-0.09, 1.48, 0.1),
+    NAN,
+    NAN,
+    ignition::math::Vector3d(9.659, 2.775, 0.085),
+    ignition::math::Vector3d(-31.232, 0.005, 1.717)
   },
   {
     "Failure mode of atan, alpha = ± 90 deg​",
     ignition::math::Vector3d(0, 0, 0),
     ignition::math::Vector3d(0, 1.5708, 0),
+    NAN,
+    NAN,
     ignition::math::Vector3d(0, 0, -10),
     ignition::math::Vector3d(-109.8, 0, 4.27)
   },
@@ -167,6 +182,8 @@ const std::vector<CalcForcesParams> params{
     "At stall, alpha = ± 9 deg",
     ignition::math::Vector3d(0, 0, 0),
     ignition::math::Vector3d(-0.08, 1.48, 0.1),
+    NAN,
+    NAN,
     ignition::math::Vector3d(9.98, 0.99, -0.66),
     ignition::math::Vector3d(-51.668, -0.005, 6.927)
   },
@@ -181,6 +198,8 @@ const std::vector<CalcForcesParams> params{
     "Sideways, alpha = 4 deg",
     ignition::math::Vector3d(0, 0, 0),
     ignition::math::Vector3d(-1.5708, 1.5708, 0),
+    NAN,
+    NAN,
     ignition::math::Vector3d(0.904, 9.985, -0.698),
     ignition::math::Vector3d(-26.88, -0.005, 1.12)
   },
@@ -188,6 +207,8 @@ const std::vector<CalcForcesParams> params{
     "Upside Down, alpha = 4 deg",
     ignition::math::Vector3d(0, 0, 0),
     ignition::math::Vector3d(-3.1416, 1.5708, 0),
+    NAN,
+    NAN,
     ignition::math::Vector3d(-9.985, 0.904, -0.698),
     ignition::math::Vector3d(-26.88, -0.005, 1.12)
   },
@@ -211,9 +232,11 @@ TEST_P(CalcForcesParamTest, AerodynamicForcesFromVelocityAndOrientation) {
   // RecordInput();
 
   // When: // TODO reduce this down to one function call
-  ignition::math::Vector3d force_N = lift_drag_model_.updateForcesInBody_N(
+    ignition::math::Vector3d force_N = lift_drag_model_.updateForcesInBody_N(
                                         pose_world,
-                                        params.velocity_world_m_per_s);
+                                        params.velocity_world_m_per_s,
+                                        params.propWash_m_per_s,
+                                        params.controlAngle_rad);
   RecordTransient();
 
   // Then:
@@ -235,7 +258,9 @@ TEST_P(CalcForcesParamTest, AerodynamicForcesFromVelocityAndOrientation) {
 struct PropWashCaseParams {
   std::string case_name;
   double planarVelocity_m_per_s;
+  double lateralVelocity_m_per_s;
   double angleOfAttack_deg;
+  double sideSlipAngle_deg;
   ignition::math::Vector3d expectedForce_body_N;
 };
 
@@ -257,15 +282,27 @@ class CalcForcesInPropWashParamTest :
 
 const std::vector<PropWashCaseParams> propWashCasesParams{
   {
-    "Home Work Problem, angle of attack = 4 [deg]",
+    "Home Work Problem, angle of attack = 4 [deg], side slip angle = 5.1587 [deg]",
     10.01,
+    -0.9037,
     4.651,
+    5.1587,
     ignition::math::Vector3d(-31.232, -0.005, 1.717)
+  },
+  {
+    "Home Work Problem, angle of attack = 4 [deg], side slip angle = -5.1587 [deg]",
+    10.01,
+    0.9037,
+    4.651,
+    -5.1587,
+    ignition::math::Vector3d(-31.232, 0.005, 1.717)
   },
   {
     "At vertical climb stall, when aircraft speed is 0",
     0,
+    0,
     4.651,
+    0,
     ignition::math::Vector3d(0, 0, 0)
   }
 };
@@ -282,7 +319,9 @@ TEST_P(CalcForcesInPropWashParamTest,
 
   // Given:
   double planarVelocity_m_per_s = params.planarVelocity_m_per_s;
+  double lateralVelocity_m_per_s = params.lateralVelocity_m_per_s;
   double angleOfAttack_deg = params.angleOfAttack_deg;
+  double sideSlipAngle_deg = params.sideSlipAngle_deg;
 
   // And Set in the model
   RecordInput();
@@ -290,9 +329,9 @@ TEST_P(CalcForcesInPropWashParamTest,
   // When: // TODO reduce this down to one function call
   ignition::math::Vector3d force_N = lift_drag_model_.updateForcesInBody_N(
                                         planarVelocity_m_per_s,
-                                        planarVelocity_m_per_s,
+                                        lateralVelocity_m_per_s,
                                         angleOfAttack_deg,
-                                        0);
+                                        sideSlipAngle_deg);
   RecordTransient();
 
   // Then:

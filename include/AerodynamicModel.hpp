@@ -37,7 +37,9 @@ class IAerodynamicModel {
    */
   virtual ignition::math::Vector3d updateForcesInBody_N(
       ignition::math::Pose3d poseInWorld_m_rad,
-      ignition::math::Vector3d velocityInWorld_m_per_s) = 0;
+      ignition::math::Vector3d velocityInWorld_m_per_s,
+      double propWash_m_per_s,
+      double controlAngle_rad) = 0;
 
   /**
    * \brief A function called from within updateLiftDragInBody_N that is useful to extend access to for cases of evaluating aerodynamics under propwash conditions.
@@ -69,7 +71,9 @@ class AerodynamicModel : public IAerodynamicModel {
 
   virtual ignition::math::Vector3d updateForcesInBody_N(ignition::math::Pose3d
       poseInWorld_m_rad,
-      ignition::math::Vector3d velocityInWorld_m_per_s);
+      ignition::math::Vector3d velocityInWorld_m_per_s,
+      double propWash_m_per_s,
+      double controlAngle_rad);
 
   virtual ignition::math::Vector3d updateForcesInBody_N(
       double planarVelocity_m_per_s,
@@ -147,7 +151,7 @@ class AerodynamicModel : public IAerodynamicModel {
   /// \param[in]  calculashteRotatedForces flag determining whether or not to negate drag through multiplying by -vecFwd (do not want to do this if rotated drag has been calculated)
   /// \return      N/A
   ///
-  ignition::math::Vector3d rotateForcesToBody(double lift_N, double drag_N, double lateralForce_N, double angleOfAttack_deg);
+  ignition::math::Vector3d rotateForcesToBody(double lift_N, double drag_N, double lateralForce_N, double angleOfAttack_deg, double sideSlipAngle_deg);
 
  private:
 
