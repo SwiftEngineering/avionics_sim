@@ -51,7 +51,7 @@ namespace avionics_sim {
 	}
 
 	double Airfoil::getLateralArea_m2() {
-		return _area_m2;
+		return _lateralArea_m2;
 	}
 
 }
