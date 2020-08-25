@@ -91,22 +91,19 @@ TEST_F(LiftDragModelTest, TestDynamicPressure) {
   ASSERT_NEAR(dynamicPressure_Pa, 244, tolerance);
 }
 
-// TEST_F(LiftDragModelTest, TestCalculatingWindAngles) {
-//   // Given: Initial Pose In World and Velocity
-//   lift_drag_model_.setWorldPose(ignition::math::Pose3d(0, 0, 0, -0.09, 1.48,
-//                                 0.1));
-//   lift_drag_model_.setWorldVelocity(ignition::math::Vector3d(10, 1, 0.1));
+TEST_F(LiftDragModelTest, TestCalculatingWindAngles) {
+  // Given: Velocity in body
+  ignition::math::Vector3d velocityInBody_m_per_s = ignition::math::Vector3d(0.81165, -0.90368, 9.977);
 
+  // When: Wind Angles are Calculated
+  std::pair<double, double> aeroAngles_deg = lift_drag_model_.calculateWindAngles(velocityInBody_m_per_s);
 
-//   // When: Wind Angles are Calculated
-//   lift_drag_model_.updateWindAnglesAndLocalVelocities();
-
-//   // Then, Wind Angles should be correct
-//   ASSERT_NEAR(lift_drag_model_.getAngleOfAttack_deg(), 4.651,
-//               tolerance);
-//   ASSERT_NEAR(lift_drag_model_.getSideSlipAngle_deg(), 5.1587,
-//               tolerance);
-// }
+  // Then, Wind Angles should be correct
+  ASSERT_NEAR(aeroAngles_deg.first, 4.651,
+              tolerance);
+  ASSERT_NEAR(aeroAngles_deg.second, -5.1587,
+              tolerance);
+}
 
 TEST_F(LiftDragModelTest, TestCalculatingLocalVelocities) {
   // Given: Initial Pose In World and Velocity
@@ -123,3 +120,23 @@ TEST_F(LiftDragModelTest, TestCalculatingLocalVelocities) {
   ASSERT_NEAR(velocityInBody_m_per_s.Y(), -0.90368, tolerance);
   ASSERT_NEAR(velocityInBody_m_per_s.Z(), 9.977, tolerance);
 }
+
+TEST_F(LiftDragModelTest, TestRotatingForcesToBody) {
+  // Given: Initial Pose In World and Velocity
+  double lift_N = 31.269;
+  double drag_N = 0.821;
+  double lateralForce_N = 0.005;
+  double angleOfAttack_deg = 4.65089;
+  double sideSlipAngle_deg = -5.15857;
+
+
+  // When: Local Velocities are calculate
+  ignition::math::Vector3d force_N = lift_drag_model_.rotateForcesToBody(lift_N, drag_N, lateralForce_N, angleOfAttack_deg, sideSlipAngle_deg);
+
+  // Then: Velocities should match expected
+  ASSERT_NEAR(force_N.X(), -31.232, tolerance);
+  ASSERT_NEAR(force_N.Y(), 0.005, tolerance);
+  ASSERT_NEAR(force_N.Z(), 1.717, tolerance);
+}
+
+

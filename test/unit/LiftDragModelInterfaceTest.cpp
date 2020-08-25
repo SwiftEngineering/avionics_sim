@@ -152,22 +152,22 @@ class CalcForcesParamTest :
 
 const std::vector<CalcForcesParams> params{
   {
-    "Home Work Problem alpha = 4 deg, beta = 5.1587 deg",
-    ignition::math::Vector3d(0, 0, 0),
-    ignition::math::Vector3d(-0.09, 1.48, 0.1),
-    NAN,
-    NAN,
-    ignition::math::Vector3d(10, 1, 0.1),
-    ignition::math::Vector3d(-31.232, -0.005, 1.717)
-  },
-  {
     "Home Work Problem alpha = 4 deg, beta = -5.1587 deg",
     ignition::math::Vector3d(0, 0, 0),
     ignition::math::Vector3d(-0.09, 1.48, 0.1),
     NAN,
     NAN,
-    ignition::math::Vector3d(9.659, 2.775, 0.085),
+    ignition::math::Vector3d(10, 1, 0.1),
     ignition::math::Vector3d(-31.232, 0.005, 1.717)
+  },
+  {
+    "Home Work Problem alpha = 4 deg, beta = 5.1587 deg",
+    ignition::math::Vector3d(0, 0, 0),
+    ignition::math::Vector3d(-0.09, 1.48, 0.1),
+    NAN,
+    NAN,
+    ignition::math::Vector3d(9.659, 2.775, 0.085),
+    ignition::math::Vector3d(-31.232, -0.005, 1.717)
   },
   {
     "Failure mode of atan, alpha = ± 90 deg​",
@@ -282,17 +282,9 @@ class CalcForcesInPropWashParamTest :
 
 const std::vector<PropWashCaseParams> propWashCasesParams{
   {
-    "Home Work Problem, angle of attack = 4 [deg], side slip angle = 5.1587 [deg]",
-    10.01,
-    -0.9037,
-    4.651,
-    5.1587,
-    ignition::math::Vector3d(-31.232, -0.005, 1.717)
-  },
-  {
     "Home Work Problem, angle of attack = 4 [deg], side slip angle = -5.1587 [deg]",
     10.01,
-    0.9037,
+    -0.9037,
     4.651,
     -5.1587,
     ignition::math::Vector3d(-31.232, 0.005, 1.717)
