@@ -3,7 +3,7 @@
 ## Given
 - Orientation$\begin{pmatrix}roll, pitch, yaw\end{pmatrix}$: $\begin{bmatrix}0.09  & 1.48  &  0.1\end{bmatrix} rad$
 - Velocity, $V_{world}$: $\begin{bmatrix}10 & 1 & 0.1\end{bmatrix} \frac{m}{s}$
-- Airfoil:  
+- Airfoil:
   - Profile : NACA0012 (See Appendix)
   - Area, $A$ : $1 m^2$
   - Body Basis:
@@ -43,7 +43,7 @@
 ## Analysis
 
 ### Transform Velocity in World Frame to Body Frame of Aircraft
-We first define the quaternion representing the rotation between the world and the aircraft, 
+We first define the quaternion representing the rotation between the world and the aircraft,
 
 $$
 Q={(q_{yaw}q_{pitch}q_{roll})}
@@ -78,6 +78,13 @@ Referencing the aerodynamic frame diagrams above, the velocity in body is broken
 - The plane parallel to the airfoil profile, $V_{planar}$
 - The plane, $V_{lateral}$
 
+Reorient vector in body to wind:
+$$
+V_{wind} = \{ V_{body} \cdot Upward, V_{body} \cdot Side, V_{body} \cdot Forward \} \\
+V_{wind} = \{ \begin{bmatrix}0.81165 & -0.9037 & 9.9767 \end{bmatrix} \cdot \begin{bmatrix} -1 & 0 & 0 \end{bmatrix}, \begin{bmatrix}0.81165 & -0.9037 & 9.9767\end{bmatrix} \cdot  \begin{bmatrix} 0 & 0 & 1 \end{bmatrix}, \begin{bmatrix}0.81165 & -0.9037 & 9.9767\end{bmatrix} \cdot  \begin{bmatrix} 0 & -1 & 0 \end{bmatrix} \} \\
+V_{wind} = \begin{bmatrix} -0.81165 & 0.9037 & 9.9767 \end{bmatrix} \\
+$$
+
 Magnitude of Velocity Vector, $V_{\infty}$
 $$
 V_{\infty} = || V_{body} || = \sqrt{ {{V_{body}}_x}^2 + {{V_{body}}_y}^2 + {{V_{body}}_z}^2 } \\
@@ -87,7 +94,7 @@ $$
 
 Planar Velocity
 $$
-V_{planar} = \sqrt{{{V_{body}}_x}^2+{{V_{body}}_z}^2}
+V_{planar} = \sqrt{{{V_{wind}}_x}^2+{{V_{wind}}_z}^2}
 $$
 $$
 V_{planar} = \sqrt{(0.81165\frac{m}{s})^2+(9.97673\frac{m}{s})^2}
@@ -98,7 +105,7 @@ $$
 
 Determine angle of attack, $\alpha$
 $$
-\alpha = tan^{-1}(\frac{-{{V_{body}}_x}} {{V_{body}}_z})
+\alpha = tan^{-1}(\frac{-{{V_{wind}}_x}} {{V_{wind}}_z})
 $$
 $$
 \alpha = tan^{-1}(\frac{-0.8117}{9.9767})
@@ -109,14 +116,14 @@ $$
 
 Lateral Velocity
 $$
-V_{lateral} = -{{V_{body}}_y} \\
+V_{lateral} = -{{V_{wind}}_y} \\
 V_{lateral} = -0.9037
 $$
 
 $$
-\beta = sin^{-1}(\frac{V_{lateral}}{V_{\infty}}) \\
-\beta = sin^{-1}(\frac{{-(-0.9037)}}{10.0504}) \\
-\beta = 5.1587^\circ
+\beta = sin^{-1}(\frac{{V_{lateral}}}{V_{\infty}}) \\
+\beta = sin^{-1}(\frac{{(-0.9037)}}{10.0504}) \\
+\beta = -5.1587^\circ
 $$
 
 
@@ -185,12 +192,18 @@ F_{up} = 31.269*cos(4.651^\circ) +  0.821 N*sin(4.651^\circ) \\F_{fwd} = 31.269*
 F_{up} = 31.232 N \\ F_{fwd} = 1.716 N
 $$
 
+$$
+F_{lat} = sign(\beta) * Drag_{ss} \\
+F_{lat} = sign(-5.1587) * 0.005 \\
+F_{lat} = -0.005
+$$
+
 For the calculation of the final resultant force in body-fixed coordinate frame, convert the scalar force quantities into the appropriate directions in body-fixed coordinate frame.
 
 $$
 F_R = (F_{up} * \vec{u}_{up}) + (F_{fwd} * \vec{u}_{fwd}) + (F_{lat} * \vec{u}_{lat}) \\
-F_R = (31.232 * \begin{bmatrix} -1 & 0 & 0\end{bmatrix}) + (1.716 * \begin{bmatrix} 0 & 0 & 1\end{bmatrix}) + (0.005 * \begin{bmatrix} 0 & -1 & 0\end{bmatrix}) \\
-F_R = \begin{bmatrix}-31.2324 & -0.005 & 1.716\end{bmatrix} N
+F_R = (31.232 * \begin{bmatrix} -1 & 0 & 0\end{bmatrix}) + (1.716 * \begin{bmatrix} 0 & 0 & 1\end{bmatrix}) + (-0.005 * \begin{bmatrix} 0 & -1 & 0\end{bmatrix}) \\
+F_R = \begin{bmatrix}-31.2324 & 0.005 & 1.716\end{bmatrix} N
 $$
 
 
@@ -198,7 +211,7 @@ $$
 
 
 $$
-Resultant Force on Body: \begin{bmatrix}-31.2324 & -0.005 & 1.716\end{bmatrix} N
+Resultant Force on Body: \begin{bmatrix}-31.2324 & 0.005 & 1.716\end{bmatrix} N
 $$
 
 
@@ -328,7 +341,7 @@ $$
 # Appendix B: Euler Angles to Quaternion
 Translating Euler angles into a quaternion representation of the rotation follows:
 
-Assuming the angles for roll, pitch, and yaw are provided in radians, then it follows that 
+Assuming the angles for roll, pitch, and yaw are provided in radians, then it follows that
 
 Given:
 $$
@@ -349,7 +362,7 @@ $$
 Given some vector $V_a$ and a reference given by the quaternion $Q=Q_{a \rightarrow b}$, the Vector represented in the reference frame is defined as:
 
 $$
-V_b = Q \cdot V_a \cdot Q^{-1} 
+V_b = Q \cdot V_a \cdot Q^{-1}
 $$
 
 This is solved by translating $V_a$ into a quaternion $Q_V$ defined as:
