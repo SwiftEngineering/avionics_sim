@@ -95,12 +95,6 @@ ignition::math::Vector3d AerodynamicModel::updateForcesInBody_N(
 
   _state.force_N = rotateForcesToBody(_state.lift_N, _state.drag_N, _state.lateralForce_N, _state.angleOfAttack_deg, _state.sideSlipAngle_deg);
 
-  // std::cout << _state.lateralVelocity_m_per_s << ", ";
-
-  // std::cout << _state.angleOfAttack_deg << ", " << _state.planarVelocity_m_per_s << ", " << _state.dynamicPressurePlanar_Pa << ", " << _state.liftCoeff << ", ";
-  // std::cout << "<" << _state.poseWorld_m_rad.Rot() << ">, " << "<" << _state.velocityWorld_m_per_s << ">, " << "<" << _state.velocityBody_m_per_s << ">, ";
-
-  // _state.print();
   return _state.force_N;
 
 }
@@ -110,7 +104,7 @@ ignition::math::Vector3d AerodynamicModel::rotateForcesToBody(double lift_N, dou
   double rotated_lift_N = (lift_N * cos(angleOfAttacks_rad)) + (drag_N * sin(angleOfAttacks_rad));
   double rotated_drag_N = (lift_N * sin(angleOfAttacks_rad)) - (drag_N * cos(angleOfAttacks_rad));
 
-  double oriented_lateral_N = -ignition::math::sgn(sideSlipDrag_deg) * lateralForce_N;
+  double oriented_lateral_N = ignition::math::sgn(sideSlipDrag_deg) * lateralForce_N;
 
   //Add the forces together.
   ignition::math::Vector3d force_N = rotated_lift_N * vecUpwd + rotated_drag_N * vecFwd + oriented_lateral_N * vecPort;
@@ -141,13 +135,8 @@ std::pair<double,double> AerodynamicModel::calculateWindAngles(ignition::math::V
   double v = vecPort.Dot(velocityInBody_m_per_s);
   double w = vecFwd.Dot(velocityInBody_m_per_s);
 
-  // std::cout << "[" << u << ", " << v << ", " << w << "], " ;
-
-  // Calculate alpha
   double angleOfAttack_rad = atan2(-u, w);
-  double sideSlipAngle_rad = asin(-(-v) / velocityInBody_m_per_s.Length());
-
-  // std::cout << "(" << RAD2DEG(angleOfAttack_rad) << ", " << RAD2DEG(sideSlipAngle_rad) <<  "), " ;
+  double sideSlipAngle_rad = asin(-v / velocityInBody_m_per_s.Length());
 
   return {RAD2DEG(angleOfAttack_rad), RAD2DEG(sideSlipAngle_rad)};
 }
@@ -157,27 +146,21 @@ ignition::math::Vector3d AerodynamicModel::transformToLocalVelocity(
     ignition::math::Vector3d velocityInWorld_m_per_s) {
 
       ignition::math::Vector3d velocityInBody_m_per_s;
-      // std::cout << "<" << velocityInBody_m_per_s << ">, ";
 
       avionics_sim::Coordinate_Utils::project_vector_global(
         poseInWorld_m_rad,
         velocityInWorld_m_per_s,
         &velocityInBody_m_per_s);
 
-      // std::cout << "<" << velocityInBody_m_per_s << ">, ";
-
-
       return velocityInBody_m_per_s;
 }
 
 double AerodynamicModel::transformBodyToWindPlanar(ignition::math::Vector3d velocityInBody_m_per_s) {
-  // Remove spanwise and vertical component
   ignition::math::Vector3d planarVelocity_m_per_s = ignition::math::Vector3d(
                                           velocityInBody_m_per_s.X(),
                                           0,
                                           velocityInBody_m_per_s.Z());
 
-  // Set planar velocity.
   return planarVelocity_m_per_s.Length();
 }
 
