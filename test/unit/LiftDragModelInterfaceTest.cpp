@@ -212,6 +212,33 @@ const std::vector<CalcForcesParams> params{
     ignition::math::Vector3d(-9.985, 0.904, -0.698),
     ignition::math::Vector3d(-26.88, -0.005, 1.12)
   },
+  {
+    "Wind Behind No Control Surface",
+    ignition::math::Vector3d(0, 0, 0),
+    ignition::math::Vector3d(0.010431, 0.161863, -2.36131),
+    NAN,
+    NAN,
+    ignition::math::Vector3d(0, 0, -20),
+    ignition::math::Vector3d(-204.097, 0.000259, -1.76903)
+  },
+  {
+    "Wind Behind with Control Surface No PropWash",
+    ignition::math::Vector3d(0, 0, 0),
+    ignition::math::Vector3d(0.010431, 0.161863, -2.36131),
+    NAN,
+    -0.785398,
+    ignition::math::Vector3d(0, 0, -20),
+    ignition::math::Vector3d(-350.207, 0.000259, 24.1522)
+  },
+  {
+    "Wind Behind With Control Surface With Propwash",
+    ignition::math::Vector3d(0, 0, 0),
+    ignition::math::Vector3d(0.010431, 0.161863, -2.36131),
+    24.1884,
+    -0.785398,
+    ignition::math::Vector3d(0, 0, -20),
+    ignition::math::Vector3d(16.3525, 0, 0.075705)
+  }
 };
 
 INSTANTIATE_TEST_CASE_P(LiftDragModelInterface,

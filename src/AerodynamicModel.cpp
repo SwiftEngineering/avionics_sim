@@ -52,13 +52,23 @@ ignition::math::Vector3d AerodynamicModel::updateForcesInBody_N(
     std::pair<double, double> aeroAngles_deg = calculateWindAngles( _state.velocityBody_m_per_s );
 
     if(!isnan(propWash_m_per_s)) {
-      planarVelocity_m_per_s = propWash_m_per_s;
+      if(planarVelocity_m_per_s < 0) {
+        planarVelocity_m_per_s += propWash_m_per_s;
+      } else {
+        planarVelocity_m_per_s = propWash_m_per_s;
+      }
       lateralVelocity_m_per_s = 0;
     }
 
     if(!isnan(controlAngle_rad)) {
       aeroAngles_deg.first = RAD2DEG(controlAngle_rad);
+
+      // Flip angles if wind is coming from behind/going backwards
+      if(planarVelocity_m_per_s < 0) {
+        aeroAngles_deg.first -= RAD2DEG(M_PI) * ignition::math::sgn(aeroAngles_deg.first);
+      }
     }
+
 
   return updateForcesInBody_N(
     planarVelocity_m_per_s,
@@ -161,7 +171,9 @@ double AerodynamicModel::transformBodyToWindPlanar(ignition::math::Vector3d velo
                                           0,
                                           velocityInBody_m_per_s.Z());
 
-  return planarVelocity_m_per_s.Length();
+  float directionInBody = ignition::math::sgn(velocityInBody_m_per_s.Z());
+
+  return directionInBody*planarVelocity_m_per_s.Length();
 }
 
 double AerodynamicModel::transformBodyToWindLateral(ignition::math::Vector3d velocityInBody_m_per_s) {
