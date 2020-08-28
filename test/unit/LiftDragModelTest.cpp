@@ -139,4 +139,21 @@ TEST_F(LiftDragModelTest, TestRotatingForcesToBody) {
   ASSERT_NEAR(force_N.Z(), 1.717, tolerance);
 }
 
+TEST_F(LiftDragModelTest, TestRotatingForcesToBodyLargeAttack) {
+  // Given: Initial Pose In World and Velocity
+  double lift_N = -8.06931;
+  double drag_N = 9.26476;
+  double lateralForce_N = 0;
+  double angleOfAttack_deg = 135;
+  double sideSlipAngle_deg = -0.589718;
+
+  // When: Local Velocities are calculate
+  ignition::math::Vector3d force_N = lift_drag_model_.rotateForcesToBody(lift_N, drag_N, lateralForce_N, angleOfAttack_deg, sideSlipAngle_deg);
+
+  // Then: Velocities should match expected
+  ASSERT_NEAR(force_N.X(), -12.257, tolerance);
+  ASSERT_NEAR(force_N.Y(), 0, tolerance);
+  ASSERT_NEAR(force_N.Z(), 0.845313, tolerance);
+}
+
 
