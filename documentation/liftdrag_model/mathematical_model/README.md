@@ -64,6 +64,8 @@ $V_{world}$ = world linear velocity [m/s]. Three element vector representing the
 
 $V_{\infty}$ = aircraft freestream velocity [m/s]. Scalar magnitude of the aircraft freestream velocity. Calculated as vector norm of $V_{body}$.
 
+$V_{lat}$ = Aircraft lateral velocity
+
 $x_b$ = aircraft fixed-coordinate system x axis. Rotation about this axis is $roll$. 
 
 $x_{vel}$ = aircraft x velocity in the world frame, i.e. 'East' [m/s]
@@ -284,7 +286,7 @@ $$
 $$
 \begin{equation}
 \tag{4}
-\beta = arcsin(\frac{-v}{V_{\infty}})
+\beta = arcsin(\frac{v}{V_{body}})
 \end{equation}
 $$
 
@@ -367,9 +369,15 @@ For the general case, the velocity of the vehicle, and hence the oncoming air, i
 $$
 V_{\infty} = \sqrt{{{V_{body}}_x}^2+{{V_{body}}_y}^2 + {{V_{body}}_z}^2}
 $$
-For the sake of conservatism, we neglect taking credit for the aircraft span wise velocity for the purposes of lift calculation.  In the case of calculating drag, the lateral velocity is treated separately. Thus 
+For the sake of conservatism, we neglect taking credit for the aircraft span wise velocity for the purposes of lift calculation.  In the case of calculating drag, the lateral velocity $V_{lat}$ is treated separately. Thus 
 $$
 V_{planar} = \sqrt{{{V_{body}}_x}^2+{{V_{body}}_z}^2}
+$$
+
+with lateral velocity being calculated as
+
+$$
+V_{lat} = -{{V_{body}}_y}
 $$
 
 To take into account direction for each component of the body velocity, each component is updated by taking a dot product of the component with its associated unit vector:
