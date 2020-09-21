@@ -9,6 +9,8 @@
 #pragma once
 
 #include <ignition/math.hh>
+#include "Property.hpp"
+#include <cmath>
 
 namespace avionics_sim {
 
@@ -28,33 +30,33 @@ class AerodynamicState {
   void print();
 
   /// \brief World Pose
-  ignition::math::Pose3d poseWorld_m_rad;
+  Property <ignition::math::Pose3d> poseWorld_m_rad;
 
   /// \brief World Velocity
-  ignition::math::Vector3d velocityWorld_m_per_s;
+  Property <ignition::math::Vector3d> velocityWorld_m_per_s;
 
   /// \brief World Velocity
-  ignition::math::Vector3d velocityBody_m_per_s;
+  Property <ignition::math::Vector3d> velocityBody_m_per_s;
 
-  double angleOfAttack_deg;
+  Property <double> angleOfAttack_deg;
   /// \Value of beta (side slip angle)
-  double sideSlipAngle_deg;
+  Property <double> sideSlipAngle_deg;
 
-  double planarVelocity_m_per_s;
-  double lateralVelocity_m_per_s;
+  Property <double> planarVelocity_m_per_s;
+  Property <double> lateralVelocity_m_per_s;
 
-  double dynamicPressurePlanar_Pa;
-  double dynamicPressureLateral_Pa;
+  Property <double> dynamicPressurePlanar_Pa;
+  Property <double> dynamicPressureLateral_Pa;
 
-  double liftCoeff;
-  double dragCoeff;
-  double lateralDragCoeff;
+  Property <double> liftCoeff;
+  Property <double> dragCoeff;
+  Property <double> lateralDragCoeff;
 
-  double lift_N;
-  double drag_N;
-  double lateralForce_N;
+  Property <double> lift_N;
+  Property <double> drag_N;
+  Property <double> lateralForce_N;
 
-  ignition::math::Vector3d force_N;
+  Property <ignition::math::Vector3d> force_N;
 
 };
 

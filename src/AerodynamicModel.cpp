@@ -69,7 +69,6 @@ ignition::math::Vector3d AerodynamicModel::updateForcesInBody_N(
       }
     }
 
-
   return updateForcesInBody_N(
     planarVelocity_m_per_s,
     lateralVelocity_m_per_s,

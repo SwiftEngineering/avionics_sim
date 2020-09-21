@@ -15,7 +15,6 @@
 #include "Math_util.hpp"
 #include "LookupTable.hpp"
 #include "AerodynamicState.hpp"
-#include "Basis.hpp"
 #include "Airfoil.hpp"
 #include "PhysicsEnvironment.hpp"
 
