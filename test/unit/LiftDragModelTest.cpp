@@ -96,12 +96,12 @@ TEST_F(LiftDragModelTest, TestCalculatingWindAngles) {
   ignition::math::Vector3d velocityInBody_m_per_s = ignition::math::Vector3d(0.81165, -0.90368, 9.977);
 
   // When: Wind Angles are Calculated
-  std::pair<double, double> aeroAngles_deg = lift_drag_model_.calculateWindAngles(velocityInBody_m_per_s);
+  AeroAngles aeroAngles_deg = lift_drag_model_.calculateBodyAttackAngles_deg(velocityInBody_m_per_s);
 
   // Then, Wind Angles should be correct
-  ASSERT_NEAR(aeroAngles_deg.first, 4.651,
+  ASSERT_NEAR(aeroAngles_deg.attackAngle_deg, 4.651,
               tolerance);
-  ASSERT_NEAR(aeroAngles_deg.second, -5.1587,
+  ASSERT_NEAR(aeroAngles_deg.sideSlipAngle_deg, -5.1587,
               tolerance);
 }
 
