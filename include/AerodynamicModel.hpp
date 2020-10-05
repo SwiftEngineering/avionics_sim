@@ -20,6 +20,11 @@
 
 namespace avionics_sim {
 
+struct AeroAngles {
+    double attackAngle_deg;
+    double sideSlipAngle_deg;
+};
+
 // TODO: Move this out to its own file
 /**
  * \brief Interface class to the lift drag model object.
@@ -68,7 +73,8 @@ class AerodynamicModel : public IAerodynamicModel {
   ///
   virtual ~AerodynamicModel();
 
-  virtual ignition::math::Vector3d updateForcesInBody_N(ignition::math::Pose3d
+  virtual ignition::math::Vector3d updateForcesInBody_N(
+      ignition::math::Pose3d
       poseInWorld_m_rad,
       ignition::math::Vector3d velocityInWorld_m_per_s,
       double propWash_m_per_s,
@@ -79,6 +85,11 @@ class AerodynamicModel : public IAerodynamicModel {
       double lateralVelocity_m_per_s,
       double angleOfAttack_deg,
       double sideSlipAngle_deg);
+
+  double calculateAttackAngleWithControl(
+      double controlAngle_rad,
+      double angleOfAttackBody_deg,
+      double planarVelocity_m_per_s);
 
   // Function to calculate dynamic pressure.
   ///
@@ -97,8 +108,9 @@ class AerodynamicModel : public IAerodynamicModel {
   /// \param[in]  upward Vector3d representing upward vector
   /// \return     N/A
   ///
-  void setBasisVectors(ignition::math::Vector3d fwd,
-                       ignition::math::Vector3d upward);
+  void setBasisVectors(
+      ignition::math::Vector3d fwd,
+      ignition::math::Vector3d upward);
 
   ignition::math::Vector3d transformToLocalVelocity(
       ignition::math::Pose3d poseInWorld_m_rad,
@@ -141,7 +153,7 @@ class AerodynamicModel : public IAerodynamicModel {
   /// \param[in]  N/A
   /// \return     N/A
   ///
-  std::pair<double,double> calculateWindAngles(ignition::math::Vector3d velocityInBody_m_per_s);
+  AeroAngles calculateBodyAttackAngles_deg(ignition::math::Vector3d velocityInBody_m_per_s);
 
   ///
   /// \brief      Function to calculate force vector with direction.
@@ -150,7 +162,17 @@ class AerodynamicModel : public IAerodynamicModel {
   /// \param[in]  calculashteRotatedForces flag determining whether or not to negate drag through multiplying by -vecFwd (do not want to do this if rotated drag has been calculated)
   /// \return      N/A
   ///
-  ignition::math::Vector3d rotateForcesToBody(double lift_N, double drag_N, double lateralForce_N, double angleOfAttack_deg, double sideSlipAngle_deg);
+  ignition::math::Vector3d rotateForcesToBody(
+      double lift_N, double drag_N, double lateralForce_N,
+      double angleOfAttack_deg, double sideSlipAngle_deg);
+
+  double invertAttackAngle_deg(double angleOfAttack_deg);
+
+  AeroAngles correctAttackAnglesForDirectionAndControl_deg(
+      AeroAngles bodyAttackAngles_deg,
+      double controlAngle_rad,
+      double planarVelocity_m_per_s
+  );
 
  private:
 
