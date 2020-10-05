@@ -17,7 +17,7 @@
 
 using namespace avionics_sim;
 
-struct CalcForcesParams {
+struct WorldFrameCaseParams {
   std::string case_name;
   ignition::math::Vector3d position_world_m;
   ignition::math::Vector3d rotation_world_rad;
@@ -29,15 +29,15 @@ struct CalcForcesParams {
 
 
 
-class LiftDragModelInterfaceTest : public ::testing::Test {
+class AerodynamicModelInterfaceTest : public ::testing::Test {
  protected:
   // Some expensive resource shared by all tests.
   // static T* shared_resource_;
 
 
 
-  avionics_sim::AerodynamicModel lift_drag_model_;
-  double tolerance_100 = 0.5; /**< Allowable percent tolerance, note this is 0.15%, not 15% */
+  avionics_sim::AerodynamicModel aerodynamic_model_;
+  double tolerance_100 = 0.5; /**< Allowable percent tolerance, note this is 0.5%, not 50% */
 
   /**
    * Sets up the test suite, called before all test cases are run
@@ -80,16 +80,16 @@ class LiftDragModelInterfaceTest : public ::testing::Test {
       area_m2, area_lateral_m2,
       LUT_NACA0012_alpha, LUT_NACA0012_CL, LUT_NACA0012_CD);
 
-    // Initialize lift drag model for new test
-    lift_drag_model_ = avionics_sim::AerodynamicModel(airfoil, environment);
+    // Initialize aerodynamic model for new test
+    aerodynamic_model_ = avionics_sim::AerodynamicModel(airfoil, environment);
     ignition::math::Vector3d up(-1, 0, 0);
     ignition::math::Vector3d forward(0, 0, 1);
-    lift_drag_model_.setBasisVectors(forward, up);
+    aerodynamic_model_.setBasisVectors(forward, up);
   }
 
   // You can define per-test tear-down logic as usual.
   virtual void TearDown() {
-    // delete lift_drag_model_;
+    // delete aerodynamic_model_;
   }
 
   // void LogStreamProperty(std::string key, std::ostream stream) {
@@ -102,10 +102,10 @@ class LiftDragModelInterfaceTest : public ::testing::Test {
     RecordProperty("--- Setup",  "------------------");
     // std::ostringstream string_store;
 
-    // RecordProperty("Area [m2]: ", lift_drag_model_.getArea());
-    // RecordProperty("Area_lateral [m2]: ", lift_drag_model_.getLateralArea());
+    // RecordProperty("Area [m2]: ", aerodynamic_model_.getArea());
+    // RecordProperty("Area_lateral [m2]: ", aerodynamic_model_.getLateralArea());
     // RecordProperty("Air Density [kg/m3]: ",
-    //                lift_drag_model_.getAirDensity_kg_per_m3());
+    //                aerodynamic_model_.getAirDensity_kg_per_m3());
     // RecordProperty("Airfoil: ", "NACA0012");
   }
 
@@ -113,22 +113,22 @@ class LiftDragModelInterfaceTest : public ::testing::Test {
     RecordProperty("--- Input",  "------------------");
 
     // std::ostringstream string_store;
-    // string_store << lift_drag_model_.getWorldPose();
+    // string_store << aerodynamic_model_.getWorldPose();
     // RecordProperty("Pose_world[m, rad]: ",  string_store.str());
     // string_store.str("");
-    // string_store << lift_drag_model_.getWorldVelocity();
+    // string_store << aerodynamic_model_.getWorldVelocity();
     // RecordProperty("Veloctiy_world [m/s]: ", string_store.str());
   }
 
   virtual void RecordTransient() {
     RecordProperty("--- Transient",  "------------------");
     // RecordProperty("Angle of Attack[deg]: ",
-    //                std::to_string(lift_drag_model_.getAngleOfAttack_deg()));
-    // RecordProperty("Lift Coefficient: ", std::to_string(lift_drag_model_.getCL()));
-    // RecordProperty("Drag Coefficient: ", std::to_string(lift_drag_model_.getCD()));
+    //                std::to_string(aerodynamic_model_.getAngleOfAttack_deg()));
+    // RecordProperty("Lift Coefficient: ", std::to_string(aerodynamic_model_.getCL()));
+    // RecordProperty("Drag Coefficient: ", std::to_string(aerodynamic_model_.getCD()));
 
-    // RecordProperty("Lift [N]: ", std::to_string(lift_drag_model_.getLift()));
-    // RecordProperty("Drag [N]: ", std::to_string(lift_drag_model_.getDrag()));
+    // RecordProperty("Lift [N]: ", std::to_string(aerodynamic_model_.getLift()));
+    // RecordProperty("Drag [N]: ", std::to_string(aerodynamic_model_.getDrag()));
   }
 
   virtual void RecordFinal(ignition::math::Vector3d force_N,
@@ -145,18 +145,18 @@ class LiftDragModelInterfaceTest : public ::testing::Test {
 };
 
 class CalcForcesParamTest :
-  public LiftDragModelInterfaceTest,
-  public testing::WithParamInterface<CalcForcesParams> {
+  public AerodynamicModelInterfaceTest,
+  public testing::WithParamInterface<WorldFrameCaseParams> {
 
 };
 
-const std::vector<CalcForcesParams> params{
+const std::vector<WorldFrameCaseParams> params{
   {
     "Home Work Problem alpha = 4 deg, beta = -5.1587 deg",
     ignition::math::Vector3d(0, 0, 0),
     ignition::math::Vector3d(-0.09, 1.48, 0.1),
-    NAN,
-    NAN,
+    0,
+    0,
     ignition::math::Vector3d(10, 1, 0.1),
     ignition::math::Vector3d(-31.232, 0.005, 1.717)
   },
@@ -164,8 +164,8 @@ const std::vector<CalcForcesParams> params{
     "Home Work Problem alpha = 4 deg, beta = 5.1587 deg",
     ignition::math::Vector3d(0, 0, 0),
     ignition::math::Vector3d(-0.09, 1.48, 0.1),
-    NAN,
-    NAN,
+    0,
+    0,
     ignition::math::Vector3d(9.659, 2.775, 0.085),
     ignition::math::Vector3d(-31.232, -0.005, 1.717)
   },
@@ -173,8 +173,8 @@ const std::vector<CalcForcesParams> params{
     "Failure mode of atan, alpha = ± 90 deg​",
     ignition::math::Vector3d(0, 0, 0),
     ignition::math::Vector3d(0, 1.5708, 0),
-    NAN,
-    NAN,
+    0,
+    0,
     ignition::math::Vector3d(0, 0, -10),
     ignition::math::Vector3d(-109.8, 0, 4.27)
   },
@@ -182,8 +182,8 @@ const std::vector<CalcForcesParams> params{
     "At stall, alpha = ± 9 deg",
     ignition::math::Vector3d(0, 0, 0),
     ignition::math::Vector3d(-0.08, 1.48, 0.1),
-    NAN,
-    NAN,
+    0,
+    0,
     ignition::math::Vector3d(9.98, 0.99, -0.66),
     ignition::math::Vector3d(-51.668, -0.005, 6.927)
   },
@@ -198,8 +198,8 @@ const std::vector<CalcForcesParams> params{
     "Sideways, alpha = 4 deg",
     ignition::math::Vector3d(0, 0, 0),
     ignition::math::Vector3d(-1.5708, 1.5708, 0),
-    NAN,
-    NAN,
+    0,
+    0,
     ignition::math::Vector3d(0.904, 9.985, -0.698),
     ignition::math::Vector3d(-26.88, -0.005, 1.12)
   },
@@ -207,8 +207,8 @@ const std::vector<CalcForcesParams> params{
     "Upside Down, alpha = 4 deg",
     ignition::math::Vector3d(0, 0, 0),
     ignition::math::Vector3d(-3.1416, 1.5708, 0),
-    NAN,
-    NAN,
+    0,
+    0,
     ignition::math::Vector3d(-9.985, 0.904, -0.698),
     ignition::math::Vector3d(-26.88, -0.005, 1.12)
   },
@@ -216,8 +216,8 @@ const std::vector<CalcForcesParams> params{
     "Wind Behind No Control Surface",
     ignition::math::Vector3d(0, 0, 0),
     ignition::math::Vector3d(0.010431, 0.161863, -2.36131),
-    NAN,
-    NAN,
+    0,
+    0,
     ignition::math::Vector3d(0, 0, -20),
     ignition::math::Vector3d(-204.097, 0.000259, -1.76903)
   },
@@ -225,10 +225,10 @@ const std::vector<CalcForcesParams> params{
     "Wind Behind with Control Surface No PropWash",
     ignition::math::Vector3d(0, 0, 0),
     ignition::math::Vector3d(0.010431, 0.161863, -2.36131),
-    NAN,
+    0,
     -0.785398,
     ignition::math::Vector3d(0, 0, -20),
-    ignition::math::Vector3d(-350.207, 0.000259, 24.1522)
+    ignition::math::Vector3d(-384.905, 0.000259, 21.3478)
   },
   {
     "Wind Behind With Control Surface With Propwash",
@@ -238,15 +238,24 @@ const std::vector<CalcForcesParams> params{
     -0.785398,
     ignition::math::Vector3d(0, 0, -20),
     ignition::math::Vector3d(16.3525, 0, 0.075705)
+  },
+    {
+    "Wind Behind With Control Surface With Little Propwash",
+    ignition::math::Vector3d(0, 0, 0),
+    ignition::math::Vector3d(0.010431, 0.161863, -2.36131),
+    5,
+    -0.785398,
+    ignition::math::Vector3d(0, 0, -20),
+    ignition::math::Vector3d(-216.501, 0.000259, 12.0077)
   }
 };
 
-INSTANTIATE_TEST_CASE_P(LiftDragModelInterface,
+INSTANTIATE_TEST_CASE_P(AerodynamicModelInterface,
                         CalcForcesParamTest,
                         ::testing::ValuesIn(params));
 
 TEST_P(CalcForcesParamTest, AerodynamicForcesFromVelocityAndOrientation) {
-  CalcForcesParams params = GetParam();
+  WorldFrameCaseParams params = GetParam();
   RecordProperty("Test Case: ", params.case_name);
   RecordSetup();
 
@@ -259,7 +268,7 @@ TEST_P(CalcForcesParamTest, AerodynamicForcesFromVelocityAndOrientation) {
   // RecordInput();
 
   // When: // TODO reduce this down to one function call
-    ignition::math::Vector3d force_N = lift_drag_model_.updateForcesInBody_N(
+    ignition::math::Vector3d force_N = aerodynamic_model_.updateForcesInBody_N(
                                         pose_world,
                                         params.velocity_world_m_per_s,
                                         params.propWash_m_per_s,
@@ -270,7 +279,6 @@ TEST_P(CalcForcesParamTest, AerodynamicForcesFromVelocityAndOrientation) {
   // The Resultant Forces should equal the expected forces
   ignition::math::Vector3d expectedForce_N = params.expectedForce_body_N;
 
-  const double tolerance = 0.1;
   RecordFinal(force_N, expectedForce_N);
 
   EXPECT_PERCENT_DIFF_LT(force_N.X(), expectedForce_N.X(), tolerance_100);
@@ -282,7 +290,7 @@ TEST_P(CalcForcesParamTest, AerodynamicForcesFromVelocityAndOrientation) {
 /********************************************************************************************/
 /********************************************************************************************/
 
-struct PropWashCaseParams {
+struct BodyFrameCaseParams {
   std::string case_name;
   double planarVelocity_m_per_s;
   double lateralVelocity_m_per_s;
@@ -292,22 +300,22 @@ struct PropWashCaseParams {
 };
 
 class CalcForcesInPropWashParamTest :
-  public LiftDragModelInterfaceTest,
-  public testing::WithParamInterface<PropWashCaseParams> {
+  public AerodynamicModelInterfaceTest,
+  public testing::WithParamInterface<BodyFrameCaseParams> {
 
  protected:
   virtual void RecordInput() {
     RecordProperty("--- Input",  "------------------");
 
     // RecordProperty("Freestream Velocity [m/s]: ",
-    //                lift_drag_model_.getFreeStreamVelocity());
+    //                aerodynamic_model_.getFreeStreamVelocity());
     // RecordProperty("Angle of Attack [deg]: ",
-    //                lift_drag_model_.getAngleOfAttack_deg());
+    //                aerodynamic_model_.getAngleOfAttack_deg());
   }
 
 };
 
-const std::vector<PropWashCaseParams> propWashCasesParams{
+const std::vector<BodyFrameCaseParams> propWashCasesParams{
   {
     "Home Work Problem, angle of attack = 4 [deg], side slip angle = -5.1587 [deg]",
     10.01,
@@ -326,13 +334,13 @@ const std::vector<PropWashCaseParams> propWashCasesParams{
   }
 };
 
-INSTANTIATE_TEST_CASE_P(LiftDragModelInterfaceTest,
+INSTANTIATE_TEST_CASE_P(AerodynamicModelInterfaceTest,
                         CalcForcesInPropWashParamTest,
                         ::testing::ValuesIn(propWashCasesParams));
 
 TEST_P(CalcForcesInPropWashParamTest,
        AerodynamicForcesFromPropWashAndSurfaceDeflection) {
-  PropWashCaseParams params = GetParam();
+  BodyFrameCaseParams params = GetParam();
   RecordProperty("Test Case: ", params.case_name);
   RecordSetup();
 
@@ -346,7 +354,7 @@ TEST_P(CalcForcesInPropWashParamTest,
   RecordInput();
 
   // When: // TODO reduce this down to one function call
-  ignition::math::Vector3d force_N = lift_drag_model_.updateForcesInBody_N(
+  ignition::math::Vector3d force_N = aerodynamic_model_.updateForcesInBody_N(
                                         planarVelocity_m_per_s,
                                         lateralVelocity_m_per_s,
                                         angleOfAttack_deg,

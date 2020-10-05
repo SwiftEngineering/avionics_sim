@@ -39,7 +39,6 @@ ignition::math::Vector3d AerodynamicModel::updateForcesInBody_N(
   ignition::math::Vector3d velocityInWorld_m_per_s,
   double propWash_m_per_s,
   double controlAngle_rad) {
-
     _state = AerodynamicState();
     _state.poseWorld_m_rad = poseInWorld_m_rad;
     _state.velocityWorld_m_per_s = velocityInWorld_m_per_s;
@@ -49,31 +48,31 @@ ignition::math::Vector3d AerodynamicModel::updateForcesInBody_N(
     double planarVelocity_m_per_s = transformBodyToWindPlanar(_state.velocityBody_m_per_s );
     double lateralVelocity_m_per_s = transformBodyToWindLateral(_state.velocityBody_m_per_s );
 
-    std::pair<double, double> aeroAngles_deg = calculateWindAngles( _state.velocityBody_m_per_s );
+    AeroAngles bodyAttackAngles_deg = calculateBodyAttackAngles_deg( _state.velocityBody_m_per_s );
 
-    if(!isnan(propWash_m_per_s)) {
-      if(planarVelocity_m_per_s < 0) {
-        planarVelocity_m_per_s += propWash_m_per_s;
-      } else {
-        planarVelocity_m_per_s = propWash_m_per_s;
-      }
+    bool isPropWashDominating = false;
+    if(propWash_m_per_s > planarVelocity_m_per_s) {
+      planarVelocity_m_per_s = std::min(propWash_m_per_s, planarVelocity_m_per_s + propWash_m_per_s);
+
+      isPropWashDominating = (planarVelocity_m_per_s > 0);
+    }
+
+    if (isPropWashDominating) {
       lateralVelocity_m_per_s = 0;
+      bodyAttackAngles_deg.attackAngle_deg = 0;
+      bodyAttackAngles_deg.sideSlipAngle_deg = 0;
     }
 
-    if(!isnan(controlAngle_rad)) {
-      aeroAngles_deg.first = RAD2DEG(controlAngle_rad);
+     AeroAngles attackAngles_deg = correctAttackAnglesForDirectionAndControl_deg(
+      bodyAttackAngles_deg,
+      controlAngle_rad,
+      planarVelocity_m_per_s);
 
-      // Flip angles if wind is coming from behind/going backwards
-      if(planarVelocity_m_per_s < 0) {
-        aeroAngles_deg.first -= RAD2DEG(M_PI) * ignition::math::sgn(aeroAngles_deg.first);
-      }
-    }
-
-  return updateForcesInBody_N(
-    planarVelocity_m_per_s,
-    lateralVelocity_m_per_s,
-    aeroAngles_deg.first,
-    aeroAngles_deg.second);
+    return updateForcesInBody_N(
+      planarVelocity_m_per_s,
+      lateralVelocity_m_per_s,
+      attackAngles_deg.attackAngle_deg,
+      attackAngles_deg.sideSlipAngle_deg);
 }
 
 /**
@@ -102,7 +101,9 @@ ignition::math::Vector3d AerodynamicModel::updateForcesInBody_N(
   _state.drag_N = calculateDrag_N(_state.dragCoeff, _state.dynamicPressurePlanar_Pa);
   _state.lateralForce_N = calculateLateralForce_N(_state.lateralDragCoeff, _state.dynamicPressureLateral_Pa);
 
-  _state.force_N = rotateForcesToBody(_state.lift_N, _state.drag_N, _state.lateralForce_N, _state.angleOfAttack_deg, _state.sideSlipAngle_deg);
+  _state.force_N = rotateForcesToBody(
+    _state.lift_N, _state.drag_N, _state.lateralForce_N,
+    _state.angleOfAttack_deg, _state.sideSlipAngle_deg);
 
   return _state.force_N;
 
@@ -134,11 +135,53 @@ void AerodynamicModel::setBasisVectors(ignition::math::Vector3d forward,
   vecPort =  vecFwd.Cross(vecUpwd);
 }
 
+AeroAngles AerodynamicModel::correctAttackAnglesForDirectionAndControl_deg(
+    AeroAngles bodyAttackAngles_deg,
+    double controlAngle_rad,
+    double planarVelocity_m_per_s) {
+
+      AeroAngles attackAngles_deg = bodyAttackAngles_deg;
+
+      if (planarVelocity_m_per_s < 0) {
+        attackAngles_deg.attackAngle_deg = invertAttackAngle_deg(bodyAttackAngles_deg.attackAngle_deg);
+      }
+
+      attackAngles_deg.attackAngle_deg = RAD2DEG(controlAngle_rad) + attackAngles_deg.attackAngle_deg;
+
+      if(planarVelocity_m_per_s < 0) {
+        attackAngles_deg.attackAngle_deg = invertAttackAngle_deg(attackAngles_deg.attackAngle_deg);
+      }
+
+    return attackAngles_deg;
+}
+
+
+double AerodynamicModel::invertAttackAngle_deg(double angleOfAttack_deg) {
+    return angleOfAttack_deg - RAD2DEG(M_PI) *  ignition::math::sgn(angleOfAttack_deg);
+}
+
+double AerodynamicModel::calculateAttackAngleWithControl(
+                                          double controlAngle_rad,
+                                          double angleOfAttackBody_deg,
+                                          double planarVelocity_m_per_s){
+
+  double angleOfAttack_deg = angleOfAttackBody_deg + RAD2DEG(controlAngle_rad);
+
+  if(planarVelocity_m_per_s < 0) {
+    double alphaInNominal_deg = angleOfAttackBody_deg - RAD2DEG(M_PI) *  ignition::math::sgn(angleOfAttackBody_deg);
+    double combinedNominal_deg = alphaInNominal_deg + RAD2DEG(controlAngle_rad);
+
+    angleOfAttack_deg = combinedNominal_deg - RAD2DEG(M_PI) *  ignition::math::sgn(combinedNominal_deg);
+  }
+
+  return angleOfAttack_deg;
+}
+
 double AerodynamicModel::calculateDynamicPressure_Pa(double velocity_m_per_s) {
   return 0.5 * _environment.getAirDensity_kg_per_m3() * velocity_m_per_s * velocity_m_per_s;
 }
 
-std::pair<double,double> AerodynamicModel::calculateWindAngles(ignition::math::Vector3d velocityInBody_m_per_s) {
+AeroAngles AerodynamicModel::calculateBodyAttackAngles_deg(ignition::math::Vector3d velocityInBody_m_per_s) {
   //Calculate velocity in each direction.
   double u = vecUpwd.Dot(velocityInBody_m_per_s);
   double v = vecPort.Dot(velocityInBody_m_per_s);
