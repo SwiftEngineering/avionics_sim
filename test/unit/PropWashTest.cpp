@@ -97,7 +97,7 @@ TEST(Prop_wash_UnitTest, Test_hover_exit_velocity_from_motor_thrust) {
   pf.load_poly_fit_curve(kDefaultPropWashHoverPoly);
 
   for (size_t i = 0; i < hover_thrust_newtons.size(); i++) {
-    ASSERT_NEAR(pf.get_output_from_poly(0, hover_thrust_newtons[i]),
+    ASSERT_NEAR(pf.get_output_from_poly(kDefaultPropWashHoverPoly, hover_thrust_newtons[i]),
                 hover_exit_velocity[i], 2E-1);
   }
 }
@@ -107,7 +107,7 @@ TEST(Prop_wash_UnitTest, Test_cruise_exit_velocity_from_motor_thrust) {
   pf.load_poly_fit_curve(kDefaultPropWashCruisePoly);
 
   for (size_t i = 0; i < cruise_thrust_newtons.size(); i++) {
-    ASSERT_NEAR(pf.get_output_from_poly(1, cruise_thrust_newtons[i]),
+    ASSERT_NEAR(pf.get_output_from_poly(kDefaultPropWashCruisePoly, cruise_thrust_newtons[i]),
                 cruise_exit_velocity[i], 2E-1);
   }
 }
@@ -117,7 +117,7 @@ TEST(Prop_wash_UnitTest, Test_motor_thrust_from_hover_exit_velocity) {
   pf.load_poly_fit_curve(kDefaultPropWashHoverInvPoly);
 
   for (size_t i = 0; i < hover_exit_velocity.size(); i++) {
-    ASSERT_NEAR(pf.get_output_from_poly(2, hover_exit_velocity[i]),
+    ASSERT_NEAR(pf.get_output_from_poly(kDefaultPropWashHoverInvPoly, hover_exit_velocity[i]),
                 hover_thrust_newtons[i], 2E-1);
   }
 }
@@ -127,7 +127,7 @@ TEST(Prop_wash_UnitTest, Test_motor_thrust_from_cruise_exit_velocity) {
   pf.load_poly_fit_curve(kDefaultPropWashCruiseInvPoly);
 
   for (size_t i = 0; i < cruise_exit_velocity.size(); i++) {
-    ASSERT_NEAR(pf.get_output_from_poly(3, cruise_exit_velocity[i]),
+    ASSERT_NEAR(pf.get_output_from_poly(kDefaultPropWashCruiseInvPoly, cruise_exit_velocity[i]),
                 cruise_thrust_newtons[i], 2E-1);
   }
 }

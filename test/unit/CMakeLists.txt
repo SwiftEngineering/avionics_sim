@@ -9,17 +9,9 @@ else()
     add_executable(unit_tests_exe ${UNIT_TEST_SRC})
     target_link_libraries(unit_tests_exe PUBLIC
     GTest::GTest GTest::Main
-        # gtest_main
-        # gmock
-        # ${LIBXML2_LIBRARIES}
-    	# ignition-math${IGN_MATH_VER}::ignition-math${IGN_MATH_VER}
-	    # ${Boost_FILESYSTEM_LIBRARY}
-    	# ${Boost_LIBRARIES}
         ${PROJECT_NAME}
     )
-    # TODO: consider using cmake's gtest_discover_tests
-    add_test(
-        NAME unit_tests
-        COMMAND unit_tests_exe --gtest_output=xml:${TEST_OUTPUT_XML_DIR} --gtest_catch_exceptions=true
+    gtest_discover_tests(unit_tests_exe
+        EXTRA_ARGS --gtest_output=xml:${TEST_OUTPUT_XML_DIR} --gtest_catch_exceptions=true
     )
 endif()
