@@ -1,0 +1,290 @@
+@Library('SwiftCiSBLibrary@v10') _
+
+def pipeline_uuid=getUUID()
+def pipeline_home=getPipelineHome()
+def agent_environment
+def pipeline_adaptee=getPipelineAdapteeHome()
+def pipeline_post_lock
+
+pipeline {
+  environment {
+    SWIFT_CISB_WORKFLOW_HOME="${pipeline_home}"
+    SWIFT_CISB_WORKFLOW_PATH="${SWIFT_CISB_WORKFLOW_HOME}"
+
+    SWIFT_CISB_ADAPTEE_HOME="${pipeline_adaptee}"
+    SWIFT_CISB_ADAPTEE_PATH="${SWIFT_CISB_ADAPTEE_HOME}"
+
+    SWIFT_CISB_PUBLISH="publish"
+
+    SWIFT_CISB_DOCKER_PROPERTIES="${SWIFT_CISB_ADAPTEE_PATH}/docker.properties"
+    SWIFT_CISB_WORKFLOW_JOB_PROPERTIES="${SWIFT_CISB_ADAPTEE_PATH}/workflow.${JOB_BASE_NAME}.properties"
+    SWIFT_CISB_WORKFLOW_PROPERTIES="${SWIFT_CISB_ADAPTEE_PATH}/workflow.properties"
+    SWIFT_CISB_DEFAULT_PROPERTIES="${SWIFT_CISB_ADAPTEE_PATH}/default.properties"
+    SWIFT_CISB_CHANNEL_PROPERTIES="${SWIFT_CISB_ADAPTEE_PATH}/channel.properties"
+
+    SWIFT_CISB_NEXUS_CREDENTIAL= credentials('swift.nexus')
+
+  }
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '16', artifactDaysToKeepStr: '32'))
+    timeout(time: 60, unit: 'MINUTES')
+    timestamps()
+    disableConcurrentBuilds()
+  }
+
+  agent { label 'SWIFT_CISB_NODE' }
+  stages {
+    stage ('Configuration') {
+      steps {
+        envSetup("${SWIFT_CISB_DOCKER_PROPERTIES}")
+
+        envSetup("${SWIFT_CISB_DEFAULT_PROPERTIES}")
+        envSetup("${SWIFT_CISB_WORKFLOW_PROPERTIES}")
+        envSetup("${SWIFT_CISB_WORKFLOW_JOB_PROPERTIES}")
+        envSetup("${SWIFT_CISB_CHANNEL_PROPERTIES}")
+
+        sh "rm -rf ${SWIFT_CISB_PUBLISH} && mkdir -p ${SWIFT_CISB_PUBLISH}"
+        script {
+          agent_environment=ConfigureAgentEnvironment("${WORKSPACE}/${SWIFT_CISB_ADAPTEE_PATH}/${SWIFT_CISB_AGENT_PROPERTIES}")
+          SetCISBRelease("unstable")
+
+          // Load default resources from here for now (mock and nexus).
+          LoadLibraryScript("scripts/mock.sh")
+          LoadLibraryScript("groovy/mock.groovy")
+
+          LoadLibraryScript("scripts/nexus.sh")
+          LoadLibraryScript("groovy/nexus-publisher.groovy")
+
+          LoadLibraryScript("groovy/post.groovy")
+
+          LoadLibraryScript("scripts/build.sh")
+
+        }
+      }
+    }
+
+    stage ('Setup') {
+      agent {
+        docker {
+          label "$SWIFT_CISB_DOCKER_LABEL"
+          image "${SWIFT_CISB_DOCKER_IMAGE}"
+          reuseNode "${SWIFT_CISB_DOCKER_REUSE}"
+          args "\
+          --user ${SWIFT_CISB_DOCKER_USER} \
+          ${SWIFT_CISB_DOCKER_BIND_GIT} \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          --privileged=true --name \"${SWIFT_CISB_WORKFLOW_NAME}-setup-${pipeline_uuid}\" \
+          "
+        }
+      }
+      steps {
+        echo "###: Stage [Setup]"
+        envSetup("${SWIFT_CISB_DEFAULT_PROPERTIES}")
+        envSetup("${SWIFT_CISB_WORKFLOW_PROPERTIES}")
+        envSetup("${SWIFT_CISB_WORKFLOW_JOB_PROPERTIES}")
+        script {
+          sh "printenv| sort"
+          DefaultWorkflow(getStage().toLowerCase())
+        }
+      }
+    }
+    stage ('Build') {
+      agent {
+        docker {
+          label "$SWIFT_CISB_DOCKER_LABEL"
+          image "${SWIFT_CISB_DOCKER_IMAGE}"
+          reuseNode "${SWIFT_CISB_DOCKER_REUSE}"
+          args "\
+          --user ${SWIFT_CISB_DOCKER_USER} \
+          ${SWIFT_CISB_DOCKER_BIND_GIT} \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          --privileged=true --name \"${SWIFT_CISB_WORKFLOW_NAME}-build-${pipeline_uuid}\" \
+          "
+        }
+      }
+      steps {
+        echo "###: Stage [Build]"
+        script {
+          DefaultWorkflow(getStage().toLowerCase())
+        }
+      }
+    }
+    stage ('Inspect') {
+      agent {
+        docker {
+          label "$SWIFT_CISB_DOCKER_LABEL"
+          image "${SWIFT_CISB_DOCKER_IMAGE}"
+          reuseNode "${SWIFT_CISB_DOCKER_REUSE}"
+          args "\
+          --user ${SWIFT_CISB_DOCKER_USER} \
+          ${SWIFT_CISB_DOCKER_BIND_GIT} \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          --privileged=true --name \"${SWIFT_CISB_WORKFLOW_NAME}-inspect-${pipeline_uuid}\" \
+          "
+        }
+      }
+      steps {
+        echo "###: Stage [Inspect]"
+        script {
+          DefaultWorkflow(getStage().toLowerCase())
+        }
+      }
+    }
+    stage ('Measure') {
+      agent {
+        docker {
+          label "$SWIFT_CISB_DOCKER_LABEL"
+          image "${SWIFT_CISB_DOCKER_IMAGE}"
+          reuseNode "${SWIFT_CISB_DOCKER_REUSE}"
+          args "\
+          --user ${SWIFT_CISB_DOCKER_USER} \
+          ${SWIFT_CISB_DOCKER_BIND_GIT} \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          --privileged=true --name \"${SWIFT_CISB_WORKFLOW_NAME}-measure-${pipeline_uuid}\" \
+          "
+        }
+      }
+      steps {
+        echo "###: Stage [Measure]"
+        script {
+          DefaultWorkflow(getStage().toLowerCase())
+        }
+      }
+    }
+    stage ('Publish') {
+      agent {
+        docker {
+          label "$SWIFT_CISB_DOCKER_LABEL"
+          image "${SWIFT_CISB_DOCKER_IMAGE}"
+          reuseNode "${SWIFT_CISB_DOCKER_REUSE}"
+          args "\
+          --user ${SWIFT_CISB_DOCKER_USER} \
+          ${SWIFT_CISB_DOCKER_BIND_GIT} \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          --privileged=true --name \"${SWIFT_CISB_WORKFLOW_NAME}-publish-${pipeline_uuid}\" \
+          "
+        }
+      }
+      steps {
+        echo "###: Stage [Publish]"
+        script {
+          DefaultWorkflow(getStage().toLowerCase())
+        }
+      }
+    }
+    stage ('Teardown') {
+      agent {
+        docker {
+          label "$SWIFT_CISB_DOCKER_LABEL"
+          image "${SWIFT_CISB_DOCKER_IMAGE}"
+          reuseNode "${SWIFT_CISB_DOCKER_REUSE}"
+          args "\
+          --user ${SWIFT_CISB_DOCKER_USER} \
+          ${SWIFT_CISB_DOCKER_BIND_GIT} \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          --privileged=true --name \"${SWIFT_CISB_WORKFLOW_NAME}-teardown-${pipeline_uuid}\" \
+          "
+        }
+      }
+      steps {
+        echo "###: Stage [Teardown]"
+        script {
+          DefaultWorkflow(getStage().toLowerCase())
+        }
+      }
+    }
+    // TODO: Find a DRY'er solution ?
+    stage ('IsTag') {
+      when { buildingTag() }
+      steps {
+        script {
+          SetCISBRelease("${SWIFT_CISB_CHANNEL_ISTAG}")
+          GetCISBRelease()
+        }
+      }
+    }
+    stage ('IsChangeRequest') {
+      when { changeRequest() }
+      steps {
+        script {
+          SetCISBRelease("${SWIFT_CISB_CHANNEL_ISCHANGEREQUEST}")
+          GetCISBRelease()
+        }
+      }
+    }
+    stage ('IsTest') {
+      when { branch pattern: "${SWIFT_CISB_CHANNEL_ISTEST_REGEX}", comparator: "REGEXP"  }
+      steps {
+        script {
+          SetCISBRelease("${SWIFT_CISB_CHANNEL_ISTEST}")
+          GetCISBRelease()
+        }
+      }
+    }
+    stage ('IsMaster') {
+      when { anyOf { branch 'master'; branch 'swift_master' } }
+      steps {
+        script {
+          SetCISBRelease("${SWIFT_CISB_CHANNEL_ISMASTER}")
+          GetCISBRelease()
+        }
+      }
+    }
+    stage ('IsFeature') {
+      when { branch pattern: "${SWIFT_CISB_CHANNEL_ISFEATURE_REGEX}", comparator: "REGEXP" }
+      steps {
+        script {
+          SetCISBRelease("${SWIFT_CISB_CHANNEL_ISFEATURE}")
+          GetCISBRelease()
+        }
+      }
+    }
+    stage ('IsRelease') {
+      when { branch pattern: "${SWIFT_CISB_CHANNEL_ISRELEASE_REGEX}", comparator: "REGEXP"  }
+      steps {
+        script {
+          SetCISBRelease("${SWIFT_CISB_CHANNEL_ISRELEASE}")
+          GetCISBRelease()
+        }
+      }
+    }
+    // Add containerized post stage
+    stage ('Post') {
+      agent {
+        docker {
+          label "$SWIFT_CISB_DOCKER_LABEL"
+          image "${SWIFT_CISB_DOCKER_IMAGE}"
+          reuseNode "${SWIFT_CISB_DOCKER_REUSE}"
+          args "\
+          --user ${SWIFT_CISB_DOCKER_USER} \
+          ${SWIFT_CISB_DOCKER_BIND_GIT} \
+          --env-file \"${agent_environment}\" \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          --privileged=true --name \"${SWIFT_CISB_WORKFLOW_NAME}-post-${pipeline_uuid}\" \
+          "
+        }
+      }
+      steps {
+        echo "###: Stage [Post]"
+        script {
+          sh "cp -vf .cisb_* ${SWIFT_CISB_PUBLISH}"
+          archiveArtifacts allowEmptyArchive: true, artifacts: "${SWIFT_CISB_PUBLISH}/**/*", fingerprint: true
+          pipeline_post_lock="post."+gitCommitLong()
+          lock(resource: pipeline_post_lock) {
+           DefaultWorkflow(SWIFT_CISB_POST_HANDLER)
+          }
+        }
+      }
+    }
+  }
+  post {
+    always {
+      script {
+        DefaultWorkflow(SWIFT_CISB_POST_NOTIFIER)
+      }
+    }
+    cleanup {
+      cleanWs()
+    }
+  }
+}

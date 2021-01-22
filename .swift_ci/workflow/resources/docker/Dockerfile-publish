@@ -1,0 +1,7 @@
+#
+# Template used to publish artifacts as a Docker image
+#
+ARG SWIFT_CISB_DOCKER_PUBLISH_BASE=base
+
+FROM ${SWIFT_CISB_DOCKER_PUBLISH_BASE} AS swift-artifact-publish
+LABEL maintainer="Swift DevOps<devops@swiftengineering.com>"

@@ -1,0 +1,22 @@
+---
+- test:
+    url: "https://nexus.swiftdo.com:5100"
+    tag: "nexus.swiftdo.com:5100"
+    login: false
+- unstable:
+    url: "https://nexus.swiftdo.com:5100"
+    tag: "nexus.swiftdo.com:5100"
+    login: false
+- edge:
+    url: "https://nexus.swiftdo.com:5100"
+    tag: "nexus.swiftdo.com:5100"
+    login: false
+- development:
+    url: "https://nexus.swiftdo.com:5100"
+    tag: "nexus.swiftdo.com:5100"
+    login: false
+- stable:
+    url: "https://nexus.swiftdo.com:5100"
+    tag: "nexus.swiftdo.com:5100"
+    login: false
+

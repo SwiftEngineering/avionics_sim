@@ -1,19 +1,21 @@
 *.o
 *.make
 test_freeimage.c
+
+# build
 build/
+
 .vscode/
-src/Lift_drag_model.cpp.orig
+
+# If someone incorrectly builds in root
 CMakeFiles/
 Makefile
 cmake_install.cmake
 CMakeCache.txt
-googletest-build/
-googletest-download/
-googletest-src/
 *integration_test*
 *_test_*.html
-avionics_sim_test_runner
-tests/test_runner/lib/
 *.orig
 *.a
+
+# CI
+publish

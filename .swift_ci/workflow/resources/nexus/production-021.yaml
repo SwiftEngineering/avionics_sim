@@ -1,0 +1,22 @@
+---
+- test:
+    url: "https://nexus.swiftflightsoftware.com:5100"
+    tag: "nexus.swiftflightsoftware.com:5100"
+    login: true
+- unstable:
+    url: "https://nexus.swiftflightsoftware.com:5101"
+    tag: "nexus.swiftflightsoftware.com:5101"
+    login: true
+- edge:
+    url: "https://nexus.swiftflightsoftware.com:5181"
+    tag: "nexus.swiftflightsoftware.com:5181"
+    login: true
+- development:
+    url: "https://nexus.swiftflightsoftware.com:5182"
+    tag: "nexus.swiftflightsoftware.com:5182"
+    login: true
+- stable:
+    url: "https://nexus.swiftflightsoftware.com:5183"
+    tag: "nexus.swiftflightsoftware.com:5183"
+    login: true
+
