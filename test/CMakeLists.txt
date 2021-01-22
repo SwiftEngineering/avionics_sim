@@ -32,7 +32,7 @@ find_package(GTest)
 # ---- End Adding Google Test Configuration ----------
 
 # A shared directory for the xml output of each test
-SET(TEST_OUTPUT_XML_DIR ${PROJECT_BINARY_DIR}/publish/xml/)
+SET(TEST_OUTPUT_XML_DIR ${PROJECT_BINARY_DIR}/publish/tests/xml/)
 add_subdirectory(unit)
 # add_subdirectory(integration)
 # add_subdirectory(system)
