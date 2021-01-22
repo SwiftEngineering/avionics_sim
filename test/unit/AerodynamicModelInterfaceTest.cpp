@@ -99,7 +99,7 @@ class AerodynamicModelInterfaceTest : public ::testing::Test {
   // }
 
   virtual void RecordSetup() {
-    RecordProperty("--- Setup",  "------------------");
+    RecordProperty("Setup",  "------------------");
     // std::ostringstream string_store;
 
     // RecordProperty("Area [m2]: ", aerodynamic_model_.getArea());
@@ -110,7 +110,7 @@ class AerodynamicModelInterfaceTest : public ::testing::Test {
   }
 
   virtual void RecordInput() {
-    RecordProperty("--- Input",  "------------------");
+    RecordProperty("Input",  "------------------");
 
     // std::ostringstream string_store;
     // string_store << aerodynamic_model_.getWorldPose();
@@ -121,7 +121,7 @@ class AerodynamicModelInterfaceTest : public ::testing::Test {
   }
 
   virtual void RecordTransient() {
-    RecordProperty("--- Transient",  "------------------");
+    RecordProperty("Transient",  "------------------");
     // RecordProperty("Angle of Attack[deg]: ",
     //                std::to_string(aerodynamic_model_.getAngleOfAttack_deg()));
     // RecordProperty("Lift Coefficient: ", std::to_string(aerodynamic_model_.getCL()));
@@ -133,7 +133,7 @@ class AerodynamicModelInterfaceTest : public ::testing::Test {
 
   virtual void RecordFinal(ignition::math::Vector3d force_N,
                            ignition::math::Vector3d expectedForce_N) {
-    RecordProperty("--- Final",  "------------------");
+    RecordProperty("Final",  "------------------");
     // std::ostringstream string_store;
     // string_store << force_N;
     // RecordProperty("Actual Force[N]: ", string_store.str());
@@ -256,7 +256,7 @@ INSTANTIATE_TEST_CASE_P(AerodynamicModelInterface,
 
 TEST_P(CalcForcesParamTest, AerodynamicForcesFromVelocityAndOrientation) {
   WorldFrameCaseParams params = GetParam();
-  RecordProperty("Test Case: ", params.case_name);
+  RecordProperty("Case", params.case_name);
   RecordSetup();
 
   // Given:
@@ -305,7 +305,7 @@ class CalcForcesInPropWashParamTest :
 
  protected:
   virtual void RecordInput() {
-    RecordProperty("--- Input",  "------------------");
+    RecordProperty("Input",  "------------------");
 
     // RecordProperty("Freestream Velocity [m/s]: ",
     //                aerodynamic_model_.getFreeStreamVelocity());
@@ -341,7 +341,7 @@ INSTANTIATE_TEST_CASE_P(AerodynamicModelInterfaceTest,
 TEST_P(CalcForcesInPropWashParamTest,
        AerodynamicForcesFromPropWashAndSurfaceDeflection) {
   BodyFrameCaseParams params = GetParam();
-  RecordProperty("Test Case: ", params.case_name);
+  RecordProperty("Case", params.case_name);
   RecordSetup();
 
   // Given:
