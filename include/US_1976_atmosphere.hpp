@@ -106,11 +106,11 @@ public:
 
 	//NASA-TM-X-74335 eq 33a / 33b
 	//Pascal
-	static double get_pressure(const double geopot_height);
+	static double get_pressure_Pa(const double geopot_height);
 
 	//NASA-TM-X-74335 eq 42
 	//kg/m^3
-	static double get_mass_density(const double geopot_height);
+	static double get_mass_density_kg_per_m3(const double geopot_height);
 
 	static constexpr double CONSTANTS_STATIC_AIR_PRESSURE_AT_SEA_LEVEL = 101325;	// Pa
 	static constexpr double CONSTANTS_AIR_DENSITY_SEA_LEVEL_15C = 1.225;			// kg/m^3

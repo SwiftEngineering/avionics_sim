@@ -26,9 +26,9 @@ AerodynamicModel::AerodynamicModel() :
   vecPort(ignition::math::Vector3d(0.0, 0.0, 0.0)) {
 }
 
-AerodynamicModel::AerodynamicModel(Airfoil airfoil, PhysicsEnvironment environment) {
+AerodynamicModel::AerodynamicModel(Airfoil airfoil, IPhysicsEnvironment & environment) {
   _airfoil = airfoil;
-  _environment = environment;
+  _environment = & environment;
 }
 
 AerodynamicModel::~AerodynamicModel() {
@@ -178,7 +178,7 @@ double AerodynamicModel::calculateAttackAngleWithControl(
 }
 
 double AerodynamicModel::calculateDynamicPressure_Pa(double velocity_m_per_s) {
-  return 0.5 * _environment.getAirDensity_kg_per_m3() * velocity_m_per_s * velocity_m_per_s;
+  return 0.5 * _environment->get_air_density_kg_per_m3() * velocity_m_per_s * velocity_m_per_s;
 }
 
 AeroAngles AerodynamicModel::calculateBodyAttackAngles_deg(ignition::math::Vector3d velocityInBody_m_per_s) {

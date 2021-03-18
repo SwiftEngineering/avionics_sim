@@ -11,7 +11,6 @@
 #include <random>
 #include "IWindModel.hpp"
 #include "Airfoil.hpp"
-#include "PhysicsEnvironment.hpp"
 
 namespace avionics_sim {
 
