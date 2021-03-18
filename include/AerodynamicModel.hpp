@@ -16,7 +16,7 @@
 #include "LookupTable.hpp"
 #include "AerodynamicState.hpp"
 #include "Airfoil.hpp"
-#include "PhysicsEnvironment.hpp"
+#include "IPhysicsEnvironment.hpp"
 
 namespace avionics_sim {
 
@@ -62,7 +62,7 @@ class AerodynamicModel : public IAerodynamicModel {
 
   AerodynamicModel(); ///< Default constructor
 
-  AerodynamicModel(Airfoil airfoil, PhysicsEnvironment environment);
+  AerodynamicModel(Airfoil airfoil, IPhysicsEnvironment & environment);
 
   // Destructor.
   ///
@@ -189,7 +189,7 @@ class AerodynamicModel : public IAerodynamicModel {
 
   AerodynamicState _state;
 
-  PhysicsEnvironment _environment;
+  IPhysicsEnvironment * _environment;
 
 };
 }

@@ -13,8 +13,13 @@
 
 using namespace avionics_sim;
 
-class LiftDragModelTest : public ::testing::Test {
- protected:
+class LiftDragModelTest : public ::testing::Test, IPhysicsEnvironment {
+  public:
+    virtual double get_air_density_kg_per_m3() {
+      return 1.22;
+    }
+
+  protected:
   avionics_sim::AerodynamicModel lift_drag_model_;
   double tolerance = 0.001;
 
@@ -36,9 +41,6 @@ class LiftDragModelTest : public ::testing::Test {
     avionics_sim::Bilinear_interp::get1DLUTelementsFromString(alphaLUTCD,
         &LUT_NACA0012_CD);
 
-    // Environment Configuration
-    PhysicsEnvironment environment = PhysicsEnvironment();
-
     // Body/Profile Configuration
     double area_m2 = 1.0;
     double area_lateral_m2 = 0.1;
@@ -47,7 +49,7 @@ class LiftDragModelTest : public ::testing::Test {
       LUT_NACA0012_alpha, LUT_NACA0012_CL, LUT_NACA0012_CD);
 
     // Initialize lift drag model for new test
-    lift_drag_model_ = avionics_sim::AerodynamicModel(airfoil, environment);
+    lift_drag_model_ = avionics_sim::AerodynamicModel(airfoil, *this);
     ignition::math::Vector3d up(-1, 0, 0);
     ignition::math::Vector3d forward(0, 0, 1);
     lift_drag_model_.setBasisVectors(forward, up);

@@ -12,7 +12,6 @@
 #include <random>
 #include "IWindModel.hpp"
 #include "Airfoil.hpp"
-#include "PhysicsEnvironment.hpp"
 
 namespace avionics_sim {
 static const double KTS_TO_MPERS = 0.514444;
