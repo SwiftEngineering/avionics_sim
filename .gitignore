@@ -2,6 +2,9 @@
 *.make
 test_freeimage.c
 
+# python
+*.pyc
+
 # build
 build/
 

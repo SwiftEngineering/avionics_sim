@@ -10,6 +10,7 @@ mkdir -p publish/lib
 echo "[$_self] - ENTER [$@]"
 cp -vrf build/publish/* publish/
 cp build/libavionics_sim.a publish/lib/
+cp -r build/documentation publish/
 status=0
 echo "[$_self] - LEAVE [$status]"
 exit ${status}

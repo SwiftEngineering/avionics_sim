@@ -10,8 +10,15 @@ Here; status=1
 echo "[$_self] - ENTER [$@]"
 
   set -x;
-    mkdir -p build && cd build && cmake .. && make
-    status=$?
+    mkdir -p build
+    pushd build
+      cmake .. && make
+      status=$?
+    popd
+
+    # attempt to build jupyter notebooks into html, dont block build if fails
+    python -m jupyter nbconvert --output-dir='./build/documentation' --execute --to html_embed documentation/*/*.ipynb
+
   set +x
 
 echo "[$_self] - LEAVE [$status]"
