@@ -11,10 +11,11 @@
 
 namespace avionics_sim {
 
-class PhysicsEnvironment {
- public:
+class IPhysicsEnvironment {
+  public:
+    virtual ~IPhysicsEnvironment() {};
 
-  double getAirDensity_kg_per_m3();
+    virtual double get_air_density_kg_per_m3() = 0;
 
 };
 
