@@ -7,14 +7,11 @@ function Here() {
 ### Main
 Here; status=1;
 echo "[$_self] - ENTER [$@]"
-if true ; then
-  set -x
-    cd build && make test
-    status=$?
-  set +x
-else
-   echo "[$_self] - IGNORED"
-	 status=0
-fi
+
+set -x
+  cd build && make test
+  status=0
+set +x
+
 echo "[$_self] - LEAVE [$status]"
 exit ${status}

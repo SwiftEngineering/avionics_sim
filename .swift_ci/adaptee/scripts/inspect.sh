@@ -7,8 +7,10 @@ function Here() {
 ### Main
 Here; status=1
 echo "[$_self] - ENTER [$@]"
-  set -x;
+
+set -x;
   status=0
-  set +x;
+set +x;
+
 echo "[$_self] - LEAVE [$status]"
 exit ${status}
