@@ -1,0 +1,35 @@
+{
+    "name": "Avionics Sim Container",
+    "context": "..",
+    "dockerFile": "Dockerfile",
+    "remoteUser": "swift",
+    "runArgs": [
+        "--rm",
+    ],
+    "mounts": [
+        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.gitconfig,target=/home/swift/.gitconfig,type=bind,consistency=cached",
+        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/swift/.ssh,type=bind,consistency=cached",
+        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.devcontainer,target=/home/swift/.devcontainer,type=bind,consistency=cached",
+    ],
+
+    "settings": {
+        // Editor
+        "editor.rulers": [
+            80,
+            120
+        ],
+        "editor.tabSize": 4,
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": true,
+
+        // CMake
+        "cmake.configureOnOpen": true,
+        "cmake.buildDirectory": "${workspaceRoot}/build/${buildType}",
+    },
+
+    "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake",
+        "ms-vscode.cmake-tools"
+    ]
+}
