@@ -2,18 +2,21 @@
 
 A library for simulating avionics commonly used in small UAS, such as pressure sensors, IMUs, GPS, batteries and other supporting utility, model, and simulation code.
 
-Currently intended for use with PX4's sitl_gazebo.
+Currently intended for use with PX4's sitl_gazebo; however, development strives to be independent from any project.
 
 ## Features
 
- * A configurable battery model with transient response
- * A differential pressure sensor model
- * A first order discrete time low pass filter
- * A Gaussian-Markov processes noise generator
+ * Aerodynamic Model with configurable airfoils
+ * Wind/Turbulence Modeling
+ * Transmission Modeling for cases like elevon linkages
+ * Configurable battery model with transient response
+ * Differential pressure sensor model
+ * First order discrete time low pass filter
+ * Gaussian-Markov processes noise generator
    * Seedable, resettable
    * MT19937-64 based
- * An implementation of the US 1976 atmosphere model
- * A 2D (Bilinear) lookup table implementation
+ * US 1976 atmosphere model
+ * 2D (Bilinear) lookup table implementation
 
 ## Planned Features
 
@@ -24,9 +27,26 @@ Currently intended for use with PX4's sitl_gazebo.
  * C++11
  * Boost
  * CMake
+ * Ignition Math
 
 ## Building
 
+Avionics Sim uses cmake for configuration intended for a shadow build process.
+
+From the project directory, that looks like the following steps
+
+1. Initialize the shadow build directory, and enter it
+```sh
+mkdir -p build && cd build
+```
+2. Configure project using the Cmake file in the project directory
+```sh
+cmake ..
+```
+3. Build the project using the generated makefile
+```
+make
+```
 
 ## Testing
 
@@ -60,22 +80,17 @@ We can filter on any layer:
 ctest -R Test_constant_current_discharge_no_interpolation_low
 ```
 
-
-
-## Related repositories
-
- * avionics_sim_unit_tests
- * avionics_sim_unit_tests_runner
-
 ## Copyright
 
-Copyright (c) Swift Engineering Inc. 2020
+Copyright (c) Swift Engineering Inc. 2021
 
 ## License
 
 Licensed by Swift Engineering Inc. under the MIT license. See LICENSE file for details.
 
 ## How to Read This Documentation
+
+Features have their own documentation seperated out within the `documentation` folder. In addition to markdown files for feature description and usage, when necessary supplementary Jupyter Notebooks are provided for predicitive analysis of the model.
 
 If reading this document on a local machine, please ensure that the complete contents of the `documentation` folder have been pulled and to use a markdown reader such as Typora.
 
