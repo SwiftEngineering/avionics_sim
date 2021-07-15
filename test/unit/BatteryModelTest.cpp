@@ -388,11 +388,11 @@ TEST(Battery_model_UnitTest, Test_max_power_available)
     std::vector<double> volts = {50.0, 48.0, 46.0, 44.0, 42.0, 40.0, 38.0};
     std::vector<double> ohms = {0.020, 0.040, 0.060, 0.080, 0.100, 0.120, 0.140, 0.160};
 
-    for (auto i : volts)
+    for (auto V : volts)
     {
-        for (auto j : ohms)
+        for (auto R : ohms)
         {
-            EXPECT_NEAR(volts[i]*volts[i]/(4*ohms[j]), bm.compute_max_power_available(volts[i], ohms[j]), epsilon);
+            EXPECT_NEAR(V*V/(4*R), bm.compute_max_power_available(V, R), epsilon);
         }
     }
 }
