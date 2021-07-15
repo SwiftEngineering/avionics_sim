@@ -17,7 +17,7 @@ echo "[$_self] - ENTER [$@]"
     popd
 
     # attempt to build jupyter notebooks into html, dont block build if fails
-    python -m jupyter nbconvert --output-dir='./build/documentation' --execute --to html_embed documentation/*/*.ipynb
+    python3 -m jupyter nbconvert --output-dir='./build/documentation' --execute --to html_embed documentation/*/*.ipynb
 
   set +x
 
