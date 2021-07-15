@@ -4,9 +4,10 @@ ARG CMAKE_MAJOR=3
 ARG CMAKE_MINOR=17
 ARG CMAKE_PATCH=0
 
-ENV TZ=Etc/UTC
+ARG TZ=Etc/UTC
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
+# Update App Manager
 RUN apt update
 
 # CLang Project Development Tools
@@ -26,6 +27,17 @@ RUN apt install -y python3 python3-pip
 RUN apt install -y pandoc texlive-xetex texlive-fonts-recommended texlive-generic-recommended inkscape libcanberra-gtk-module
 RUN python3 -m pip install -U numpy scipy matplotlib
 RUN python3 -m pip install -U jupyter nbconvert jupyter_contrib_nbextensions jupyter_nbextensions_configurator
+
+# Add A Developer User
+ARG USERNAME=dev
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+RUN groupadd --gid $USER_GID ${USERNAME} && \
+    useradd --uid $USER_UID --gid $USER_GID -m ${USERNAME} && \
+    apt install -y sudo && \
+    echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME && \
+    chmod 0440 /etc/sudoers.d/$USERNAME
 
 # Package Manager Cleanup
 RUN apt-get -y autoremove \
