@@ -2,14 +2,8 @@
     "name": "Avionics Sim Container",
     "context": "..",
     "dockerFile": "Dockerfile",
-    "remoteUser": "swift",
     "runArgs": [
         "--rm",
-    ],
-    "mounts": [
-        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.gitconfig,target=/home/swift/.gitconfig,type=bind,consistency=cached",
-        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/swift/.ssh,type=bind,consistency=cached",
-        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.devcontainer,target=/home/swift/.devcontainer,type=bind,consistency=cached",
     ],
 
     "settings": {
@@ -30,6 +24,8 @@
     "extensions": [
         "ms-vscode.cpptools",
         "ms-vscode.cmake",
-        "ms-vscode.cmake-tools"
+        "ms-vscode.cmake-tools",
+        "ms-python.python",
+        "ms-toolsai.jupyter"
     ]
 }
