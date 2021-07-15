@@ -2,6 +2,7 @@
     "name": "Avionics Sim Container",
     "context": "..",
     "dockerFile": "Dockerfile",
+    "remoteUser": "dev",
     "runArgs": [
         "--rm",
     ],
