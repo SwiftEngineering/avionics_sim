@@ -317,4 +317,4 @@ bool Bilinear_interp::get2DLUTelementsFromString(const std::string &inputVals,
 
   return true;
 }
-}
+} // namespace avionics_sim

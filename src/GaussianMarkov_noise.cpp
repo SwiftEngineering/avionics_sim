@@ -76,4 +76,4 @@ double GaussianMarkov_noise::update(const double dT)
 	return y_n;
 }
 
-}
+} // namespace avionics_sim

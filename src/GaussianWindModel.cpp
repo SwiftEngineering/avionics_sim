@@ -99,4 +99,4 @@ v3 GaussianWindModel::generate_random_wind_direction() {
 }
 
 
-}
+} // namespace avionics_sim

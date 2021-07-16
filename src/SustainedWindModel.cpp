@@ -53,4 +53,4 @@ void SustainedWindModel::set_linear_rate(double strength, v3 direction){
     linear_rate_ = _direction * _strength;
 }
 
-}
+} // namespace avionics_sim

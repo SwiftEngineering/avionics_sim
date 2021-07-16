@@ -52,4 +52,4 @@ namespace avionics_sim
       return rotAMatrix.Rotation();
     }
 
-}
+} // namespace avionics_sim
