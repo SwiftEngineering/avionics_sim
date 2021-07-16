@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.10)
 project(avionics_sim C CXX)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_CLANG_TIDY "clang-tidy;-checks=*")
 
 # Find the Boost Library
 set(BOOST_VER 1.65.1)
@@ -72,3 +71,5 @@ cpack_add_component(avionics-sim-dev
 	DESCRIPTION "Dev headers for avionics sim"
 	DEPENDS avionics-sim
 )
+
+include(${CMAKE_SOURCE_DIR}/.cmake/clang_tools.cmake)
