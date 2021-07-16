@@ -16,10 +16,18 @@
         "editor.tabSize": 4,
         "editor.detectIndentation": false,
         "editor.insertSpaces": true,
+        "editor.formatOnSave": true,
+        "editor.showFoldingControls": "always",
 
         // CMake
         "cmake.configureOnOpen": true,
         "cmake.buildDirectory": "${workspaceRoot}/build/${buildType}",
+
+        // Styling
+        "astyle.astylerc": "${workspaceRoot}/.astyle/astylerc",
+        "[cpp]": {
+            "editor.defaultFormatter": "chiehyu.vscode-astyle"
+        }
     },
 
     "extensions": [
@@ -27,6 +35,7 @@
         "ms-vscode.cmake",
         "ms-vscode.cmake-tools",
         "ms-python.python",
-        "ms-toolsai.jupyter"
+        "ms-toolsai.jupyter",
+        "chiehyu.vscode-astyle"
     ]
 }
