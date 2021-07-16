@@ -11,7 +11,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN apt update
 
 # CLang Project Development Tools
-RUN apt install -y git astyle gcovr lcov
+RUN apt install -y git astyle gcovr lcov clang clang-tidy
 
 # Versioned CMake
 ENV CMAKE_MAJOR_MINOR=${CMAKE_MAJOR}.${CMAKE_MINOR}
