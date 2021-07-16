@@ -23,13 +23,19 @@ jobs:
       uses: actions/checkout@v2
     
     - name: Build docker image
-      run: docker build -t ci_container < Dockerfile
+      run: docker build -t ci_container . < Dockerfile
+    
+    - name: Start Container
+      run: docker run --name my_container -dit -v $PWD:/work_dir -w/work_dir ci_container /bin/bash
     
     - name: Configure in Container
-      run: docker run -it -v $PWD:/work_dir -w/work_dir ci_container cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: docker exec my_container cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
     
     - name: Build in Container
-      run: docker exec -it cmake --build build --config ${{env.BUILD_TYPE}}
+      run: docker exec my_container cmake --build build --config ${{env.BUILD_TYPE}}
+
+    - name: Stop Container
+      run: docker stop my_container
 
 #     - name: Configure CMake
 #       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
