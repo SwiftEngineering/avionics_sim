@@ -6,7 +6,6 @@
     "runArgs": [
         "--rm",
     ],
-
     "settings": {
         // Editor
         "editor.rulers": [
@@ -18,18 +17,15 @@
         "editor.insertSpaces": true,
         "editor.formatOnSave": true,
         "editor.showFoldingControls": "always",
-
         // CMake
         "cmake.configureOnOpen": true,
         "cmake.buildDirectory": "${workspaceRoot}/build/${buildType}",
-
         // Styling
-        "astyle.astylerc": "${workspaceRoot}/.astyle/astylerc",
+        "astyle.astylerc": "${workspaceRoot}/.styling/astyle/astylerc",
         "[cpp]": {
             "editor.defaultFormatter": "chiehyu.vscode-astyle"
         }
     },
-
     "extensions": [
         "ms-vscode.cpptools",
         "ms-vscode.cmake",
