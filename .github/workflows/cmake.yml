@@ -28,6 +28,9 @@ jobs:
     
     - name: Test changing working dir
       working-directory: ${{github.workspace}}
+      run: |
+        ls -al
+        pwd
       
         
     - name: Debugging help2
