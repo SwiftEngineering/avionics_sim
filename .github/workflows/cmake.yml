@@ -21,23 +21,18 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
-    - name: Debugging help
+    - name: Install dependencies
       run: |
-        ls -al
-        pwd
+        apt update
+        apt install -y git astyle gcovr lcov clang clang-tidy
+        apt install -y libboost-all-dev libignition-math4-dev
     
-    - name: Test changing working dir
-      working-directory: ${{github.workspace}}
+    - name: Install  Documentation Dependecies
       run: |
-        ls -al
-        pwd
-      
-        
-    - name: Debugging help2
-      run: |
-        ls -al
-        pwd
-
+        apt install -y python3 python3-pip
+        apt install -y pandoc texlive-xetex texlive-fonts-recommended texlive-generic-recommended inkscape libcanberra-gtk-module
+        python3 -m pip install -U numpy scipy matplotlib
+        python3 -m pip install -U jupyter nbconvert jupyter_contrib_nbextensions jupyter_nbextensions_configurator
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
