@@ -168,3 +168,23 @@ The documentation for this aerodynamic model is in three parts.
 [Documentation for Gazebo plugin](documentation/liftdrag_model/devguide/plugin/index.html).
 
 [Documentation for Lift Drag Model C++ class](documentation/liftdrag_model/devguide/model_class/index.html).
+
+## CLang Support
+
+CLang support is currently configured for use within the development container, as such all commands following are defined in the context of running in the container.
+
+### Styling
+
+Run the following in the development container to style all clang related files.
+
+```sh
+astyle *.cpp *.hpp *.h --suffix=none --recursive
+```
+
+### Linting
+
+Run the following in the development container
+
+```sh
+clang-tidy src/*.cpp -- -Iinclude -DMY_DEFINES ...
+```
