@@ -103,4 +103,4 @@ double US_1976_atmosphere::get_mass_density_kg_per_m3(const double geopot_height
 	return rho;
 }
 
-}
+} // namespace avionics_sim

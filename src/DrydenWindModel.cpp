@@ -148,4 +148,4 @@ void DrydenWindModel::update_scale_length_and_intensities(double altitude_m) {
 }
 
 
-}
+} // namespace avionics_sim

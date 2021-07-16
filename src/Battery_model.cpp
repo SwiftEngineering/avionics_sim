@@ -201,4 +201,4 @@ double Battery_model::get_soc_percent(){
     return (m_capacity - m_soc)/m_capacity;
 }
 
-}
+} // namespace avionics_sim

@@ -91,4 +91,4 @@ double Exponential_smoothing_filter::get_phase(const double f) const
 	return -atan(omega_tau);
 }
 
-}
+} // namespace avionics_sim

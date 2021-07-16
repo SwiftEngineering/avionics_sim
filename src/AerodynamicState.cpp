@@ -52,4 +52,4 @@ void AerodynamicState::print() {
       << "Force[N]: " << force_N << '\n';
 }
 
-}
+} // namespace avionics_sim

@@ -49,4 +49,4 @@ double FourBarMechanism::bound_output_rad(const double deflection_rad){
   return bounded_deflection_rad;
 }
 
-}
+} // namespace avionics_sim

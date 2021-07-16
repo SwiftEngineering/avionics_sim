@@ -32,4 +32,4 @@ LookupTable::LookupTable::LookupTable(
     return valB;
   }
 
-}
+} // namespace avionics_sim

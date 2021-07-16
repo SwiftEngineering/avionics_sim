@@ -54,4 +54,4 @@ namespace avionics_sim {
 		return _lateralArea_m2;
 	}
 
-}
+} // namespace avionics_sim

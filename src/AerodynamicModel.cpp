@@ -7,17 +7,19 @@
  */
 
 #include "AerodynamicModel.hpp"
-#include "Coordinate_Utils.hpp"
-#include <functional>
-#include <errno.h>
-#include <algorithm>
 
-#include <sstream>
-#include <cstdlib>
-#include <iostream>
-#include <fstream>
-#include <iterator>
+#include <algorithm>
 #include <cmath>
+#include <cstdlib>
+#include <errno.h>
+#include <functional>
+#include <fstream>
+#include <iostream>
+#include <iterator>
+#include <sstream>
+
+#include "Coordinate_Utils.hpp"
+
 
 namespace avionics_sim {
 AerodynamicModel::AerodynamicModel() :

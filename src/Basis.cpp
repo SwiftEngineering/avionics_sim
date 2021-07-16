@@ -22,4 +22,4 @@ Basis::Basis() :
     side=forward.Cross(up);
   }
 
-}
+} // namespace avionics_sim

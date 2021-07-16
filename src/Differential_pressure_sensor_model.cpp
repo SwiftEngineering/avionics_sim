@@ -54,4 +54,4 @@ double Differential_pressure_sensor_model::get_air_density(const double static_p
 	return static_pressure / (CONSTANTS_AIR_GAS_CONST * (temperature_celsius - CONSTANTS_ABSOLUTE_NULL_CELSIUS));
 }
 
-}
+} // namespace avionics_sim
