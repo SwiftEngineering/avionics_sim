@@ -9,8 +9,10 @@
 #pragma once
 
 #include <ignition/math.hh>
-#include "Property.hpp"
+
 #include <cmath>
+
+#include "Property.hpp"
 
 namespace avionics_sim {
 
@@ -24,7 +26,6 @@ namespace avionics_sim {
 
 class AerodynamicState {
  public:
-
   AerodynamicState();
 
   void print();
@@ -57,7 +58,6 @@ class AerodynamicState {
   Property <double> lateralForce_N;
 
   Property <ignition::math::Vector3d> force_N;
-
 };
 
-}
+}   // namespace avionics_sim

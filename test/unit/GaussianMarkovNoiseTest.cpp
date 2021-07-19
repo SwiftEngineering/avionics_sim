@@ -1,11 +1,11 @@
-#include "GaussianMarkov_noise.hpp"
-
-// gtest
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+
 #include <array>
 #include <cmath>
 #include <vector>
+
+#include "GaussianMarkov_noise.hpp"
 
 TEST(GaussianMarkov_noise_UnitTest, init) {
   avionics_sim::GaussianMarkov_noise gm(1, 1, 0);
@@ -131,7 +131,7 @@ TEST(GaussianMarkov_noise_UnitTest, test_sigma) {
     distance_b += dx * dx;
   }
 
-  //over enough generations, distance should approach sigma^2 faster
+  // over enough generations, distance should approach sigma^2 faster
   EXPECT_NEAR(distance_b / distance_a, 100.0, 2.5);
 }
 
@@ -158,6 +158,6 @@ TEST(GaussianMarkov_noise_UnitTest, test_tau) {
     len_b += std::abs(next - last);
   }
 
-  //dist b should move faster than dist a
+  // dist b should move faster than dist a
   EXPECT_GT(len_b, len_a);
 }

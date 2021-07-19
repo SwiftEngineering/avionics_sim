@@ -14,7 +14,6 @@
 namespace avionics_sim {
 class Bilinear_interp {
  public:
-
   // INTERP_SUCCESS             Indicates that interpolation was a success.
   // INTERP_WARN_OUT_OF_BOUNDS  Indicates that the interpolation was clamped because input data was out of bounds
   //                            and was therefore clamped to the nearest available data. This output still returns
@@ -33,7 +32,7 @@ class Bilinear_interp {
 
 
 
-  Bilinear_interp(); ///< Default constructor
+  Bilinear_interp();    ///< Default constructor
 
   ///
   /// \brief      Constructs an interpolation object with x, y, and z vectors being passed at construciton.
@@ -216,9 +215,9 @@ class Bilinear_interp {
   /// \brief Vectors to hold LUT data.
   /// Holds 2D LUT values for X and Z points
   std::vector< std::vector<double> > xVals, zVals;
-  std::vector<double> yVals; ///< Holds Y values for LUT data.
+  std::vector<double> yVals;    ///< Holds Y values for LUT data.
 
   /// Bools to keep track of which LUT data values have been added.
   bool haveXVals, haveYVals, haveZVals;
 };
-}
+}   // namespace avionics_sim

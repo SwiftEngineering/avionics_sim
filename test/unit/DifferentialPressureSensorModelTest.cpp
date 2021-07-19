@@ -1,7 +1,6 @@
-// test_diff_press.cpp
-#include "Differential_pressure_sensor_model.hpp"
-
 #include <gtest/gtest.h>
+
+#include "Differential_pressure_sensor_model.hpp"
 
 // Test conversion from indicated airspeed to differential pressure for non-compressable flow
 TEST(Differential_pressure_UnitTest, Test_diff_press_from_indicated) {
@@ -14,7 +13,6 @@ TEST(Differential_pressure_UnitTest, Test_diff_press_from_indicated) {
     computed_diff_press = dp.diff_press_from_indicated_airspeed(indicated[i]);
     ASSERT_DOUBLE_EQ(computed_diff_press, expected[i]);
   }
-
 }
 
 // Test conversion from corrected airspeed to indicated airspeed
@@ -39,7 +37,6 @@ TEST(Differential_pressure_UnitTest, Test_indicated_from_corrected) {
       ASSERT_DOUBLE_EQ(calculated_indicated, expected[i][j]);
     }
   }
-
 }
 
 // Test conversion from true airspeed to indicated airspeed
@@ -60,7 +57,6 @@ TEST(Differential_pressure_UnitTest,
       }
     }
   };
-  ;
 
   for (size_t i = 0; i < true_airspeed.size(); i++) {
     for (size_t j = 0; j < static_pressure.size(); j++) {
@@ -115,7 +111,6 @@ TEST(Differential_pressure_UnitTest, Test_diff_press_from_true_airspeed) {
       }
     }
   }
-
 }
 #if(0)
 int main(int argc, char **argv) {

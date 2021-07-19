@@ -1,12 +1,11 @@
 #include <gtest/gtest.h>
-// #include <gmock/gmock.h>
+#include <ignition/math/Pose3.hh>
+#include <ignition/math/Vector3.hh>
+#include <stdio.h>
 
 #include <string>
 #include <sstream>
 #include <boost/array.hpp>
-#include <stdio.h>
-#include <ignition/math/Pose3.hh>
-#include <ignition/math/Vector3.hh>
 
 #include "Math_util.hpp"
 

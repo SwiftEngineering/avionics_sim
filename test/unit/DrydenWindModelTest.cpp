@@ -2,7 +2,7 @@
 
 #include "DrydenWindModel.hpp"
 
-using namespace avionics_sim;
+namespace avionics_sim {
 
 class MockProvider : public IDrydenProvider {
  public:
@@ -11,7 +11,7 @@ class MockProvider : public IDrydenProvider {
     state.velocity_m_per_s = v3(9.85, -0.72, 0.12);
     state.altitude_m = 457.2;
     return state;
-  };
+  }
 };
 
 TEST(DrydenWindModelTest, Test_Blank_Initialization) {
@@ -58,7 +58,7 @@ TEST(DrydenWindModelTest, Test_Simulation) {
   double wingspan_m = 3.96;
   double turbulence_intensity = MODERRATE_TURBULENCE_INTENSITY_m_per_s;
 
-  FILE * test_results_file = fopen("dryden_sim_linear_rates.csv", "w");
+  FILE *test_results_file = fopen("dryden_sim_linear_rates.csv", "w");
 
   DrydenWindModel wind_model(
     random_generator,
@@ -74,12 +74,13 @@ TEST(DrydenWindModelTest, Test_Simulation) {
 
   wind_model.set_sample_period(sample_period_s);
 
-  for(int i = 0; i < num_steps; i++) {
+  for (int i = 0; i < num_steps; i++) {
     double time_s = i * sample_period_s;
     WindRate wind_rate = wind_model.get_rates();
     wind_rates.push_back(std::pair<double, WindRate>(time_s, wind_rate));
 
-    fprintf(test_results_file, "%f, %f, %f, %f\n", time_s, wind_rate.linear_rate.X(), wind_rate.linear_rate.Y(), wind_rate.linear_rate.Z());
+    fprintf(test_results_file, "%f, %f, %f, %f\n", time_s, wind_rate.linear_rate.X(), wind_rate.linear_rate.Y(),
+            wind_rate.linear_rate.Z());
 
     ASSERT_TRUE(!isnan(wind_rate.linear_rate.X()));
     ASSERT_TRUE(!isnan(wind_rate.linear_rate.Y()));
@@ -88,3 +89,5 @@ TEST(DrydenWindModelTest, Test_Simulation) {
 
   fclose(test_results_file);
 }
+
+}  // namespace avionics_sim

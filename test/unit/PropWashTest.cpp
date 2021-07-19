@@ -12,41 +12,41 @@
 /// \brief Default prop wash polynomial coefficients for hover motors
 static const auto kDefaultPropWashHoverPoly =  boost::array<double, 4> {
   {
-    0.0000000000000000,	// 0
-    2.7030763802904000,	// 1
-    -0.702633077657167,	// 2
+    0.0000000000000000,  // 0
+    2.7030763802904000,  // 1
+    -0.702633077657167,  // 2
     0.0736560590372073
-  }	// 3
+  }  // 3
 };
 
 /// \brief Default prop wash polynomial coefficients for cruise motors
 static const auto kDefaultPropWashCruisePoly =  boost::array<double, 4> {
   {
-    0.000000000000000,	// 0
-    11.97254427818900,	// 1
-    -12.8282803262074,	// 2
+    0.000000000000000,  // 0
+    11.97254427818900,  // 1
+    -12.8282803262074,  // 2
     5.492934885776160
-  }	// 3
+  }  // 3
 };
 
 /// \brief Default prop wash inverse polynomial coefficients for hover motors
 static const auto kDefaultPropWashHoverInvPoly =  boost::array<double, 4> {
   {
-    0.0000000000000000000, // 0
-    0.0000000000000000000, // 1
-    0.2098022317000000000, // 2
+    0.0000000000000000000,  // 0
+    0.0000000000000000000,  // 1
+    0.2098022317000000000,  // 2
     -1.33511353301094E-17
-  }// 3
+  }  // 3
 };
 
 /// \brief Default prop wash inverse polynomial coefficients for cruise motors
 static const auto kDefaultPropWashCruiseInvPoly =  boost::array<double, 4> {
   {
-    0.000000000000000000,	// 0
-    3.83435246246275E-16,	// 1
-    0.044691599700000000,	// 2
+    0.000000000000000000,   // 0
+    3.83435246246275E-16,   // 1
+    0.044691599700000000,   // 2
     3.14157801432187E-17
-  }// 3
+  }  // 3
 };
 
 // Test variables

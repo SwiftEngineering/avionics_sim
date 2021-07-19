@@ -1,10 +1,9 @@
 #include <gtest/gtest.h>
-// #include <gmock/gmock.h>
+#include <stdio.h>
 
 #include <string>
 #include <sstream>
 #include <boost/array.hpp>
-#include <stdio.h>
 
 #include "LookupTable.hpp"
 
@@ -16,10 +15,6 @@ class LookupTableTest : public ::testing::Test {
   avionics_sim::LookupTable lookupTable_ =
     avionics_sim::LookupTable(colNames, cols);
 
-  // You can define per-test set-up logic as usual.
-  virtual void SetUp() {
-
-  }
 };
 
 TEST_F(LookupTableTest, TestConstruction) {

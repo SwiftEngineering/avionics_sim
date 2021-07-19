@@ -1,21 +1,21 @@
 #include <gtest/gtest.h>
-// #include <gmock/gmock.h>
-
-#include <string>
-#include <sstream>
-#include <boost/array.hpp>
 #include <stdio.h>
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector3.hh>
 
+#include <string>
+#include <sstream>
+
+#include <boost/array.hpp>
+
 #include "AerodynamicModel.hpp"
 #include "Lift_drag_model_exception.hpp"
 
-#define PERCENT_DIFF_100(a,b) ((a == 0) && (b==0)) ? 0 : 2.0 * abs(a-b) / (a+b) * 100.0
-#define EXPECT_PERCENT_DIFF_LT(a, b, tolerance_100) EXPECT_LT(PERCENT_DIFF_100(a,b), tolerance_100)
+#define PERCENT_DIFF_100(a, b) ((a == 0) && (b == 0)) ? 0 : 2.0 * abs(a - b) / (a + b) * 100.0
+#define EXPECT_PERCENT_DIFF_LT(a, b, tolerance_100) EXPECT_LT(PERCENT_DIFF_100(a, b), tolerance_100)
 
 
-using namespace avionics_sim;
+namespace avionics_sim {
 
 struct WorldFrameCaseParams {
   std::string case_name;
@@ -28,12 +28,12 @@ struct WorldFrameCaseParams {
 };
 
 class AerodynamicModelInterfaceTest : public ::testing::Test, IPhysicsEnvironment {
-  public:
-    virtual double get_air_density_kg_per_m3() {
-      return 1.22;
-    }
+ public:
+  virtual double get_air_density_kg_per_m3() {
+    return 1.22;
+  }
 
-  protected:
+ protected:
   // Some expensive resource shared by all tests.
   // static T* shared_resource_;
 
@@ -77,8 +77,8 @@ class AerodynamicModelInterfaceTest : public ::testing::Test, IPhysicsEnvironmen
     double area_m2 = 1.0;
     double area_lateral_m2 = 0.1;
     Airfoil airfoil = Airfoil(
-      area_m2, area_lateral_m2,
-      LUT_NACA0012_alpha, LUT_NACA0012_CL, LUT_NACA0012_CD);
+                        area_m2, area_lateral_m2,
+                        LUT_NACA0012_alpha, LUT_NACA0012_CL, LUT_NACA0012_CD);
 
     // Initialize aerodynamic model for new test
     aerodynamic_model_ = avionics_sim::AerodynamicModel(airfoil, *this);
@@ -147,7 +147,6 @@ class AerodynamicModelInterfaceTest : public ::testing::Test, IPhysicsEnvironmen
 class CalcForcesParamTest :
   public AerodynamicModelInterfaceTest,
   public testing::WithParamInterface<WorldFrameCaseParams> {
-
 };
 
 const std::vector<WorldFrameCaseParams> params{
@@ -239,7 +238,7 @@ const std::vector<WorldFrameCaseParams> params{
     ignition::math::Vector3d(0, 0, -20),
     ignition::math::Vector3d(16.3525, 0, 0.075705)
   },
-    {
+  {
     "Wind Behind With Control Surface With Little Propwash",
     ignition::math::Vector3d(0, 0, 0),
     ignition::math::Vector3d(0.010431, 0.161863, -2.36131),
@@ -269,10 +268,10 @@ TEST_P(CalcForcesParamTest, AerodynamicForcesFromVelocityAndOrientation) {
 
   // When: // TODO reduce this down to one function call
   ignition::math::Vector3d force_N = aerodynamic_model_.updateForcesInBody_N(
-                                      pose_world,
-                                      params.velocity_world_m_per_s,
-                                      params.propWash_m_per_s,
-                                      params.controlAngle_rad);
+                                       pose_world,
+                                       params.velocity_world_m_per_s,
+                                       params.propWash_m_per_s,
+                                       params.controlAngle_rad);
   RecordTransient();
 
   // // Then:
@@ -302,7 +301,6 @@ struct BodyFrameCaseParams {
 class CalcForcesInPropWashParamTest :
   public AerodynamicModelInterfaceTest,
   public testing::WithParamInterface<BodyFrameCaseParams> {
-
  protected:
   virtual void RecordInput() {
     RecordProperty("Input",  "------------------");
@@ -312,7 +310,6 @@ class CalcForcesInPropWashParamTest :
     // RecordProperty("Angle of Attack [deg]: ",
     //                aerodynamic_model_.getAngleOfAttack_deg());
   }
-
 };
 
 const std::vector<BodyFrameCaseParams> propWashCasesParams{
@@ -370,3 +367,5 @@ const std::vector<BodyFrameCaseParams> propWashCasesParams{
 //   EXPECT_PERCENT_DIFF_LT(force_N.Y(), expectedForce_N.Y(), tolerance_100);
 //   EXPECT_PERCENT_DIFF_LT(force_N.Z(), expectedForce_N.Z(), tolerance_100);
 // }
+
+}  // namespace avionics_sim

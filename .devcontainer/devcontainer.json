@@ -24,7 +24,9 @@
         "astyle.astylerc": "${workspaceRoot}/.styling/astyle/astylerc",
         "[cpp]": {
             "editor.defaultFormatter": "chiehyu.vscode-astyle"
-        }
+        },
+        // Linting
+        "cpplint.lineLength": 120
     },
     "extensions": [
         "ms-vscode.cpptools",
@@ -32,6 +34,7 @@
         "ms-vscode.cmake-tools",
         "ms-python.python",
         "ms-toolsai.jupyter",
-        "chiehyu.vscode-astyle"
+        "chiehyu.vscode-astyle",
+        "mine.cpplint"
     ]
 }

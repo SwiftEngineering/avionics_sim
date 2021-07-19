@@ -13,7 +13,7 @@
 
 namespace {
 
-  double epsilon = 1E-5;
+double epsilon = 1E-5;
 
 }
 

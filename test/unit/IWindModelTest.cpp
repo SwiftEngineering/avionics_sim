@@ -1,22 +1,21 @@
-#include "TestUtils.hpp"
-
-#include <iostream>
-
-#include <string>
-#include <sstream>
-#include <boost/array.hpp>
 #include <stdio.h>
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector3.hh>
 
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <boost/array.hpp>
+
 #include "IWindModel.hpp"
 #include "GaussianWindModel.hpp"
+#include "TestUtils.hpp"
 
-#define PERCENT_DIFF_100(a,b) ((a == 0) && (b==0)) ? 0 : (2.0 * abs(a-b) / (a+b) * 100.0)
-#define EXPECT_PERCENT_DIFF_LT(a, b, tolerance_100) EXPECT_LT(PERCENT_DIFF_100(a,b), tolerance_100)
+#define PERCENT_DIFF_100(a, b) ((a == 0) && (b == 0)) ? 0 : (2.0 * abs(a - b) / (a + b) * 100.0)
+#define EXPECT_PERCENT_DIFF_LT(a, b, tolerance_100) EXPECT_LT(PERCENT_DIFF_100(a, b), tolerance_100)
 
 
-using namespace avionics_sim;
+namespace avionics_sim {
 
 struct WorldFrameCaseParams {
   std::string case_name;
@@ -27,7 +26,7 @@ struct WorldFrameCaseParams {
 
 class IWindModelTest : public ::testing::TestWithParam<WorldFrameCaseParams> {
  protected:
-  avionics_sim::IWindModel * wind_model_;
+  avionics_sim::IWindModel *wind_model_;
   double tolerance_100 = 0.5; /**< Allowable percent tolerance, note this is 0.5%, not 50% */
 
   static void SetUpTestSuite() {
@@ -43,7 +42,6 @@ class IWindModelTest : public ::testing::TestWithParam<WorldFrameCaseParams> {
     std::default_random_engine dir_generator(2);
 
     wind_model_ = new GaussianWindModel(str_generator, dir_generator);
-
   }
 
   virtual void TearDown() {
@@ -87,3 +85,5 @@ const std::vector<WorldFrameCaseParams> params{
 INSTANTIATE_TEST_CASE_P(WindModelTests,
                         IWindModelTest,
                         ::testing::ValuesIn(params));
+
+}  // namespace avionics_sim
