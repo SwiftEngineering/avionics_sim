@@ -13,39 +13,36 @@
 
 namespace avionics_sim {
 
-DrydenWindModel::DrydenWindModel(){
+DrydenWindModel::DrydenWindModel() {
 
 }
 
-DrydenWindModel::DrydenWindModel(std::default_random_engine& random_generator, IDrydenProvider& provider) :
+DrydenWindModel::DrydenWindModel(std::default_random_engine &random_generator, IDrydenProvider &provider) :
   provider_(&provider),
   strength_generator_(random_generator),
   wingspan_m_(0),
   launch_turbulence_intensity_(0) {
-
 }
 
 DrydenWindModel::DrydenWindModel(
-        std::default_random_engine& random_generator,
-        IDrydenProvider& provider,
-        double wingspan_m,
-        double launch_turbulence_intensity) :
+  std::default_random_engine &random_generator,
+  IDrydenProvider &provider,
+  double wingspan_m,
+  double launch_turbulence_intensity) :
   provider_(&provider),
   strength_generator_(random_generator),
   wingspan_m_(wingspan_m),
   launch_turbulence_intensity_(launch_turbulence_intensity) {
-
 }
 
 DrydenWindModel::DrydenWindModel(
-      IDrydenProvider& provider,
-      double wingspan_m,
-      double launch_turbulence_intensity) :
+  IDrydenProvider &provider,
+  double wingspan_m,
+  double launch_turbulence_intensity) :
   provider_(&provider),
   strength_generator_(std::default_random_engine()),
   wingspan_m_(wingspan_m),
   launch_turbulence_intensity_(launch_turbulence_intensity) {
-
 }
 
 DrydenWindModel::~DrydenWindModel() {
@@ -68,7 +65,7 @@ void DrydenWindModel::set_intensity(double intensity_m_per_s) {
 }
 
 WindRate DrydenWindModel::get_rates() {
-  if(provider_ == nullptr) {
+  if (provider_ == nullptr) {
     return {
       v3(0, 0, 0),
       v3(0, 0, 0)
@@ -88,25 +85,26 @@ WindRate DrydenWindModel::get_rates() {
   _linear_rate = calculate_step_linear_rate(_linear_rate, step_velocity_scale, linear_rate_noise, _intensity);
 
   return {
-      v3(_linear_rate.u, _linear_rate.v, _linear_rate.w),
-      v3(0, 0, 0)
-    };
-}
-
-WindFrame DrydenWindModel::calculate_step_linear_rate(
-  WindFrame rate_prev, WindFrame step_velocity_scale, WindFrame noise, WindFrame intensity){
-  return {
-      rate_prev.u * (1 - step_velocity_scale.u) + noise.u * intensity.u * sqrt(2 * step_velocity_scale.u),
-      rate_prev.v * (1 - step_velocity_scale.v) + noise.v * intensity.v * sqrt(4 * step_velocity_scale.v),
-      rate_prev.w * (1 - step_velocity_scale.w) + noise.w * intensity.w * sqrt(4 * step_velocity_scale.w)
+    v3(_linear_rate.u, _linear_rate.v, _linear_rate.w),
+    v3(0, 0, 0)
   };
 }
 
-WindFrame DrydenWindModel::calculate_step_velocity_scale(double sample_period_s, double velocity_m_per_s, WindFrame scale_length) {
+WindFrame DrydenWindModel::calculate_step_linear_rate(
+  WindFrame rate_prev, WindFrame step_velocity_scale, WindFrame noise, WindFrame intensity) {
   return {
-    sample_period_s * velocity_m_per_s / scale_length.u,
-    sample_period_s * velocity_m_per_s / scale_length.v,
-    sample_period_s * velocity_m_per_s / scale_length.w};
+    rate_prev.u *(1 - step_velocity_scale.u) + noise.u *intensity.u * sqrt(2 * step_velocity_scale.u),
+    rate_prev.v *(1 - step_velocity_scale.v) + noise.v *intensity.v * sqrt(4 * step_velocity_scale.v),
+    rate_prev.w *(1 - step_velocity_scale.w) + noise.w *intensity.w * sqrt(4 * step_velocity_scale.w)
+  };
+}
+
+WindFrame DrydenWindModel::calculate_step_velocity_scale(double sample_period_s, double velocity_m_per_s,
+    WindFrame scale_length) {
+  return {
+    sample_period_s *velocity_m_per_s / scale_length.u,
+    sample_period_s *velocity_m_per_s / scale_length.v,
+    sample_period_s *velocity_m_per_s / scale_length.w};
 }
 
 WindFrame DrydenWindModel::generate_linear_rate_noise() {
@@ -117,15 +115,14 @@ WindFrame DrydenWindModel::generate_linear_rate_noise() {
 }
 
 void DrydenWindModel::update_scale_length_and_intensities(double altitude_m) {
-
   WindFrame scale_length;
   WindFrame intensity;
 
   if (altitude_m < 304.8) {
-    scale_length.u  = altitude_m / pow(0.177 + 0.0027 * altitude_m,1.2);
+    scale_length.u  = altitude_m / pow(0.177 + 0.0027 * altitude_m, 1.2);
     scale_length.v  = scale_length.u;
     scale_length.w  = altitude_m;
-  } else if( altitude_m > 609.6) {
+  } else if (altitude_m > 609.6) {
     scale_length.u  = 762;
     scale_length.v  = 762;
     scale_length.w  = 762;
@@ -133,19 +130,19 @@ void DrydenWindModel::update_scale_length_and_intensities(double altitude_m) {
     double low = 304.8;
     double high = 762;
 
-    Bilinear_interp::interpolate( {304.8, 609.6}, {low, high}, altitude_m, &scale_length.u);
-    Bilinear_interp::interpolate( {304.8, 609.6}, {low, high}, altitude_m, &scale_length.v);
-    Bilinear_interp::interpolate( {304.8, 609.6}, {low, high}, altitude_m, &scale_length.w);
+    Bilinear_interp::interpolate({304.8, 609.6}, {low, high}, altitude_m, &scale_length.u);
+    Bilinear_interp::interpolate({304.8, 609.6}, {low, high}, altitude_m, &scale_length.v);
+    Bilinear_interp::interpolate({304.8, 609.6}, {low, high}, altitude_m, &scale_length.w);
   }
 
 
-  intensity.u  = 0.06*launch_turbulence_intensity_ / pow(0.177 + 0.0027*altitude_m,0.4);
+  intensity.u  = 0.06 * launch_turbulence_intensity_ / pow(0.177 + 0.0027 * altitude_m, 0.4);
   intensity.v  = intensity.u;
-  intensity.w  = 0.06*launch_turbulence_intensity_;
+  intensity.w  = 0.06 * launch_turbulence_intensity_;
 
   _scale_length = scale_length;
   _intensity = intensity;
 }
 
 
-} // namespace avionics_sim
+}  // namespace avionics_sim

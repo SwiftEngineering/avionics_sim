@@ -1,36 +1,29 @@
-// project
-#include "Exponential_smoothing_filter.hpp"
+#include <gtest/gtest.h>
 
-// gtest
-#include "gtest/gtest.h"
-
-#include <algorithm>
 #include <cmath>
+#include <algorithm>
 #include <numeric>
 #include <vector>
+
+#include "Exponential_smoothing_filter.hpp"
 
 namespace {
 class sinewave {
  public:
-
   sinewave(const double f) : m_omega_f(2.0 * M_PI * f) {
-
   }
 
   double operator()(const double t) {
     return sin(m_omega_f * t);
   }
  protected:
-
-  //convert to angular frequency
+  // convert to angular frequency
   const double m_omega_f;
 };
 
 class squarewave {
  public:
-
   squarewave(const double f) : m_f(f) {
-
   }
 
   double operator()(const double t) {
@@ -54,9 +47,7 @@ class squarewave {
 
 class step {
  public:
-
   step(const double f) : m_f(f) {
-
   }
 
   double operator()(const double t) {
@@ -69,9 +60,7 @@ class step {
     return 0;
   }
  protected:
-
   double m_f;
-
 };
 
 template< class InputIt >
@@ -85,25 +74,24 @@ double calculate_rms(InputIt first, InputIt last) {
 
   return sqrt(sum_sq / count);
 }
-
 }
 
 
 TEST(Exponential_smoothing_filter_UnitTest, lpf_f0_500hz_3db_500hz) {
-  //sample at 1MHz
+  // sample at 1MHz
   const double dT = 1e-6;
 
-  //0.002s per cycle, 2000 cycles per period, 4 periods
+  // 0.002s per cycle, 2000 cycles per period, 4 periods
   const size_t nsamp = 8000;
 
-  //500 Hz 3db / 1e-6 dT
+  // 500 Hz 3db / 1e-6 dT
   avionics_sim::Exponential_smoothing_filter lpf(500.0, dT);
 
-  //x0 / y0 is 500Hz sinewave
+  // x0 / y0 is 500Hz sinewave
   const double f0 = 500.0;
-  //filter input
+  // filter input
   std::vector<double> x0(nsamp);
-  //filter output
+  // filter output
   std::vector<double> y0(nsamp);
 
   sinewave s0_gen(f0);
@@ -114,13 +102,13 @@ TEST(Exponential_smoothing_filter_UnitTest, lpf_f0_500hz_3db_500hz) {
     y0[n] = lpf.next_y_n(x0[n]);
   }
 
-  //y0 tests
-  //check gain
+  // y0 tests
+  // check gain
   EXPECT_DOUBLE_EQ(lpf.get_gain(f0), sqrt(2.0) / 2.0);
-  //check phase
+  // check phase
   EXPECT_DOUBLE_EQ(lpf.get_phase(f0), -45.0 * M_PI / 180.0);
 
-  //skip first four periods
+  // skip first four periods
   auto x_start = x0.begin();
   std::advance(x_start, 4000);
 
@@ -137,20 +125,20 @@ TEST(Exponential_smoothing_filter_UnitTest, lpf_f0_500hz_3db_500hz) {
 }
 
 TEST(Exponential_smoothing_filter_UnitTest, lpf_f0_1000hz_3db_500hz) {
-  //sample at 1MHz
+  // sample at 1MHz
   const double dT = 1e-6;
 
-  //0.001s per cycle, 1000 cycles per period, 8 periods
+  // 0.001s per cycle, 1000 cycles per period, 8 periods
   const size_t nsamp = 8000;
 
-  //500 Hz 3db / 1e-6 dT
+  // 500 Hz 3db / 1e-6 dT
   avionics_sim::Exponential_smoothing_filter lpf(500.0, dT);
 
-  //x0 / y1 is 1000kHz sinewave
+  // x0 / y1 is 1000kHz sinewave
   const double f0 = 1000.0;
-  //filter input
+  // filter input
   std::vector<double> x0(nsamp);
-  //filter output
+  // filter output
   std::vector<double> y0(nsamp);
 
   sinewave s0_gen(f0);
@@ -161,7 +149,7 @@ TEST(Exponential_smoothing_filter_UnitTest, lpf_f0_1000hz_3db_500hz) {
     y0[n] = lpf.next_y_n(x0[n]);
   }
 
-  //skip first 4 periods
+  // skip first 4 periods
   auto x_start = x0.begin();
   std::advance(x_start, 4000);
 
@@ -172,36 +160,31 @@ TEST(Exponential_smoothing_filter_UnitTest, lpf_f0_1000hz_3db_500hz) {
   double y0_rms = calculate_rms(y_start, y0.end());
   double y0_gain = 20.0 * log10(y0_rms / x0_rms);
 
-  //y1 tets
-  //check gain
+  // y1 tets
+  // check gain
   EXPECT_DOUBLE_EQ(lpf.get_gain(f0), 0.447213595499958);
-  //check phase
+  // check phase
   EXPECT_DOUBLE_EQ(lpf.get_phase(f0), -1.10714871779409);
 
   EXPECT_DOUBLE_EQ(x0_rms, sqrt(2.0) / 2.0);
   EXPECT_NEAR(y0_rms, 0.447213595499958 * sqrt(2.0) / 2.0, 0.01);
   EXPECT_NEAR(y0_gain, -6.98970004336019, 0.01);
-
-  // for(size_t n = 0 ; n < nsamp; n++)
-  // {
-  // 	printf("%f\t%f\t%f\n", n*dT, x0[n], y0[n]);
-  // }
 }
 
 TEST(Exponential_smoothing_filter_UnitTest, lpf_step_500hz_3db_500hz) {
   const size_t nsamp = 4000;
 
-  //sample at 1MHz
+  // sample at 1MHz
   const double dT = 1e-6;
 
-  //500 Hz 3db / 1e-6 dT
+  // 500 Hz 3db / 1e-6 dT
   avionics_sim::Exponential_smoothing_filter lpf(500.0, dT);
 
-  //x0 / y0 is 500Hz step
+  // x0 / y0 is 500Hz step
   const double f0 = 500.0;
-  //filter input
+  // filter input
   std::vector<double> x0(nsamp);
-  //filter output
+  // filter output
   std::vector<double> y0(nsamp);
 
   step step_gen(f0);
@@ -212,7 +195,7 @@ TEST(Exponential_smoothing_filter_UnitTest, lpf_step_500hz_3db_500hz) {
     y0[n] = lpf.next_y_n(x0[n]);
   }
 
-  //the step starts at 0.0005s, so at 0.005s + tau it should be at ~63.2%
+  // the step starts at 0.0005s, so at 0.005s + tau it should be at ~63.2%
   double tau = 1.0 / (2.0 * M_PI * 500.0);
   double tau_0 = tau + 0.0005;
   size_t tau_0_n = round(tau_0 / dT);
@@ -223,17 +206,17 @@ TEST(Exponential_smoothing_filter_UnitTest, lpf_step_500hz_3db_500hz) {
 TEST(Exponential_smoothing_filter_UnitTest, lpf_square_500hz_3db_500hz) {
   const size_t nsamp = 8000;
 
-  //sample at 1MHz
+  // sample at 1MHz
   const double dT = 1e-6;
 
-  //500 Hz 3db / 1e-6 dT
+  // 500 Hz 3db / 1e-6 dT
   avionics_sim::Exponential_smoothing_filter lpf(500.0, dT);
 
-  //x0 / y0 is 500Hz squarewave
+  // x0 / y0 is 500Hz squarewave
   const double f0 = 500.0;
-  //filter input
+  // filter input
   std::vector<double> x0(nsamp);
-  //filter output
+  // filter output
   std::vector<double> y0(nsamp);
 
   squarewave sq_gen(f0);
@@ -244,7 +227,7 @@ TEST(Exponential_smoothing_filter_UnitTest, lpf_square_500hz_3db_500hz) {
     y0[n] = lpf.next_y_n(x0[n]);
   }
 
-  //skip first 2 periods
+  // skip first 2 periods
   auto x_start = x0.begin();
   std::advance(x_start, 4000);
 
@@ -259,12 +242,12 @@ TEST(Exponential_smoothing_filter_UnitTest, lpf_square_500hz_3db_500hz) {
 
   double tau = 1.0 / (2.0 * M_PI * 500.0);
 
-  //rising
+  // rising
   double tau_0 = tau + 0.001;
   size_t tau_0_n = round(tau_0 / dT);
   EXPECT_NEAR(y0[tau_0_n], 0.632 * 2.0 - 1.0, 0.005);
 
-  //falling
+  // falling
   double tau_1 = tau + 0.002;
   size_t tau_1_n = round(tau_0 / dT);
   EXPECT_NEAR(y0[tau_1_n], 1.0 - 0.368 * 2.0, 0.005);

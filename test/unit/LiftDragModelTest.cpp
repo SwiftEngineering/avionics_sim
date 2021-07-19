@@ -1,25 +1,23 @@
 #include <gtest/gtest.h>
-// #include <gmock/gmock.h>
+#include <ignition/math/Pose3.hh>
+#include <ignition/math/Vector3.hh>
+#include <stdio.h>
 
 #include <string>
 #include <sstream>
 #include <boost/array.hpp>
-#include <stdio.h>
-#include <ignition/math/Pose3.hh>
-#include <ignition/math/Vector3.hh>
 
 #include "AerodynamicModel.hpp"
-//#include "Lift_drag_model_exception.hpp"
 
-using namespace avionics_sim;
+namespace avionics_sim {
 
 class LiftDragModelTest : public ::testing::Test, IPhysicsEnvironment {
-  public:
-    virtual double get_air_density_kg_per_m3() {
-      return 1.22;
-    }
+ public:
+  virtual double get_air_density_kg_per_m3() {
+    return 1.22;
+  }
 
-  protected:
+ protected:
   avionics_sim::AerodynamicModel lift_drag_model_;
   double tolerance = 0.001;
 
@@ -45,8 +43,8 @@ class LiftDragModelTest : public ::testing::Test, IPhysicsEnvironment {
     double area_m2 = 1.0;
     double area_lateral_m2 = 0.1;
     Airfoil airfoil = Airfoil(
-      area_m2, area_lateral_m2,
-      LUT_NACA0012_alpha, LUT_NACA0012_CL, LUT_NACA0012_CD);
+                        area_m2, area_lateral_m2,
+                        LUT_NACA0012_alpha, LUT_NACA0012_CL, LUT_NACA0012_CD);
 
     // Initialize lift drag model for new test
     lift_drag_model_ = avionics_sim::AerodynamicModel(airfoil, *this);
@@ -110,12 +108,13 @@ TEST_F(LiftDragModelTest, TestCalculatingWindAngles) {
 TEST_F(LiftDragModelTest, TestCalculatingLocalVelocities) {
   // Given: Initial Pose In World and Velocity
   ignition::math::Pose3d poseInWorld_m_rad = ignition::math::Pose3d(0, 0, 0, -0.09, 1.48,
-                                0.1);
+      0.1);
   ignition::math::Vector3d velocityInWorld_m_per_s = ignition::math::Vector3d(10, 1, 0.1);
 
 
   // When: Local Velocities are calculate
-  ignition::math::Vector3d velocityInBody_m_per_s = lift_drag_model_.transformToLocalVelocity(poseInWorld_m_rad, velocityInWorld_m_per_s);
+  ignition::math::Vector3d velocityInBody_m_per_s = lift_drag_model_.transformToLocalVelocity(poseInWorld_m_rad,
+      velocityInWorld_m_per_s);
 
   // Then: Velocities should match expected
   ASSERT_NEAR(velocityInBody_m_per_s.X(), 0.81165, tolerance);
@@ -133,7 +132,8 @@ TEST_F(LiftDragModelTest, TestRotatingForcesToBody) {
 
 
   // When: Local Velocities are calculate
-  ignition::math::Vector3d force_N = lift_drag_model_.rotateForcesToBody(lift_N, drag_N, lateralForce_N, angleOfAttack_deg, sideSlipAngle_deg);
+  ignition::math::Vector3d force_N = lift_drag_model_.rotateForcesToBody(lift_N, drag_N, lateralForce_N,
+                                     angleOfAttack_deg, sideSlipAngle_deg);
 
   // Then: Velocities should match expected
   ASSERT_NEAR(force_N.X(), -31.232, tolerance);
@@ -150,7 +150,8 @@ TEST_F(LiftDragModelTest, TestRotatingForcesToBodyLargeAttack) {
   double sideSlipAngle_deg = -0.589718;
 
   // When: Local Velocities are calculate
-  ignition::math::Vector3d force_N = lift_drag_model_.rotateForcesToBody(lift_N, drag_N, lateralForce_N, angleOfAttack_deg, sideSlipAngle_deg);
+  ignition::math::Vector3d force_N = lift_drag_model_.rotateForcesToBody(lift_N, drag_N, lateralForce_N,
+                                     angleOfAttack_deg, sideSlipAngle_deg);
 
   // Then: Velocities should match expected
   ASSERT_NEAR(force_N.X(), -12.257, tolerance);
@@ -158,4 +159,4 @@ TEST_F(LiftDragModelTest, TestRotatingForcesToBodyLargeAttack) {
   ASSERT_NEAR(force_N.Z(), 0.845313, tolerance);
 }
 
-
+}  // namespace avionics_sim

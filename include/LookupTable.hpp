@@ -8,12 +8,13 @@
 
 #pragma once
 
+#include <assert.h>
+#include <stdio.h>
+
 #include <string>
 #include <vector>
 #include <unordered_map>
 #include <sstream>
-#include <stdio.h>
-#include <assert.h>
 
 #include "Bilinear_interp.hpp"
 
@@ -21,7 +22,6 @@ namespace avionics_sim {
 
 class LookupTable {
  public:
-
   ///
   /// \brief      Constructor
   /// \details    Creates instance of lookup table.
@@ -42,10 +42,10 @@ class LookupTable {
   ///
   double lookup(double valA, std::string fromA, std::string inB);
 
-private:
-
+ private:
   /// \brief Hash table containing LUTs.
   std::unordered_map<std::string, std::vector<double>> lutMap;
 };
 
-}
+}   // namespace avionics_sim
+

@@ -80,7 +80,7 @@ Bilinear_interp::InterpResult Bilinear_interp::interpolate2D(
   double z_u = 0.0f;
   InterpResult errorState = InterpResult::INTERP_SUCCESS;
 
-  double y_clamped; // Bound using first and last points of LUT. Clamp if out of range, but throw an error.
+  double y_clamped;  // Bound using first and last points of LUT. Clamp if out of range, but throw an error.
 
   // Sanity check and bounding
   if (y < yv.front()) {
@@ -128,17 +128,17 @@ Bilinear_interp::InterpResult Bilinear_interp::interpolate2D(
     // Only have the first curve to work with.
     if (interpolate(xv[iy_u - 1], zv[iy_u - 1], x,
                     &z_l) != InterpResult::INTERP_SUCCESS) {
-      errorState = InterpResult::INTERP_WARN_OUT_OF_BOUNDS; // Threw an error.
+      errorState = InterpResult::INTERP_WARN_OUT_OF_BOUNDS;  // Threw an error.
     }
 
-    *z = z_l; // No second interpolation
+    *z = z_l;   // No second interpolation
   }   else  {
     // Only have the last curve to work with.
     if (interpolate(xv[iy_u], zv[iy_u], x, &z_l) != InterpResult::INTERP_SUCCESS) {
-      errorState = InterpResult::INTERP_WARN_OUT_OF_BOUNDS; // Threw an error.
+      errorState = InterpResult::INTERP_WARN_OUT_OF_BOUNDS;  // Threw an error.
     }
 
-    *z = z_l; // No second interpolation
+    *z = z_l;   // No second interpolation
   }
 
   return errorState;
@@ -161,7 +161,7 @@ bool Bilinear_interp::setXVals(const std::string &inputVals) {
 
   haveXVals = true;
 
-  return true; // Success
+  return true;  // Success
 }
 
 void Bilinear_interp::setXVals(const std::vector<std::vector<double>> &xv) {
@@ -176,7 +176,7 @@ bool Bilinear_interp::setYVals(const std::string &inputVals) {
 
   haveYVals = true;
 
-  return true; // Success
+  return true;  // Success
 }
 
 void Bilinear_interp::setYVals(const std::vector<double> &yv) {
@@ -191,7 +191,7 @@ bool Bilinear_interp::setZVals(const std::string &inputVals) {
 
   haveZVals = true;
 
-  return true; // Success
+  return true;  // Success
 }
 
 void Bilinear_interp::setZVals(const std::vector<std::vector<double>> &zv) {
@@ -317,4 +317,4 @@ bool Bilinear_interp::get2DLUTelementsFromString(const std::string &inputVals,
 
   return true;
 }
-} // namespace avionics_sim
+}   // namespace avionics_sim

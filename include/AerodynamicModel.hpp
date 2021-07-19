@@ -8,9 +8,10 @@
 
 #pragma once
 
+#include <ignition/math.hh>
+
 #include <vector>
 #include <string>
-#include <ignition/math.hh>
 #include "Bilinear_interp.hpp"
 #include "Math_util.hpp"
 #include "LookupTable.hpp"
@@ -21,11 +22,10 @@
 namespace avionics_sim {
 
 struct AeroAngles {
-    double attackAngle_deg;
-    double sideSlipAngle_deg;
+  double attackAngle_deg;
+  double sideSlipAngle_deg;
 };
 
-// TODO: Move this out to its own file
 /**
  * \brief Interface class to the lift drag model object.
  *
@@ -40,29 +40,28 @@ class IAerodynamicModel {
    * \brief Updates the model with a pose and velocity of an airfoil and calculates the resultant lift and drag forces from it.
    */
   virtual ignition::math::Vector3d updateForcesInBody_N(
-      ignition::math::Pose3d poseInWorld_m_rad,
-      ignition::math::Vector3d velocityInWorld_m_per_s,
-      double propWash_m_per_s,
-      double controlAngle_rad) = 0;
+    ignition::math::Pose3d poseInWorld_m_rad,
+    ignition::math::Vector3d velocityInWorld_m_per_s,
+    double propWash_m_per_s,
+    double controlAngle_rad) = 0;
 
   /**
    * \brief A function called from within updateLiftDragInBody_N that is useful to extend access to for cases of evaluating aerodynamics under propwash conditions.
    */
   virtual ignition::math::Vector3d updateForcesInBody_N(
-      double planarVelocity_m_per_s,
-      double lateralVelocity_m_per_s,
-      double angleOfAttack_deg,
-      double sideSlipAngle_deg)  = 0;
+    double planarVelocity_m_per_s,
+    double lateralVelocity_m_per_s,
+    double angleOfAttack_deg,
+    double sideSlipAngle_deg)  = 0;
 
-  virtual ~IAerodynamicModel() {};
+  virtual ~IAerodynamicModel() {}
 };
 
 class AerodynamicModel : public IAerodynamicModel {
  public:
+  AerodynamicModel();   ///< Default constructor
 
-  AerodynamicModel(); ///< Default constructor
-
-  AerodynamicModel(Airfoil airfoil, IPhysicsEnvironment & environment);
+  AerodynamicModel(Airfoil airfoil, IPhysicsEnvironment &environment);
 
   // Destructor.
   ///
@@ -74,22 +73,22 @@ class AerodynamicModel : public IAerodynamicModel {
   virtual ~AerodynamicModel();
 
   virtual ignition::math::Vector3d updateForcesInBody_N(
-      ignition::math::Pose3d
-      poseInWorld_m_rad,
-      ignition::math::Vector3d velocityInWorld_m_per_s,
-      double propWash_m_per_s,
-      double controlAngle_rad);
+    ignition::math::Pose3d
+    poseInWorld_m_rad,
+    ignition::math::Vector3d velocityInWorld_m_per_s,
+    double propWash_m_per_s,
+    double controlAngle_rad);
 
   virtual ignition::math::Vector3d updateForcesInBody_N(
-      double planarVelocity_m_per_s,
-      double lateralVelocity_m_per_s,
-      double angleOfAttack_deg,
-      double sideSlipAngle_deg);
+    double planarVelocity_m_per_s,
+    double lateralVelocity_m_per_s,
+    double angleOfAttack_deg,
+    double sideSlipAngle_deg);
 
   double calculateAttackAngleWithControl(
-      double controlAngle_rad,
-      double angleOfAttackBody_deg,
-      double planarVelocity_m_per_s);
+    double controlAngle_rad,
+    double angleOfAttackBody_deg,
+    double planarVelocity_m_per_s);
 
   // Function to calculate dynamic pressure.
   ///
@@ -109,12 +108,12 @@ class AerodynamicModel : public IAerodynamicModel {
   /// \return     N/A
   ///
   void setBasisVectors(
-      ignition::math::Vector3d fwd,
-      ignition::math::Vector3d upward);
+    ignition::math::Vector3d fwd,
+    ignition::math::Vector3d upward);
 
   ignition::math::Vector3d transformToLocalVelocity(
-      ignition::math::Pose3d poseInWorld_m_rad,
-      ignition::math::Vector3d velocityInWorld_m_per_s);
+    ignition::math::Pose3d poseInWorld_m_rad,
+    ignition::math::Vector3d velocityInWorld_m_per_s);
 
   double transformBodyToWindPlanar(ignition::math::Vector3d velocityInBody_m_per_s);
   double transformBodyToWindLateral(ignition::math::Vector3d velocityInBody_m_per_s);
@@ -159,23 +158,20 @@ class AerodynamicModel : public IAerodynamicModel {
   /// \brief      Function to calculate force vector with direction.
   ///
   /// \details     N/A
-  /// \param[in]  calculashteRotatedForces flag determining whether or not to negate drag through multiplying by -vecFwd (do not want to do this if rotated drag has been calculated)
   /// \return      N/A
   ///
   ignition::math::Vector3d rotateForcesToBody(
-      double lift_N, double drag_N, double lateralForce_N,
-      double angleOfAttack_deg, double sideSlipAngle_deg);
+    double lift_N, double drag_N, double lateralForce_N,
+    double angleOfAttack_deg, double sideSlipAngle_deg);
 
   double invertAttackAngle_deg(double angleOfAttack_deg);
 
   AeroAngles correctAttackAnglesForDirectionAndControl_deg(
-      AeroAngles bodyAttackAngles_deg,
-      double controlAngle_rad,
-      double planarVelocity_m_per_s
-  );
+    AeroAngles bodyAttackAngles_deg,
+    double controlAngle_rad,
+    double planarVelocity_m_per_s);
 
  private:
-
   /// \brief Forward vector
   ignition::math::Vector3d vecFwd;
 
@@ -189,7 +185,6 @@ class AerodynamicModel : public IAerodynamicModel {
 
   AerodynamicState _state;
 
-  IPhysicsEnvironment * _environment;
-
+  IPhysicsEnvironment *_environment;
 };
-}
+}   // namespace avionics_sim

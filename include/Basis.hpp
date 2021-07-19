@@ -14,7 +14,6 @@ namespace avionics_sim {
 
 class Basis {
  public:
-
   ///
   /// \brief      Constructor
   /// \details    Creates instance of lookup table.
@@ -34,7 +33,6 @@ class Basis {
   ignition::math::Vector3d up;
   ignition::math::Vector3d forward;
   ignition::math::Vector3d side;
-
 };
 
-}
+}   // namespace avionics_sim

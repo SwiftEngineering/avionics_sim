@@ -26,12 +26,12 @@ class Math_util {
   /// Map a value linearly from one range to another range, handling offset and scale.
   /// Input and output ranges may be postive or negative, and may be in any order to allow reflecting a range
   ///
-  /// \param [in] x			The input number
-  /// \param [in] in_min		The start of the input range
-  /// \param [in] in_max		The end of the input range
-  /// \param [in] out_min		The start of the output range
-  /// \param [in] out_max		The end of the output range
-  /// \return					The corresponding value in the output range
+  /// \param [in] x         The input number
+  /// \param [in] in_min    The start of the input range
+  /// \param [in] in_max    The end of the input range
+  /// \param [in] out_min   The start of the output range
+  /// \param [in] out_max   The end of the output range
+  /// \return               The corresponding value in the output range
   ///
   template<typename T>
   static T linear_map(const T &x, const T &in_min, const T &in_max,
@@ -46,9 +46,9 @@ class Math_util {
   /// More correct than std::pow if x is also an integer, especially if x or n is a large integer
   /// Possibly faster than std::pow when n is a non-negative integer
   ///
-  /// \param [in] x	The base number
-  /// \param [in] n	The exponent
-  /// \return			x^n
+  /// \param [in]   x   The base number
+  /// \param [in]   n   The exponent
+  /// \return       x^n
   ///
   template<typename T>
   static T pow_integer(const T &x, const size_t n) {
@@ -70,10 +70,10 @@ class Math_util {
   ///
   /// Compute the RMS value of a given array
   ///
-  /// \param [in] first	First in sequence
-  /// \param [in] last	last in sequence
-  /// \param [in] count	number of elements
-  /// \return			sqrt(sum(x_i^2) / N)
+  /// \param [in] first First in sequence
+  /// \param [in] last  last in sequence
+  /// \param [in] count number of elements
+  /// \return           sqrt(sum(x_i^2) / N)
   ///
   template< class InputIt, class AccumType = typename std::iterator_traits<InputIt>::value_type, class ResultType = AccumType >
   static ResultType calculate_rms(InputIt first, InputIt last,
@@ -91,9 +91,9 @@ class Math_util {
   ///
   /// Compute the RMS value of a given array. Number of elements determined by std::distance.
   ///
-  /// \param [in] first	First in sequence
-  /// \param [in] last	last in sequence
-  /// \return			sqrt(sum(x_i^2) / N)
+  /// \param [in] first First in sequence
+  /// \param [in] last  last in sequence
+  /// \return           sqrt(sum(x_i^2) / N)
   ///
   template< class InputIt, class AccumType = typename std::iterator_traits<InputIt>::value_type, class ResultType = AccumType >
   static ResultType calculate_rms(InputIt first, InputIt last) {
@@ -107,10 +107,10 @@ class Math_util {
   ///
   /// Compute the mean value of a given array
   ///
-  /// \param [in] first	First in sequence
-  /// \param [in] last	last in sequence
-  /// \param [in] count	number of elements
-  /// \return				sum(x_i) / N
+  /// \param [in] first First in sequence
+  /// \param [in] last  last in sequence
+  /// \param [in] count number of elements
+  /// \return           sum(x_i) / N
   ///
   template< class InputIt, class AccumType = typename std::iterator_traits<InputIt>::value_type, class ResultType = AccumType >
   static ResultType calculate_mean(InputIt first, InputIt last,
@@ -128,9 +128,9 @@ class Math_util {
   ///
   /// Compute the mean value of a given array. Number of elements determined by std::distance.
   ///
-  /// \param [in] first	First in sequence
-  /// \param [in] last	last in sequence
-  /// \return				sum(x_i) / N
+  /// \param [in] first First in sequence
+  /// \param [in] last  last in sequence
+  /// \return           sum(x_i) / N
   ///
   template< class InputIt, class AccumType = typename std::iterator_traits<InputIt>::value_type, class ResultType = AccumType >
   static ResultType calculate_mean(InputIt first, InputIt last) {
@@ -145,9 +145,9 @@ class Math_util {
   /// Prints a number up to a certain precision of digits
   ///
   /// Adapted from https://stackoverflow.com/questions/16605967/set-precision-of-stdto-string-when-converting-floating-point-values
-  /// \param [in] first	Floating point value
-  /// \param [in] last	Precision
-  /// \return				Value to precision as string
+  /// \param [in] first Floating point value
+  /// \param [in] last  Precision
+  /// \return           Value to precision as string
   ///
   template <typename T>
   static std::string to_string_with_precision(const T a_value, const int n = 6) {
@@ -163,10 +163,10 @@ class Math_util {
   /// Performs equality comparison for floating point numbers up to a given epsilon (tolerance)
   ///
   /// Adapted from https://stackoverflow.com/questions/2833153/floating-point-comparison-in-stl-boost
-  /// \param [in] first	First Floating point value
-  /// \param [in] second	Second Floating point value
-  /// \param [in] last	Precision
-  /// \return				Boolean indicating whether or not the floating point values are equal.
+  /// \param [in] first     First Floating point value
+  /// \param [in] second    Second Floating point value
+  /// \param [in] last      Precision
+  /// \return               Boolean indicating whether or not the floating point values are equal.
   ///
   template <typename T>
   static bool rough_eq(T lhs, T rhs,
@@ -180,15 +180,15 @@ class Math_util {
   /// Performs less than comparison for floating point numbers up to a given epsilon (tolerance)
   ///
   /// Adapted from https://stackoverflow.com/questions/2833153/floating-point-comparison-in-stl-boost
-  /// \param [in] first	First Floating point value
-  /// \param [in] second	Second Floating point value
-  /// \param [in] last	Precision
-  /// \return				Boolean indicating whether or not the the first value is less than the second.
+  /// \param [in] first     First Floating point value
+  /// \param [in] second    Second Floating point value
+  /// \param [in] last      Precision
+  /// \return               Boolean indicating whether or not the the first value is less than the second.
   ///
   template <typename T>
   static bool rough_lt(T lhs, T rhs,
                        T epsilon = std::numeric_limits<T>::epsilon()) {
-    //Check first if they are equal per rough_eq. If so, return false. Else, return evaluation.
+    // Check first if they are equal per rough_eq. If so, return false. Else, return evaluation.
     if (rough_eq(lhs, rhs, epsilon)) {
       return false;
     }
@@ -204,10 +204,10 @@ class Math_util {
   /// Performs less than comparison for floating point numbers up to a given epsilon (tolerance)
   ///
   /// Adapted from https://stackoverflow.com/questions/2833153/floating-point-comparison-in-stl-boost
-  /// \param [in] first	First Floating point value
-  /// \param [in] second	Second Floating point value
-  /// \param [in] last	Precision
-  /// \return				Boolean indicating whether or not the the first value is less than or equal to the second.
+  /// \param [in] first     First Floating point value
+  /// \param [in] second    Second Floating point value
+  /// \param [in] last      Precision
+  /// \return               Boolean indicating whether or not the the first value is less than or equal to the second.
   ///
   template <typename T>
   static bool rough_lte(T lhs, T rhs,
@@ -221,15 +221,15 @@ class Math_util {
   /// Performs less than comparison for floating point numbers up to a given epsilon (tolerance)
   ///
   /// Adapted from https://stackoverflow.com/questions/2833153/floating-point-comparison-in-stl-boost
-  /// \param [in] first	First Floating point value
-  /// \param [in] second	Second Floating point value
-  /// \param [in] last	Precision
-  /// \return				Boolean indicating whether or not the the first value is greater than the second.
+  /// \param [in] first     First Floating point value
+  /// \param [in] second    Second Floating point value
+  /// \param [in] last      Precision
+  /// \return               Boolean indicating whether or not the the first value is greater than the second.
   ///
   template <typename T>
   static bool rough_gt(T lhs, T rhs,
                        T epsilon = std::numeric_limits<T>::epsilon()) {
-    //Check first if they are equal per rough_eq. If so, return false. Else, return evaluation.
+    // Check first if they are equal per rough_eq. If so, return false. Else, return evaluation.
     if (rough_eq(lhs, rhs, epsilon)) {
       return false;
     }
@@ -245,10 +245,10 @@ class Math_util {
   /// Performs less than comparison for floating point numbers up to a given epsilon (tolerance)
   ///
   /// Adapted from https://stackoverflow.com/questions/2833153/floating-point-comparison-in-stl-boost
-  /// \param [in] first	First Floating point value
-  /// \param [in] second	Second Floating point value
-  /// \param [in] last	Precision
-  /// \return				Boolean indicating whether or not the the first value is greater than or equal to the second.
+  /// \param [in] first     First Floating point value
+  /// \param [in] second    Second Floating point value
+  /// \param [in] last      Precision
+  /// \return               Boolean indicating whether or not the the first value is greater than or equal to the second.
   ///
   template <typename T>
   static bool rough_gte(T lhs, T rhs,
@@ -257,7 +257,6 @@ class Math_util {
   }
 
  protected:
-
 };
 
-}
+}   // namespace avionics_sim
