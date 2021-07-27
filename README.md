@@ -29,6 +29,21 @@ Currently intended for use with PX4's sitl_gazebo; however, development strives 
  * CMake
  * Ignition Math
 
+Alternatively:
+
+* Docker
+
+## Getting Started
+
+As part of an effort to make this library as open to extensibility as possible the choice was made to utilize containerization and an IDE configuration that readily supports it for quickly bringing up a build environment for developers. While still currently listed as the [third most popular IDE](https://pypl.github.io/IDE.html) VS Code does have integrated supported for docker containirization and is rapidly growing in popularity,  a feature not fully supported by the leading two IDEs. As such this project is distributed with project configuration files for a VS Code Project. Containerization helps in providing developers a consistent build environment the develop in without being inundated with the task of installing specific dependency versions. The containerization used by this project is Docker, while it is the [second most popular containerization](https://www.datanyze.com/market-share/containerization--321) it is designed for containing applications rather than entire operating systems like the most popular container system LXC.
+
+To start development all that should be required is downloading the following:
+* VS Code
+* Docker
+And opening the project folder within the IDE, and then opening the project in a container when prompted by the IDE.
+
+If developers would like to further investigate what is happening in this regard, it is recommended to review the official documentation provided by the IDE team [here](https://code.visualstudio.com/docs/remote/containers) as that is not the scope of this project. It is the belief of the original developers of this project that providing a containerized environment and at least one IDE project configuration should become a standard adopted by most public repos as it handles the most frustating hurdle for new developers when working on a new project: setting up your environment/dependencies.
+
 ## Building
 
 Avionics Sim uses cmake for configuration intended for a shadow build process.
