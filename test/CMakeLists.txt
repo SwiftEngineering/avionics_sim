@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.10)
 
 include(${PROJECT_SOURCE_DIR}/.cmake/gtest/CMakeLists.txt)
 
