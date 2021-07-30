@@ -9,7 +9,7 @@ ARG TZ=Etc/UTC
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # CLang Project Development Tools
-RUN apt update && apt install --no-install-recommends -y \
+RUN apt update && apt install -y \
     git=1:2.17.1-1ubuntu0.8 \
     astyle=3.1-1ubuntu2 \
     gcovr=3.4-1 \
