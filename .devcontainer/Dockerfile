@@ -8,11 +8,14 @@ ARG CMAKE_PATCH=0
 ARG TZ=Etc/UTC
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# Update App Manager
-RUN apt update
-
 # CLang Project Development Tools
-RUN apt install -y git astyle gcovr lcov clang clang-tidy
+RUN apt update && apt install --no-install-recommends -y \
+    git=1:2.17.1-1ubuntu0.8 \
+    astyle=3.1-1ubuntu2 \
+    gcovr=3.4-1 \
+    lcov=1.13-3 \
+    clang=1:6.0-41~exp5~ubuntu1 \
+    clang-tidy=1:6.0-41~exp5~ubuntu1
 
 # Versioned CMake
 ENV CMAKE_MAJOR_MINOR=${CMAKE_MAJOR}.${CMAKE_MINOR}
@@ -21,7 +24,9 @@ RUN apt install -y curl
 RUN curl "https://cmake.org/files/v${CMAKE_MAJOR_MINOR}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C /usr/local
 
 # Project Build Requirements
-RUN apt install -y libboost-all-dev libignition-math4-dev 
+RUN apt install -y \
+    libboost-all-dev=1.65.1.0ubuntu1 \
+    libignition-math4-dev=4.0.0+dfsg1-4
 
 # Project Documentation Build Requirements
 RUN apt install -y python3 python3-pip
