@@ -34,6 +34,8 @@ RUN apt install -y pandoc texlive-xetex texlive-fonts-recommended texlive-generi
 RUN python3 -m pip install -U numpy scipy matplotlib
 RUN python3 -m pip install -U jupyter nbconvert jupyter_contrib_nbextensions jupyter_nbextensions_configurator
 
+RUN python3 -m pip install -U cpplint
+
 # Add A Developer User
 ARG USERNAME=dev
 ARG USER_UID=1000
