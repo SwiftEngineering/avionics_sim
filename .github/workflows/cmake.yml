@@ -6,7 +6,7 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Debug
   IMAGE_TAG: swift/avionics_sim:latest
-  DOCKER_TEST: .devcontainer/docker_test.yml
+  DOCKER_TEST: .devcontainer/docker_test.yaml
   CI_CONTAINER: ci_container
 
 jobs:
