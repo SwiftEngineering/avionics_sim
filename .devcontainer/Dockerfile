@@ -26,15 +26,26 @@ RUN curl "https://cmake.org/files/v${CMAKE_MAJOR_MINOR}/cmake-${CMAKE_VERSION}-L
 # Project Build Requirements
 RUN apt install -y \
     libboost-all-dev=1.65.1.0ubuntu1 \
-    libignition-math4-dev=4.0.0+dfsg1-4
-
+    libignition-math4-dev=4.0.0+dfsg1-4 \
 # Project Documentation Build Requirements
-RUN apt install -y python3 python3-pip
-RUN apt install -y pandoc texlive-xetex texlive-fonts-recommended texlive-generic-recommended inkscape libcanberra-gtk-module
-RUN python3 -m pip install -U numpy scipy matplotlib
-RUN python3 -m pip install -U jupyter nbconvert jupyter_contrib_nbextensions jupyter_nbextensions_configurator
+    python3=3.6.7-1~18.04 \
+    python3-pip=9.0.1-2.3~ubuntu1.18.04.5 \
+    pandoc=1.19.2.4~dfsg-1build4 \
+    texlive-xetex=2017.20180305-1 \
+    texlive-fonts-recommended=2017.20180305-1  \
+    texlive-generic-recommended=2017.20180305-1  \
+    inkscape=0.92.3-1 \
+    libcanberra-gtk-module=0.30-5ubuntu1
 
-RUN python3 -m pip install -U cpplint
+RUN python3 -m pip install -U \
+    numpy==1.19.5 \
+    scipy==1.5.4 \
+    matplotlib==3.3.4 \
+    jupyter==1.0.0 \
+    nbconvert==6.0.7 \
+    jupyter_contrib_nbextensions==0.5.1 \
+    jupyter_nbextensions_configurator==0.4.1 \
+    cpplint==1.5.5
 
 # Add A Developer User
 ARG USERNAME=dev
