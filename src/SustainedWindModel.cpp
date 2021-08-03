@@ -11,9 +11,9 @@
 namespace avionics_sim {
 
 SustainedWindModel::SustainedWindModel() :
-    linear_rate_(0,0,0),
+    linear_rate_(0, 0, 0),
     _strength(0),
-    _direction(0,0,0) {
+    _direction(0, 0, 0) {
 }
 
 SustainedWindModel::SustainedWindModel(v3 linear_rate) :
@@ -33,8 +33,8 @@ SustainedWindModel::~SustainedWindModel() {
 
 WindRate SustainedWindModel::get_rates() {
     return {
-      linear_rate_,
-      v3(0, 0, 0)
+        linear_rate_,
+        v3(0, 0, 0)
     };
 }
 
@@ -46,11 +46,11 @@ void SustainedWindModel::set_direction(v3 direction) {
     set_linear_rate(_strength, direction);
 }
 
-void SustainedWindModel::set_linear_rate(double strength, v3 direction){
+void SustainedWindModel::set_linear_rate(double strength, v3 direction) {
     _strength = strength;
     _direction = direction.Normalize();
 
     linear_rate_ = _direction * _strength;
 }
 
-}
+}  // namespace avionics_sim

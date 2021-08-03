@@ -190,7 +190,7 @@ CLang support is currently configured for use within the development container, 
 
 ### Styling
 
-Run the following in the development container to style all clang related files.
+Run the following in the development container to style all C/C++ related files.
 
 ```sh
 astyle *.cpp *.hpp *.h --suffix=none --recursive
@@ -198,8 +198,21 @@ astyle *.cpp *.hpp *.h --suffix=none --recursive
 
 ### Linting
 
-Run the following in the development container
+This project is currently using the cpplint linting tools for its close ties with the Google C++ Style Guide for which 
+this project uses. Additional configuration of the tool is done through the `CPPLINT.cfg` configuration file. Which 
+should note that makes the following modifactions to the style guide:
+
+* Line Length : 120
+* private/protected/public markers are not required to follow the 3 space indentation
+* Const References required is not followed, this is becuase while the Style Guide allows for non-const references the cpplint tool oddley does not
+
+To lint all the relevant files, run the following in the development container
 
 ```sh
-clang-tidy src/*.cpp -- -Iinclude -DMY_DEFINES ...
+cpplint --recursive src include tests
+```
+
+The CI system currently uses linting as a metric, and does so by outputing the results as a junit xml using the following command:
+```sh
+cpplint --output=junit --recursive src include test 2> build/lint_report.xml
 ```

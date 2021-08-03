@@ -23,41 +23,39 @@ namespace avionics_sim {
  */
 
 class AerodynamicState {
- public:
+  public:
+    AerodynamicState();
 
-  AerodynamicState();
+    void print();
 
-  void print();
+    /// \brief World Pose
+    Property <ignition::math::Pose3d> poseWorld_m_rad;
 
-  /// \brief World Pose
-  Property <ignition::math::Pose3d> poseWorld_m_rad;
+    /// \brief World Velocity
+    Property <ignition::math::Vector3d> velocityWorld_m_per_s;
 
-  /// \brief World Velocity
-  Property <ignition::math::Vector3d> velocityWorld_m_per_s;
+    /// \brief World Velocity
+    Property <ignition::math::Vector3d> velocityBody_m_per_s;
 
-  /// \brief World Velocity
-  Property <ignition::math::Vector3d> velocityBody_m_per_s;
+    Property <double> angleOfAttack_deg;
+    /// \Value of beta (side slip angle)
+    Property <double> sideSlipAngle_deg;
 
-  Property <double> angleOfAttack_deg;
-  /// \Value of beta (side slip angle)
-  Property <double> sideSlipAngle_deg;
+    Property <double> planarVelocity_m_per_s;
+    Property <double> lateralVelocity_m_per_s;
 
-  Property <double> planarVelocity_m_per_s;
-  Property <double> lateralVelocity_m_per_s;
+    Property <double> dynamicPressurePlanar_Pa;
+    Property <double> dynamicPressureLateral_Pa;
 
-  Property <double> dynamicPressurePlanar_Pa;
-  Property <double> dynamicPressureLateral_Pa;
+    Property <double> liftCoeff;
+    Property <double> dragCoeff;
+    Property <double> lateralDragCoeff;
 
-  Property <double> liftCoeff;
-  Property <double> dragCoeff;
-  Property <double> lateralDragCoeff;
+    Property <double> lift_N;
+    Property <double> drag_N;
+    Property <double> lateralForce_N;
 
-  Property <double> lift_N;
-  Property <double> drag_N;
-  Property <double> lateralForce_N;
-
-  Property <ignition::math::Vector3d> force_N;
-
+    Property <ignition::math::Vector3d> force_N;
 };
 
-}
+}  // namespace avionics_sim

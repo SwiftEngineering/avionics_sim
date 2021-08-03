@@ -19,7 +19,7 @@ struct WindRate {
     v3 linear_rate;
     v3 angular_rate;
 
-    struct WindRate& operator+=(const WindRate& rhs) {
+    struct WindRate &operator+=(const WindRate &rhs) {
         linear_rate += rhs.linear_rate;
         angular_rate += rhs.angular_rate;
         return *this;
@@ -27,16 +27,22 @@ struct WindRate {
 };
 
 class IWindModel {
-	public:
-        virtual WindRate get_rates() = 0;
-        virtual ~IWindModel() {};
+  public:
+    virtual WindRate get_rates() = 0;
+    virtual ~IWindModel() {}
 
-        virtual void enable() { is_enabled_ = true; }
-        virtual void disable() { is_enabled_ = false; }
-        virtual bool is_enabled() {return is_enabled_; }
+    virtual void enable() {
+        is_enabled_ = true;
+    }
+    virtual void disable() {
+        is_enabled_ = false;
+    }
+    virtual bool is_enabled() {
+        return is_enabled_;
+    }
 
 
-    protected:
-        bool is_enabled_ = true;
+  protected:
+    bool is_enabled_ = true;
 };
-}
+}  // namespace avionics_sim
