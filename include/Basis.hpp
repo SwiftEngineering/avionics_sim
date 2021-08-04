@@ -13,28 +13,26 @@
 namespace avionics_sim {
 
 class Basis {
- public:
+  public:
+    ///
+    /// \brief      Constructor
+    /// \details    Creates instance of lookup table.
+    /// \param[in]  forward (forward vector)
+    /// \param[in]  upward (upward vector)
+    /// \return     Instance of Basis
+    ///
+    Basis();
 
-  ///
-  /// \brief      Constructor
-  /// \details    Creates instance of lookup table.
-  /// \param[in]  forward (forward vector)
-  /// \param[in]  upward (upward vector)
-  /// \return     Instance of Basis
-  ///
-  Basis();
+    ///
+    /// \brief      Calculates side vector as cross product
+    /// \details    Side vector is cross product of up and forward vectors.
+    /// \return     N/A
+    ///
+    void calculateSideVector();
 
-  ///
-  /// \brief      Calculates side vector as cross product
-  /// \details    Side vector is cross product of up and forward vectors.
-  /// \return     N/A
-  ///
-  void calculateSideVector();
-
-  ignition::math::Vector3d up;
-  ignition::math::Vector3d forward;
-  ignition::math::Vector3d side;
-
+    ignition::math::Vector3d up;
+    ignition::math::Vector3d forward;
+    ignition::math::Vector3d side;
 };
 
-}
+}  // namespace avionics_sim

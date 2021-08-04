@@ -2,18 +2,21 @@
 
 A library for simulating avionics commonly used in small UAS, such as pressure sensors, IMUs, GPS, batteries and other supporting utility, model, and simulation code.
 
-Currently intended for use with PX4's sitl_gazebo.
+Currently intended for use with PX4's sitl_gazebo; however, development strives to be independent from any project.
 
 ## Features
 
- * A configurable battery model with transient response
- * A differential pressure sensor model
- * A first order discrete time low pass filter
- * A Gaussian-Markov processes noise generator
+ * Aerodynamic Model with configurable airfoils
+ * Wind/Turbulence Modeling
+ * Transmission Modeling for cases like elevon linkages
+ * Configurable battery model with transient response
+ * Differential pressure sensor model
+ * First order discrete time low pass filter
+ * Gaussian-Markov processes noise generator
    * Seedable, resettable
    * MT19937-64 based
- * An implementation of the US 1976 atmosphere model
- * A 2D (Bilinear) lookup table implementation
+ * US 1976 atmosphere model
+ * 2D (Bilinear) lookup table implementation
 
 ## Planned Features
 
@@ -24,9 +27,41 @@ Currently intended for use with PX4's sitl_gazebo.
  * C++11
  * Boost
  * CMake
+ * Ignition Math
+
+Alternatively:
+
+* Docker
+
+## Getting Started
+
+As part of an effort to make this library as open to extensibility as possible the choice was made to utilize containerization and an IDE configuration that readily supports it for quickly bringing up a build environment for developers. While still currently listed as the [third most popular IDE](https://pypl.github.io/IDE.html) VS Code does have integrated supported for docker containirization and is rapidly growing in popularity,  a feature not fully supported by the leading two IDEs. As such this project is distributed with project configuration files for a VS Code Project. Containerization helps in providing developers a consistent build environment the develop in without being inundated with the task of installing specific dependency versions. The containerization used by this project is Docker, while it is the [second most popular containerization](https://www.datanyze.com/market-share/containerization--321) it is designed for containing applications rather than entire operating systems like the most popular container system LXC.
+
+To start development all that should be required is downloading the following:
+* VS Code
+* Docker
+And opening the project folder within the IDE, and then opening the project in a container when prompted by the IDE.
+
+If developers would like to further investigate what is happening in this regard, it is recommended to review the official documentation provided by the IDE team [here](https://code.visualstudio.com/docs/remote/containers) as that is not the scope of this project. It is the belief of the original developers of this project that providing a containerized environment and at least one IDE project configuration should become a standard adopted by most public repos as it handles the most frustating hurdle for new developers when working on a new project: setting up your environment/dependencies.
 
 ## Building
 
+Avionics Sim uses cmake for configuration intended for a shadow build process.
+
+From the project directory, that looks like the following steps
+
+1. Initialize the shadow build directory, and enter it
+```sh
+mkdir -p build && cd build
+```
+2. Configure project using the Cmake file in the project directory
+```sh
+cmake ..
+```
+3. Build the project using the generated makefile
+```
+make
+```
 
 ## Testing
 
@@ -60,22 +95,17 @@ We can filter on any layer:
 ctest -R Test_constant_current_discharge_no_interpolation_low
 ```
 
-
-
-## Related repositories
-
- * avionics_sim_unit_tests
- * avionics_sim_unit_tests_runner
-
 ## Copyright
 
-Copyright (c) Swift Engineering Inc. 2020
+Copyright (c) Swift Engineering Inc. 2021
 
 ## License
 
 Licensed by Swift Engineering Inc. under the MIT license. See LICENSE file for details.
 
 ## How to Read This Documentation
+
+Features have their own documentation seperated out within the `documentation` folder. In addition to markdown files for feature description and usage, when necessary supplementary Jupyter Notebooks are provided for predicitive analysis of the model.
 
 If reading this document on a local machine, please ensure that the complete contents of the `documentation` folder have been pulled and to use a markdown reader such as Typora.
 
@@ -153,3 +183,36 @@ The documentation for this aerodynamic model is in three parts.
 [Documentation for Gazebo plugin](documentation/liftdrag_model/devguide/plugin/index.html).
 
 [Documentation for Lift Drag Model C++ class](documentation/liftdrag_model/devguide/model_class/index.html).
+
+## CLang Support
+
+CLang support is currently configured for use within the development container, as such all commands following are defined in the context of running in the container.
+
+### Styling
+
+Run the following in the development container to style all C/C++ related files.
+
+```sh
+astyle *.cpp *.hpp *.h --suffix=none --recursive
+```
+
+### Linting
+
+This project is currently using the cpplint linting tools for its close ties with the Google C++ Style Guide for which 
+this project uses. Additional configuration of the tool is done through the `CPPLINT.cfg` configuration file. Which 
+should note that makes the following modifactions to the style guide:
+
+* Line Length : 120
+* private/protected/public markers are not required to follow the 3 space indentation
+* Const References required is not followed, this is becuase while the Style Guide allows for non-const references the cpplint tool oddley does not
+
+To lint all the relevant files, run the following in the development container
+
+```sh
+cpplint --recursive src include tests
+```
+
+The CI system currently uses linting as a metric, and does so by outputing the results as a junit xml using the following command:
+```sh
+cpplint --output=junit --recursive src include test 2> build/lint_report.xml
+```

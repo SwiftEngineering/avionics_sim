@@ -15,11 +15,10 @@ Basis::Basis() :
     up(ignition::math::Vector3d(0.0, 0.0, 0.0)),
     forward(ignition::math::Vector3d(0.0, 0.0, 0.0)),
     side(ignition::math::Vector3d(0.0, 0.0, 0.0))
-   {}
+{}
 
-  void Basis::calculateSideVector()
-  {
-    side=forward.Cross(up);
-  }
-
+void Basis::calculateSideVector() {
+    side = forward.Cross(up);
 }
+
+}  // namespace avionics_sim

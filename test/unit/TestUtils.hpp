@@ -1,3 +1,8 @@
+/**
+ * @copyright   Copyright (c) 2021, Swift Engineering Inc.
+ * @license     Licensed under the MIT license. See LICENSE for details.
+ */
+
 #pragma once
 
 #include <gtest/gtest.h>
@@ -11,9 +16,9 @@
   EXPECT_NEAR(a[2], b[2], abs_error);\
   }
 
-namespace {
+namespace avionics_sim {
 
-  double epsilon = 1E-5;
+static const double epsilon = 1E-5;
 
 }
 

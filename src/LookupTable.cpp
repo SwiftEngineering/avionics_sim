@@ -15,21 +15,21 @@ LookupTable::LookupTable::LookupTable(
     std::vector<std::string> colNames,
     std::vector<std::vector<double>> cols) {
 
-    //Number of column names must match the number of columns
+    // Number of column names must match the number of columns
     assert(colNames.size() == cols.size());
 
-    //Populate LUT Map
+    // Populate LUT Map
     for (int i = 0; i < colNames.size(); i++) {
-      lutMap.insert(std::make_pair(colNames[i], cols.at(i)));
+        lutMap.insert(std::make_pair(colNames[i], cols.at(i)));
     }
-  }
+}
 
-  double LookupTable::lookup(double valA, std::string fromA, std::string inB) {
+double LookupTable::lookup(double valA, std::string fromA, std::string inB) {
     double valB;
     avionics_sim::Bilinear_interp::interpolate(lutMap.at(fromA), lutMap.at(inB),
-        valA, &valB);
+            valA, &valB);
 
     return valB;
-  }
-
 }
+
+}  // namespace avionics_sim

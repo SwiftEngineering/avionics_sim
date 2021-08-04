@@ -8,7 +8,7 @@ if (number_of_srcs EQUAL 0)
 else()
     add_executable(unit_tests_exe ${UNIT_TEST_SRC})
     target_link_libraries(unit_tests_exe PUBLIC
-    GTest::GTest GTest::Main
+        ${GTEST_LIBS}
         ${PROJECT_NAME}
     )
     gtest_discover_tests(unit_tests_exe

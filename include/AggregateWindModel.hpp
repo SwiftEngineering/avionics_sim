@@ -15,16 +15,16 @@
 namespace avionics_sim {
 
 class AggregateWindModel : public IWindModel {
-    public:
-        AggregateWindModel();
+  public:
+    AggregateWindModel();
 
-        virtual ~AggregateWindModel();
+    virtual ~AggregateWindModel();
 
-        virtual WindRate get_rates();
+    virtual WindRate get_rates();
 
-        void add_model(IWindModel & wind_model);
+    void add_model(IWindModel &wind_model);
 
-    protected:
-        std::vector<IWindModel*> _wind_models;
+  protected:
+    std::vector<IWindModel *> _wind_models;
 };
-}
+}  // namespace avionics_sim

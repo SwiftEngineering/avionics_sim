@@ -1,5 +1,8 @@
+/**
+ * @copyright   Copyright (c) 2021, Swift Engineering Inc.
+ * @license     Licensed under the MIT license. See LICENSE for details.
+ */
 #include <gtest/gtest.h>
-// #include <gmock/gmock.h>
 
 #include <string>
 #include <sstream>
@@ -17,35 +20,35 @@ const unsigned int LESS_THAN_EQ = 4;
 const unsigned int GREATER_THAN_EQ = 5;
 
 class MathUtilTest : public ::testing::Test {
- protected:
-  avionics_sim::Math_util mathUtil;
-  double tolerance = 0.00001;
+  protected:
+    avionics_sim::Math_util mathUtil;
+    double tolerance = 0.00001;
 };
 
 TEST_F(MathUtilTest, TestCalculateMean) {
-  // Given: Range of Values
-  std::vector<double> samples = {2.0, -10, 99, -100000};
-  double expectedMean = -24977.25;
+    // Given: Range of Values
+    std::vector<double> samples = {2.0, -10, 99, -100000};
+    double expectedMean = -24977.25;
 
-  // When: Dynamic Pressure is Calculated
-  double resultantMean = mathUtil.calculate_mean(samples.begin(), samples.end(),
-                         samples.size());
+    // When: Dynamic Pressure is Calculated
+    double resultantMean = mathUtil.calculate_mean(samples.begin(), samples.end(),
+                           samples.size());
 
-  // Then: Dynamic Pressure should match expected
-  ASSERT_NEAR(resultantMean, expectedMean, tolerance);
+    // Then: Dynamic Pressure should match expected
+    ASSERT_NEAR(resultantMean, expectedMean, tolerance);
 }
 
 TEST_F(MathUtilTest, TestCalculateRMS) {
-  // Given: Range of Values
-  std::vector<double> samples = {2.0, -10, 99, -100000};
-  double expectedRMS = 50000.02476;
+    // Given: Range of Values
+    std::vector<double> samples = {2.0, -10, 99, -100000};
+    double expectedRMS = 50000.02476;
 
-  // When: Dynamic Pressure is Calculated
-  double resultantRMS = mathUtil.calculate_rms(samples.begin(), samples.end(),
-                        samples.size());
+    // When: Dynamic Pressure is Calculated
+    double resultantRMS = mathUtil.calculate_rms(samples.begin(), samples.end(),
+                          samples.size());
 
-  // Then: Dynamic Pressure should match expected
-  ASSERT_NEAR(resultantRMS, expectedRMS, tolerance);
+    // Then: Dynamic Pressure should match expected
+    ASSERT_NEAR(resultantRMS, expectedRMS, tolerance);
 }
 
 // TEST_F(MathUtilTest, TestCalculateFPComparison) {
@@ -90,23 +93,23 @@ TEST_F(MathUtilTest, TestCalculateRMS) {
 // }
 
 TEST_F(MathUtilTest, TestLinearMap) {
-  // Given:
-  double x = 4.651;
-  double in_min = 4.0;
-  double in_max = 5.0;
-  double out_min = 0.44;
-  double out_max = 0.55;
-  double expectedValue = 0.511614;
+    // Given:
+    double x = 4.651;
+    double in_min = 4.0;
+    double in_max = 5.0;
+    double out_min = 0.44;
+    double out_max = 0.55;
+    double expectedValue = 0.511614;
 
 
-  // When:
-  double result = mathUtil.linear_map(x, in_min, in_max, out_min, out_max);
+    // When:
+    double result = mathUtil.linear_map(x, in_min, in_max, out_min, out_max);
 
-  // Then:
-  ASSERT_NEAR(result, expectedValue, tolerance);
+    // Then:
+    ASSERT_NEAR(result, expectedValue, tolerance);
 }
 
-// TODO: Figure out why this has a hold up in the test
+// TODO(Mike Lyons): Figure out why this has a hold up in the test
 // TEST_F(MathUtilTest, TestPowInteger) {
 //   // Given:
 //   double base = 5;

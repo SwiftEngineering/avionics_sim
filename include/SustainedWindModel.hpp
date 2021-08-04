@@ -14,35 +14,31 @@
 namespace avionics_sim {
 
 class SustainedWindModel : public IWindModel {
-    public:
-        SustainedWindModel();
+  public:
+    SustainedWindModel();
 
-	    SustainedWindModel(v3 linear_rate);
+    explicit SustainedWindModel(v3 linear_rate);
 
-        SustainedWindModel(double strength, v3 direction);
+    SustainedWindModel(double strength, v3 direction);
 
-        virtual ~SustainedWindModel();
+    virtual ~SustainedWindModel();
 
-        virtual WindRate get_rates();
+    virtual WindRate get_rates();
 
-        void set_strength(double strength);
+    void set_strength(double strength);
 
-        void set_direction(v3 direction);
+    void set_direction(v3 direction);
 
-        void set_linear_rate(double strength, v3 direction);
-
-
-    protected:
-
-        v3 linear_rate_;
-
-    private:
-        // keep seperate from the aggregate vector for independent setting
-        // but prevent having to multiply every time wind rates is called
-        double  _strength;
-        v3      _direction;
+    void set_linear_rate(double strength, v3 direction);
 
 
+  protected:
+    v3 linear_rate_;
 
+  private:
+    // keep seperate from the aggregate vector for independent setting
+    // but prevent having to multiply every time wind rates is called
+    double  _strength;
+    v3      _direction;
 };
-}
+}  // namespace avionics_sim

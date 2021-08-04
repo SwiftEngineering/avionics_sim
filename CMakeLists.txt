@@ -4,6 +4,10 @@ project(avionics_sim C CXX)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 11)
 
+# Find the Boost Library
+set(BOOST_VER 1.65.1)
+find_package(Boost ${BOOST_VER} REQUIRED)
+
 # Find the Ignition-Math library
 set(IGN_MATH_VER 4)
 find_package(ignition-math${IGN_MATH_VER} REQUIRED)
@@ -67,3 +71,5 @@ cpack_add_component(avionics-sim-dev
 	DESCRIPTION "Dev headers for avionics sim"
 	DEPENDS avionics-sim
 )
+
+include(${CMAKE_SOURCE_DIR}/.cmake/clang_tools.cmake)

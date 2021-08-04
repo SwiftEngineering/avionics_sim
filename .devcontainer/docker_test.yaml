@@ -1,0 +1,18 @@
+schemaVersion: '2.0.0'
+commandTests:
+    - name: 'has cmake package'
+      command: 'which'
+      args: ['cmake']
+      expectedOutput: ['/usr/local/bin/cmake']
+    - name: 'has astyle package'
+      command: 'apt'
+      args: ['list', 'astyle']
+      expectedOutput: ['astyle']
+    - name: 'has gcovr package'
+      command: 'apt'
+      args: ['list', 'gcovr']
+      expectedOutput: ['gcovr']
+    - name: 'has lcov package'
+      command: 'apt'
+      args: ['list', 'lcov']
+      expectedOutput: ['lcov']
