@@ -1,0 +1,24 @@
+*.o
+*.make
+test_freeimage.c
+
+# python
+*.pyc
+
+# build
+build/
+
+.vscode/
+
+# If someone incorrectly builds in root
+CMakeFiles/
+Makefile
+cmake_install.cmake
+CMakeCache.txt
+*integration_test*
+*_test_*.html
+*.orig
+*.a
+
+# CI
+publish

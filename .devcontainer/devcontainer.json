@@ -1,0 +1,40 @@
+{
+    "name": "Avionics Sim Container",
+    "context": "..",
+    "dockerFile": "Dockerfile",
+    "remoteUser": "dev",
+    "runArgs": [
+        "--rm",
+    ],
+    "settings": {
+        // Editor
+        "editor.rulers": [
+            80,
+            120
+        ],
+        "editor.tabSize": 4,
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": true,
+        "editor.formatOnSave": true,
+        "editor.showFoldingControls": "always",
+        // CMake
+        "cmake.configureOnOpen": true,
+        "cmake.buildDirectory": "${workspaceRoot}/build/${buildType}",
+        // Styling
+        "astyle.astylerc": "${workspaceRoot}/.styling/astyle/astylerc",
+        "[cpp]": {
+            "editor.defaultFormatter": "chiehyu.vscode-astyle"
+        },
+        // Linting
+        "cpplint.lineLength": 120
+    },
+    "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake",
+        "ms-vscode.cmake-tools",
+        "ms-python.python",
+        "ms-toolsai.jupyter",
+        "chiehyu.vscode-astyle",
+        "mine.cpplint"
+    ]
+}
